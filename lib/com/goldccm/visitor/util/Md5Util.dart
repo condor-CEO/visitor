@@ -7,12 +7,17 @@ class Md5Util{
 
   final  List hexChar = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 
-  static Md5Util instance;
-  static Md5Util getInstance(){
-    print("getInstance");
-    if(instance == null){
-      instance  = new Md5Util();
+  factory Md5Util() =>_getInstance();
+  static Md5Util get instance => _getInstance();
+  static Md5Util _instance;
+  Md5Util._internal() {
+    // 初始化
+  }
+  static Md5Util _getInstance() {
+    if (_instance == null) {
+      _instance = new Md5Util._internal();
     }
+    return _instance;
   }
 
    String encryptByMD5ByHex(String data) {

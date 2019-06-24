@@ -83,7 +83,8 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Future<bool> _onWillPop()=>new Future.value(false);
+    return new WillPopScope(child: Scaffold(
         body: _pageList[_tabIndex],
         bottomNavigationBar: new BottomNavigationBar(
           items: <BottomNavigationBarItem>[
@@ -107,7 +108,7 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
               _tabIndex = index;
             });
           },
-        ));
+        )), onWillPop: _onWillPop);;
   }
 
   }

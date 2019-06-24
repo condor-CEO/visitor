@@ -5,28 +5,23 @@ import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
 import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 
 class Http{
-  static Http instance;
-  static String token;
+  factory Http() =>_getInstance();
+  static Http get instance => _getInstance();
+  static Http _instance;
   Dio _dio;
-
-  static  getInstance(){
-    print("getInstance");
-    if(instance == null){
-      instance  = new Http();
-    }
+  Http._internal() {
+    // 初始化
+    _dio = new Dio();
+    _dio.options.baseUrl = Constant.serverUrl;
+//    _dio.options.baseUrl = "http://192.168.101.44/visitor/";
+    _dio.options.connectTimeout = 5000; //5s
+    _dio.options.receiveTimeout = 3000;
   }
-
-  Http(){
-
-//    Options options = new BaseOptions(
-//      baseUrl: "https://www.xx.com/api",
-//      connectTimeout: 5000,
-//      receiveTimeout: 3000,
-//    );
-       _dio = new Dio();
-       _dio.options.baseUrl = "http://47.99.209.40:8082/";
-       _dio.options.connectTimeout = 5000; //5s
-       _dio.options.receiveTimeout = 3000;
+  static Http _getInstance() {
+    if (_instance == null) {
+      _instance = new Http._internal();
+    }
+    return _instance;
   }
 
 
@@ -59,8 +54,8 @@ class Http{
   }
 
   // post请求封装
-  postWithHeader(url,{ options, cancelToken, data}) async {
-    print('post请求::: url：$url ,body: $data');
+  postWithHeader(url,{ options, cancelToken, queryParameters}) async {
+    print('post请求::: url：$url ,body: $queryParameters');
     Response response;
     var headers = Map<String, String>();
     headers['token'] = DataUtils.getAccessToken().toString();
@@ -73,7 +68,7 @@ class Http{
     try{
       response = await _dio.post(
           url,
-          data:data !=null ? data : {},
+          queryParameters:queryParameters !=null ? queryParameters : {},
           cancelToken:cancelToken
       );
       print(response);
@@ -111,13 +106,13 @@ class Http{
   }
 
   // post请求封装
-  post(url,{ options, cancelToken, data}) async {
-    print('post请求::: url：$url ,body: $data');
+  post(url,{ options, cancelToken, queryParameters}) async {
+    print('post请求::: url：$url ,body: $queryParameters');
     Response response;
     try{
       response = await _dio.post(
           url,
-          data:data !=null ? data : {},
+          queryParameters:queryParameters !=null ? queryParameters : {},
           cancelToken:cancelToken
       );
       print(response);

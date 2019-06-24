@@ -1,15 +1,21 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:visitor/home.dart';
-import 'dart:async';
-import 'Regisit.dart';
-import 'GestureLogin.dart';
-import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
-import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
 import 'package:visitor/com/goldccm/visitor/model/JsonResult.dart';
+import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
+import 'package:visitor/com/goldccm/visitor/util/Md5Util.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
+import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
+import 'package:visitor/com/goldccm/visitor/util/SharedPreferenceUtil.dart';
+import 'package:visitor/home.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
+
+import 'GestureLogin.dart';
+import 'Regisit.dart';
 
 final Color _availableStyle = Colors.blue;
 
@@ -237,11 +243,11 @@ class LoginState extends State<Login> {
             children: <Widget>[
               new Expanded(
                 child: new RaisedButton(
-                  onPressed: () {
+                  onPressed: _loginAction,/*() {
                     Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
                       return new MyHomeApp();
                     }));
-                  },
+                  },*/
                   //通过控制 Text 的边距来控制控件的高度
                   child: new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
@@ -348,8 +354,8 @@ class LoginState extends State<Login> {
    * 获取验证码
    */
   Future<bool> getCheckCode() async {
-    bool checkLogin = checkLoignUser();
-      if(checkLogin){
+    bool _userNameCheck = checkLoignUser();
+      if(_userNameCheck){
         String url = Constant.sendCodeUrl+"/"+_userNameController.text.toString()+"/1";
        var data = await Http().get(url,queryParameters:{"phone":_userNameController.text.toString(),"type":"1"});
        if(data!=null){
@@ -363,7 +369,7 @@ class LoginState extends State<Login> {
        }
 
     }else{
-        return checkLogin;
+        return _userNameCheck;
       }
   }
 
@@ -385,5 +391,89 @@ class LoginState extends State<Login> {
     return checkResult;
 
   }
+
+  /**
+   * 密码校验
+   */
+  bool checkPass(){
+    String _pass = _passwordController.text.toString();
+    bool checkResult = true;
+    if(_pass==null||_pass==""){
+      ToastUtil.showShortToast('密码不能为空');
+      checkResult= false;
+    }else if(_pass!=''&&_pass.length<6&&_pass.length>=32){
+      ToastUtil.showShortToast('密码长度不能小于6位大于32位');
+      checkResult= false;
+    }else{
+      checkResult= true;
+    }
+    return checkResult;
+  }
+
+  /**
+   * 手机验证码校验
+   */
+  bool checkCode(){
+    String _checkCode = _checkCodeController.text.toString();
+    bool checkResult = true;
+    if(_checkCode==null||_checkCode==""){
+      ToastUtil.showShortToast('验证码不能为空');
+      checkResult= false;
+    }else if(_checkCode!=''&&_checkCode.length!=6){
+      ToastUtil.showShortToast('验证码必须为6位数字');
+      checkResult= false;
+    }else{
+      checkResult= true;
+    }
+    return checkResult;
+
+  }
+
+  Future _loginAction() async{
+    //密码登录
+    bool userNameCheck = checkLoignUser();
+    String _passNum;
+    String _codeNum;
+    if(userNameCheck&&_loginType == _loginPass){
+      bool passCheck = checkPass();
+      if(passCheck){
+        _passNum = Md5Util().encryptByMD5ByHex(_passwordController.text.toString());
+      }
+    }else if(_loginType==_loginCode){
+      //验证码登录
+      if(checkCode()){
+        _codeNum = _checkCodeController.text.toString();
+      }
+    }
+      var data = await Http.instance.post(Constant.loginUrl,queryParameters:{"phone":_userNameController.text.toString(),"style":"1","sysPwd":_passNum,"code":_codeNum});
+      if(data!=null){
+        JsonResult result = JsonResult.fromJson(data);
+        print('$result');
+        if(result.sign=='success'){
+          Map userMap = result.data['user'];
+          UserInfo userInfo = UserInfo.fromJson(userMap);
+          DataUtils.saveLoginInfo(userMap);
+          DataUtils.saveUserInfo(userMap);
+          //DataUtils.saveNoticeInfo(noticeMap);
+          SharedPreferenceUtil.saveUser(userInfo);
+          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
+            return new MyHomeApp();
+          }));
+          return true;
+        }else{
+          Fluttertoast.showToast(msg: result.desc);
+          return false;
+        }
+
+      }
+
+
+
+
+
+
+
+  }
+
 
 }

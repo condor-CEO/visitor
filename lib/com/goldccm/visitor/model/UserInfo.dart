@@ -32,7 +32,7 @@ class UserInfo {
    String userName;
 
    String qrcodeUrl;
-   String companyId;
+   num companyId;
    String soleCode;
    String validityDate;
    String companyName;
@@ -60,7 +60,7 @@ class UserInfo {
        this.isGestureOpened, this.ufId, this.sortLetters,
        this.hasApplyPermission});
 
-   UserInfo.fromJson(Map json) {
+   UserInfo.fromJson(var json) {
       id = json['id'];
       orgId = json['orgId'];
       relationNo = json['relationNo'];

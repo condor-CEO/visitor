@@ -70,7 +70,7 @@ class DataUtils{
       String token= data['token'];
       String isSetTransPwd= data['isSetTransPwd'];
       String qrcodeUrl= data['qrcodeUrl'];
-      String companyId= data['companyId'];
+      int companyId= data['companyId'];
       String role= data['role'];
       String workKey= data['workKey'];
       String failReason= data['failReason'];
@@ -88,7 +88,7 @@ class DataUtils{
       await sp.setString(SP_ISAUTH, isAuth);
       await sp.setString(SP_TOKEN, token);
       await sp.setString(SP_ISSETTRANSPWD, isSetTransPwd);
-      await sp.setString(SP_COMPANYID, companyId);
+      await sp.setInt(SP_COMPANYID, companyId);
       await sp.setString(SP_WORKKEY, workKey);
       UserInfo userInfo = new UserInfo(id :id,
         orgId:orgId,
@@ -176,7 +176,7 @@ class DataUtils{
     userInfo.phone = sp.getString(SP_PHONE);
     userInfo.isAuth = sp.getString(SP_ISAUTH);
     userInfo.token = sp.getString(SP_TOKEN);
-    userInfo.companyId = sp.getString(SP_COMPANYID);
+    userInfo.companyId = sp.getInt(SP_COMPANYID);
     userInfo.workKey = sp.getString(SP_WORKKEY);
     return userInfo;
   }

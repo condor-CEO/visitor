@@ -16,11 +16,11 @@ class CommonUtil{
 
   //计算当前的key，上送服务端校验
   static String calWorkKey() {
-    String userId = Md5Util.getInstance().encryptByMD5ByHex(DataUtils.getUserId().toString().padLeft(12,'F'));
-    String token = Md5Util.getInstance().encryptByMD5ByHex(DataUtils.getAccessToken().toString());
-    String currDate = Md5Util.getInstance().encryptByMD5ByHex(getCurrentTime());
+    String userId = Md5Util.instance .encryptByMD5ByHex(DataUtils.getUserId().toString().padLeft(12,'F'));
+    String token = Md5Util.instance.encryptByMD5ByHex(DataUtils.getAccessToken().toString());
+    String currDate = Md5Util.instance.encryptByMD5ByHex(getCurrentTime());
     String keyStr = userId.substring(6,12)+currDate.substring(2,14)+token.substring(5,10);
-    return Md5Util.getInstance().encryptByMD5ByHex(keyStr).toUpperCase();
+    return Md5Util.instance.encryptByMD5ByHex(keyStr).toUpperCase();
 
   }
 

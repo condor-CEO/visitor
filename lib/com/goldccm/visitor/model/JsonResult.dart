@@ -5,15 +5,15 @@ import 'dart:convert';
 class JsonResult {
   String sign ;
   String desc ;
-  var  data;
+  Map<String,dynamic>  data;
 
 
   JsonResult.fromJson(var result){
     JsonDecoder jsonDecoder = new JsonDecoder();
-    var jsonResult =jsonDecoder.convert(result);
+    Map<String,dynamic> jsonResult =json.decode(result);
     var verify = jsonResult['verify'];
     data = jsonResult['data'];
-    sign = verify['sign'];
-    desc = verify['desc'];
+    sign = jsonResult['verify']['sign'];
+    desc = jsonResult['verify']['desc'];
   }
 }
