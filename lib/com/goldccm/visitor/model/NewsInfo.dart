@@ -21,12 +21,12 @@ class NewsInfo{
 });
 
   NewsInfo.fromJson(Map json){
-    this.id=json['id'];
-    this.newsDate=json['newsDate'];
-    this.newsName=json['newsName'];
-    this.newsDetail=json['newsDetail'];
-    this.newsImageUrl=json['newsImageUrl'];
-    this.newsUrl=json['newsUrl'];
-    this.newsStatus=json['newsStatus'];
-  }
+     this.id=json['id'];
+     this.newsDate=json['newsDate'];
+     this.newsName=json['newsName'];
+     this.newsDetail=json['newsDetail'];
+     this.newsImageUrl=json['newsImageUrl'];
+     this.newsUrl=json['newsUrl'];
+     this.newsStatus=json['newsStatus'];
+   }
 }

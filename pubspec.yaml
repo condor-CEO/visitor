@@ -59,6 +59,12 @@ flutter:
     - asset/images/visitor_bg_splash.png
     - asset/images/visitor_icon_message.png
     - asset/images/visitor_logo.png
+    - asset/images/visitor_icon_verify.png
+    - asset/images/visitor_icon_qrcode.png
+    - asset/images/visitor_icon_staff.png
+    - asset/images/visitor_icon_security.png
+    - asset/images/visitor_icon_setting.png
+    - asset/images/visitor_icon_next.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
