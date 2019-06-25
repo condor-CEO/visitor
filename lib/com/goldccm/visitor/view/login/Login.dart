@@ -190,7 +190,7 @@ class LoginState extends State<Login> {
                             flex: 2,
                             child: new TextField(
                               style: _labelStyle,
-                              keyboardType: TextInputType.text,
+                              keyboardType: TextInputType.number,
                               controller: _checkCodeController,
                               decoration: InputDecoration(
                                   border: InputBorder.none,

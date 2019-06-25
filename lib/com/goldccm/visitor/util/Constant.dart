@@ -1,5 +1,5 @@
 class Constant {
-  static final String serverUrl = "http://192.168.101.44/visitor/";
+  static final String serverUrl = "http://47.99.209.40:8082/";
   static final String userUrl = "user/";
   static final String codeUrl = "code/";
   static final String userFriendUrl = "userFriend/";
