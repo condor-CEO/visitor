@@ -5,7 +5,6 @@ class UserInfo {
    num id;
    num orgId;
    String relationNo;
-
    String realName; //真实姓名
    String nickName; //昵称
    String loginName; //登录账号

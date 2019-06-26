@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:visitor/com/goldccm/visitor/view/homepage/addresspage.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/homepage.dart';
-import 'package:visitor/com/goldccm/visitor/view/homepage/minepage.dart';
+import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 
 
 class MyHomeApp extends StatefulWidget{
