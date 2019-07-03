@@ -9,6 +9,11 @@ class IdentifyCodePage extends StatefulWidget{
 }
 class IdentifyCodePageState extends State<IdentifyCodePage>{
   @override
+  void initState() {
+    super.initState();
+    getSoleCode();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -16,5 +21,8 @@ class IdentifyCodePageState extends State<IdentifyCodePage>{
         centerTitle:true,
       ),
     );
+  }
+  getSoleCode(){
+
   }
 }

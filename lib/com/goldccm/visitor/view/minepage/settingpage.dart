@@ -45,7 +45,6 @@ class SettingPageState extends State<SettingPage>{
                 width: 300.0,
                 height: 50.0,
                 child: new RaisedButton(
-
                   color: Colors.blue,
                   textColor: Colors.white,
                   child: new Text('安全退出'),

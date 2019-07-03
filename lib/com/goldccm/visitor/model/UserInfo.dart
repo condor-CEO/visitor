@@ -31,7 +31,7 @@ class UserInfo {
    String userName;
 
    String qrcodeUrl;
-   String companyId;
+   num companyId;
    String soleCode;
    String validityDate;
    String companyName;

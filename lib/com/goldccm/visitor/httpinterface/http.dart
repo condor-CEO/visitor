@@ -111,21 +111,22 @@ class Http{
   }
 
   // post请求封装
-  post(url,{ options, cancelToken, data}) async {
-    print('post请求::: url：$url ,body: $data');
+  post(url,{ options, cancelToken, data,queryParameters}) async {
+    print('post请求::: url：$url ,body: $queryParameters');
     Response response;
     try{
       response = await _dio.post(
           url,
           data:data !=null ? data : {},
+          queryParameters: queryParameters !=null ? queryParameters : {},
           cancelToken:cancelToken
       );
       print(response);
     }on DioError catch(e){
       if(CancelToken.isCancel(e)){
-        print('get请求取消! ' + e.message);
+        print('post请求取消! '+ e.message);
       }else{
-        print('get请求发生错误：$e');
+        print('post请求发生错误：$e');
       }
     }
     return response.data;
