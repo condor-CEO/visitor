@@ -11,7 +11,9 @@ class Md5Util{
   static Md5Util getInstance(){
     print("getInstance");
     if(instance == null){
-      instance  = new Md5Util();
+      return instance  = new Md5Util();
+    }else{
+      return instance;
     }
   }
 
