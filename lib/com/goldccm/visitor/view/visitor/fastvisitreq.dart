@@ -87,8 +87,14 @@ class FastVisitReqState extends State<FastVisitReq>{
                     theme: new DatePickerTheme(),
                     onConfirm:(date){
                       print('comfirm$date');
-                      _visitStartControl.text=date.toString().substring(0,16);
-                      _startNode.unfocus();
+                      if(date.isBefore(DateTime.now())){
+                        ToastUtil.showShortToast('开始时间不能小于当前时间');
+                        _startNode.unfocus();
+                      }else{
+                        _visitStartControl.text=date.toString().substring(0,16);
+                        _startNode.unfocus();
+                      }
+
                     } ,
                   );
 
@@ -133,8 +139,17 @@ class FastVisitReqState extends State<FastVisitReq>{
                           theme: new DatePickerTheme(),
                           onConfirm:(date){
                             print('comfirm$date');
+                            if(date.isBefore(DateTime.parse(_visitStartControl.text.toString()))){
+                              ToastUtil.showShortToast('结束时间不能小于开始时间,请重新选择');
+                              _endNode.unfocus();
+                            }
+
+                            if(date.day!=(DateTime.parse(_visitStartControl.text.toString()).day)){
+                              ToastUtil.showShortToast('访问时间请选择在同一天,请重新选择');
+                              _endNode.unfocus();
+                            }
                             _visitEndControl.text=date.toString().substring(0,16);
-                            _endNode.unfocus();
+
                           } ,
                         );
 
@@ -159,33 +174,39 @@ class FastVisitReqState extends State<FastVisitReq>{
                 color: Colors.black54,
               ),
 
-              new Padding(
-                padding: new EdgeInsets.only(
-                    top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
-                child: new Row(
-                  children: <Widget>[
-                    new Expanded(
-                      child: new RaisedButton(
-                        onPressed: (){},
-                        //通过控制 Text 的边距来控制控件的高度
-                        child: new Padding(
-                          padding: new EdgeInsets.fromLTRB(
-                              0.0, 15.0, 0.0, 15.0),
-                          child: new Text(
-                            "发起访问",
-                            style: new TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: '楷体_GB2312',
+              new Expanded(
+                child: new Padding(
+                  padding: new EdgeInsets.only(
+                      top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
+                  child: new Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Expanded(
+                        child: new RaisedButton(
+                          onPressed: (){},
+                          //通过控制 Text 的边距来控制控件的高度
+                          child: new Padding(
+                            padding: new EdgeInsets.fromLTRB(
+                                0.0, 15.0, 0.0, 15.0),
+                            child: new Text(
+                              "发起访问",
+                              style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontFamily: '楷体_GB2312',
+                              ),
                             ),
                           ),
+                          color: Colors.lightBlue,
                         ),
-                        color: Colors.lightBlue,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+
               ),
+
+
 
 
 
