@@ -13,8 +13,7 @@ class Constant {
   static final String newsUrl = "news/";
   static final int connectTimeout=3000;
   static final int receiveTimeout=3000;
-
-
+  static final double fontSize=14.0;
   /*
    * 登录
    */
