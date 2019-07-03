@@ -1,7 +1,12 @@
+import 'dart:math';
+
+//import 'Base64.dart';
 import 'DataUtils.dart';
 import 'Md5Util.dart';
 import 'dart:io';
 import 'package:package_info/package_info.dart';
+import 'dart:convert';
+
 
 
 class CommonUtil{
@@ -9,9 +14,15 @@ class CommonUtil{
   //获取当前系统时间yyyymmddHHMMss
 
   static String getCurrentTime(){
-    var current = DateTime.now();
-    return current.year.toString()+current.month.toString().padLeft(2,'0')+current.day.toString().padLeft(2,'0')+current.hour.toString().padLeft(2,'0')+
-    current.minute.toString().padLeft(2,'2')+current.second.toString().padLeft(2,'0');
+    var current = DateTime.now().toString();
+    return current;
+//    return current.year.toString()+current.month.toString().padLeft(2,'0')+current.day.toString().padLeft(2,'0')+current.hour.toString().padLeft(2,'0')+
+//    current.minute.toString().padLeft(2,'2')+current.second.toString().padLeft(2,'0');
+  }
+
+  static String getCurrentTimeMinis(){
+    return new DateTime.now().millisecondsSinceEpoch.toString();
+
   }
 
   //计算当前的key，上送服务端校验
@@ -51,10 +62,48 @@ static String  getAppVersion(){
      appVersion = packageInfo.version;
   });
   return appVersion;
-
-
 }
 
+  /**
+   * 生成固定几位的随机数
+   * type :类型 1-数字  2-字母  3-数字加字母
+   * length：生成随机数长度
+   */
+  static String getRandData(int type,int length){
+    String charModel = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+    String munModel ="1234567890";
+    String charAndnumModel ="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+    String model="";
+   if(type==1){
+     model = charModel;
+   }else if(type==2){
+     model = munModel;
+   }else{
+     model = charAndnumModel;
+   }
 
+
+    String randStr = '';
+    for (var i = 0; i < length; i++) {
+      randStr = randStr + model[Random().nextInt(model.length)];
+    }
+
+    return randStr;
+}
+
+  /*
+  * Base64加密
+  */
+  static String encodeBase64(String data){
+    var content = utf8.encode(data);
+    var digest = base64Encode(content);
+    return digest;
+  }
+  /*
+  * Base64解密
+  */
+  static String decodeBase64(String data){
+    return String.fromCharCodes(base64Decode(data));
+  }
 
 }

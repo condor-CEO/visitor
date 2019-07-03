@@ -19,19 +19,22 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   shared_preferences: ^0.5.3+1
   dio: ^2.1.0
   crypto: ^2.0.6
-  package_info: ^0.4.0+4
+  package_info: ^0.4.0+2
   gesture_password: ^0.0.4
-  image_picker: ^0.6.0+10
   fluttertoast: ^3.1.0
   flutter_swiper: ^1.1.6
+  image_picker: ^0.6.0+10
   qr_flutter: ^2.1.0+55
   flutter_webview_plugin: ^0.3.5
+  flutter_datetime_picker: ^1.2.4
+  flutter_cupertino_date_picker: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -62,14 +65,6 @@ flutter:
     - asset/images/visitor_bg_splash.png
     - asset/images/visitor_icon_message.png
     - asset/images/visitor_logo.png
-    - asset/images/visitor_icon_verify.png
-    - asset/images/visitor_icon_qrcode.png
-    - asset/images/visitor_icon_head.png
-    - asset/images/visitor_icon_nodata.png
-    - asset/images/visitor_icon_staff.png
-    - asset/images/visitor_icon_security.png
-    - asset/images/visitor_icon_setting.png
-    - asset/images/visitor_icon_next.png
     - asset/images/open_door.png
     - asset/images/visitor_icon_action_visit.png
     - asset/images/visitor_icon_action_qrcode.png

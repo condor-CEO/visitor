@@ -22,12 +22,8 @@ final Color _availableStyle = Colors.blue;
 /// 墨水瓶（`InkWell`）不可用时使用的样式。
 final Color _unavailableStyle = Colors.grey;
 
-final TextStyle _labelStyle = new TextStyle(
-  fontSize: 15.0,
-  color: Colors.blue,
-  fontFamily:'楷体_GB2312'
-);
-
+final TextStyle _labelStyle =
+    new TextStyle(fontSize: 15.0, color: Colors.blue, fontFamily: '楷体_GB2312');
 
 class Login extends StatefulWidget {
   final int countdown;
@@ -55,7 +51,6 @@ class LoginState extends State<Login> {
   bool _codeBtnflag = true;
   Timer _timer;
 
-
   /// 当前倒计时的秒数。
   int _seconds;
 
@@ -65,12 +60,9 @@ class LoginState extends State<Login> {
   /// 当前墨水瓶（`InkWell`）的文本。
   String _verifyStr = '获取验证码';
 
-
   TextEditingController _userNameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _checkCodeController=new TextEditingController();
-
-
+  TextEditingController _checkCodeController = new TextEditingController();
 
   @override
   void initState() {
@@ -113,241 +105,258 @@ class LoginState extends State<Login> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     var _buttonLogin;
     return new Scaffold(
         //color: Colors.white,
-        body:
-        new SingleChildScrollView(
-          child: new ConstrainedBox(
-              constraints: new BoxConstraints(
-                minHeight: 120.0,
-              ),
-              child: new Padding(
-      padding: const EdgeInsets.only(top: 30.0),
-      child: new Column(children: <Widget>[
-        new Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-          new Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-                onTap: _regisit, //写入方法名称就可以了，但是是无参的
-                child: new Text('注册',
-                    style: _labelStyle)),
-          ),
-        ]),
-        new Padding(
-          padding: const EdgeInsets.only(top: 80.0),
-          child: new Image.asset("asset/images/visitor_logo.png"),
-        ),
-        new Padding(
-            padding: const EdgeInsets.only(top: 30.0, left: 20.0, right: 20.0),
+        body: new SingleChildScrollView(
             child: new ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 60, maxWidth: 400),
-              child: new TextField(
-                autocorrect: true,
-                keyboardType: TextInputType.number,
-                maxLines: 1,
-                maxLength: 11,
-                maxLengthEnforced: true,
-                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                controller: _userNameController,
-                style: _labelStyle,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(10).copyWith(top: 20.0,bottom: 10.0),
-                    prefixIcon: Icon(Icons.perm_identity),
-                    hintText: '请输入用户名',
-                    fillColor: Colors.black12,
-                    filled: true),
-                autofocus: true,
-              ),
-            )),
-
-        new Padding(
-            padding: const EdgeInsets.only(top: 5.0, left: 20.0, right: 20.0),
-            child: new ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 40, maxWidth: 400),
-                child: _loginType == _loginPass
-                    ? new TextField(
-                        style: _labelStyle,
-                        keyboardType: TextInputType.text,
-                        controller: _passwordController,
-                  decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(10.0).copyWith(top: 11.0,bottom: 11.0),
-                            prefixIcon: Icon(Icons.lock),
-                            hintText: '请输入密码',
-                            fillColor: Colors.black12,
-                            filled: true),
-                        obscureText: true,
-                      )
-                    : new Row(
+                constraints: new BoxConstraints(
+                  minHeight: 120.0,
+                ),
+                child: new Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: new Column(children: <Widget>[
+                    new Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          new Padding(
+                            padding: const EdgeInsets.only(right: 20.0),
+                            child: GestureDetector(
+                                onTap: _regisit, //写入方法名称就可以了，但是是无参的
+                                child: new Text('注册', style: _labelStyle)),
+                          ),
+                        ]),
+                    new Padding(
+                      padding: const EdgeInsets.only(top: 80.0),
+                      child: new Image.asset("asset/images/visitor_logo.png"),
+                    ),
+                    new Padding(
+                        padding: const EdgeInsets.only(
+                            top: 30.0, left: 20.0, right: 20.0),
+                        child: new ConstrainedBox(
+                          constraints:
+                              BoxConstraints(maxHeight: 60, maxWidth: 400),
+                          child: new TextField(
+                            autocorrect: true,
+                            keyboardType: TextInputType.number,
+                            maxLines: 1,
+                            maxLength: 11,
+                            maxLengthEnforced: true,
+                            inputFormatters: [
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ],
+                            controller: _userNameController,
+                            style: _labelStyle,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.all(10)
+                                    .copyWith(top: 20.0, bottom: 10.0),
+                                prefixIcon: Icon(Icons.perm_identity),
+                                hintText: '请输入用户名',
+                                fillColor: Colors.black12,
+                                filled: true),
+                            autofocus: true,
+                          ),
+                        )),
+                    new Padding(
+                        padding: const EdgeInsets.only(
+                            top: 5.0, left: 20.0, right: 20.0),
+                        child: new ConstrainedBox(
+                            constraints:
+                                BoxConstraints(maxHeight: 40, maxWidth: 400),
+                            child: _loginType == _loginPass
+                                ? new TextField(
+                                    style: _labelStyle,
+                                    keyboardType: TextInputType.text,
+                                    controller: _passwordController,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(10.0)
+                                            .copyWith(top: 11.0, bottom: 11.0),
+                                        prefixIcon: Icon(Icons.lock),
+                                        hintText: '请输入密码',
+                                        fillColor: Colors.black12,
+                                        filled: true),
+                                    obscureText: true,
+                                  )
+                                : new Row(
+                                    children: <Widget>[
+                                      new Expanded(
+                                        flex: 2,
+                                        child: new TextField(
+                                          style: _labelStyle,
+                                          keyboardType: TextInputType.number,
+                                          controller: _checkCodeController,
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              contentPadding:
+                                                  EdgeInsets.all(10.0).copyWith(
+                                                      top: 12.0, bottom: 12.0),
+                                              prefixIcon: Icon(Icons.lock),
+                                              hintText: '请输入验证码',
+                                              hintStyle: new TextStyle(
+                                                fontFamily: '楷体_GB2312',
+                                              ),
+                                              fillColor: Colors.black12,
+                                              filled: true),
+                                          obscureText: true,
+                                        ),
+                                      ),
+                                      new Expanded(
+                                          flex: 1,
+                                          child: new Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 10.0),
+                                            child: new RaisedButton(
+                                              onPressed: () async {
+                                                if (_codeBtnflag) {
+                                                  bool res =
+                                                      await getCheckCode();
+                                                  if (res == true) {
+                                                    _startTimer();
+                                                  } else {
+                                                    return null;
+                                                  }
+                                                } else {
+                                                  return null;
+                                                }
+                                              },
+                                              //通过控制 Text 的边距来控制控件的高度
+                                              child: new Padding(
+                                                padding:
+                                                    new EdgeInsets.fromLTRB(
+                                                        0.0, 12.0, 0.0, 12.0),
+                                                child: new Text(
+                                                  _verifyStr,
+                                                  style: new TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontFamily: '楷体_GB2312',
+                                                  ),
+                                                ),
+                                              ),
+                                              color: colorStyle,
+                                            ),
+                                          )),
+                                    ],
+                                  ))),
+                    new Padding(
+                      padding: new EdgeInsets.only(
+                          top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
+                      child: new Row(
                         children: <Widget>[
                           new Expanded(
-                            flex: 2,
-                            child: new TextField(
-                              style: _labelStyle,
-                              keyboardType: TextInputType.number,
-                              controller: _checkCodeController,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10.0).copyWith(top: 12.0,bottom: 12.0),
-                                  prefixIcon: Icon(Icons.lock),
-                                  hintText: '请输入验证码',
-                                  hintStyle: new TextStyle(fontFamily:'楷体_GB2312',),
-                                  fillColor: Colors.black12,
-                                  filled: true),
-                              obscureText: true,
-                            ),
-                          ),
-                          new Expanded(
-                              flex: 1,
-                              child: new Padding(
-                                padding: EdgeInsets.only(left: 10.0),
-                                child: new RaisedButton(
-                                  onPressed: () async {
-                                    if (_codeBtnflag) {
-                                      bool res = await getCheckCode();
-                                      if(res==true){
-                                        _startTimer();
-                                      }else{
-                                        return null;
-                                      }
-
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                  //通过控制 Text 的边距来控制控件的高度
-                                  child: new Padding(
-                                    padding: new EdgeInsets.fromLTRB(
-                                        0.0, 12.0, 0.0, 12.0),
-                                    child: new Text(
-                                      _verifyStr,
-                                      style: new TextStyle(
-                                          color: Colors.white, fontSize: 12,fontFamily:'楷体_GB2312',),
-                                    ),
-                                  ),
-                                  color: colorStyle,
-                                ),
-                              )),
-                        ],
-                      ))),
-
-        new Padding(
-          padding: new EdgeInsets.only(top:20.0, left:20.0, right:20.0, bottom:10.0),
-          child: new Row(
-            children: <Widget>[
-              new Expanded(
-                child: new RaisedButton(
-                  onPressed: _loginAction,/*() {
+                            child: new RaisedButton(
+                              onPressed: _loginAction,
+                              /*() {
                     Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
                       return new MyHomeApp();
                     }));
                   },*/
-                  //通过控制 Text 的边距来控制控件的高度
-                  child: new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
-                    child: new Text(
-                      "登录",
-                      style: new TextStyle(color: Colors.white, fontSize: 18,fontFamily:'楷体_GB2312',),
+                              //通过控制 Text 的边距来控制控件的高度
+                              child: new Padding(
+                                padding: new EdgeInsets.fromLTRB(
+                                    0.0, 15.0, 0.0, 15.0),
+                                child: new Text(
+                                  "登录",
+                                  style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontFamily: '楷体_GB2312',
+                                  ),
+                                ),
+                              ),
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  color: Colors.blue,
-                ),
-              ),
-            ],
-          ),
-        ),
-        new Padding(
-          padding: const EdgeInsets.only(right: 20.0),
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              new GestureDetector(
-                onTap: () {},
-                child: new Text(
-                  '忘记密码',
-                  style:_labelStyle,
-                ),
-              )
-            ],
-          ),
-        ),
-
-        new Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                new Padding(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: _loginType == _loginPass
-                      ? new GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _loginType = _loginCode;
-                            });
-                          },
-                          child: new Text(
-                            '短信登录',
-                            style: _labelStyle,
-                          ),
-                        )
-                      : new GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _loginType = _loginPass;
-                            });
-                          },
-                          child: new Text(
-                            '密码登录',
-                            style:_labelStyle,
-                          ),
+                    new Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          new GestureDetector(
+                            onTap: () {},
+                            child: new Text(
+                              '忘记密码',
+                              style: _labelStyle,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            new Padding(
+                              padding: EdgeInsets.only(right: 10.0),
+                              child: _loginType == _loginPass
+                                  ? new GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _loginType = _loginCode;
+                                        });
+                                      },
+                                      child: new Text(
+                                        '短信登录',
+                                        style: _labelStyle,
+                                      ),
+                                    )
+                                  : new GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _loginType = _loginPass;
+                                        });
+                                      },
+                                      child: new Text(
+                                        '密码登录',
+                                        style: _labelStyle,
+                                      ),
+                                    ),
+                            ),
+                          ],
                         ),
-                ),
-              ],
-            ),
-            new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: new GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
-                        return new GestureLogin();
-                      }));
-                    },
-                    child: new Text(
-                      '手势密码',
-                      style:_labelStyle,
+                        new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: new GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, new MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                    return new GestureLogin();
+                                  }));
+                                },
+                                child: new Text(
+                                  '手势密码',
+                                  style: _labelStyle,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ]),
-    ))
-    )
-    );
+                  ]),
+                ))));
   }
 
   void _regisit() {
     setState(() {
-      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (BuildContext context) {
         return new Regisit();
       }));
     });
-
-
   }
 
   /**
@@ -355,57 +364,61 @@ class LoginState extends State<Login> {
    */
   Future<bool> getCheckCode() async {
     bool _userNameCheck = checkLoignUser();
-      if(_userNameCheck){
-        String url = Constant.sendCodeUrl+"/"+_userNameController.text.toString()+"/1";
-       var data = await Http().get(url,queryParameters:{"phone":_userNameController.text.toString(),"type":"1"});
-       if(data!=null){
-         JsonResult result = JsonResult.fromJson(data);
-         if(result.sign=='success'){
-             return true;
-         }else{
-           Fluttertoast.showToast(msg: result.desc);
-           return false;
-         }
-       }
-
-    }else{
-        return _userNameCheck;
+    if (_userNameCheck) {
+      String url = Constant.sendCodeUrl +
+          "/" +
+          _userNameController.text.toString() +
+          "/1";
+      var data = await Http().get(url, queryParameters: {
+        "phone": _userNameController.text.toString(),
+        "type": "1"
+      });
+      if (data != null) {
+        JsonResult result = JsonResult.fromJson(data);
+        if (result.sign == 'success') {
+          return true;
+        } else {
+          Fluttertoast.showToast(msg: result.desc);
+          return false;
+        }
       }
+    } else {
+      return _userNameCheck;
+    }
   }
 
   /*
   *  用户名校验
    */
-  bool checkLoignUser(){
+  bool checkLoignUser() {
     String _loginName = _userNameController.text.toString();
-    bool checkResult =true;
-    if(_loginName==null||_loginName==""){
+    bool checkResult = true;
+    if (_loginName == null || _loginName == "") {
       ToastUtil.showShortToast('手机号不能为空');
-      checkResult= false;
-    }else if(_loginName!=''&&_loginName.length!=11){
+      checkResult = false;
+    } else if (_loginName != '' && _loginName.length != 11) {
       ToastUtil.showShortToast('手机号长度不正确');
-      checkResult= false;
-    }else{
-      checkResult= true;
+      checkResult = false;
+    } else {
+      checkResult = true;
     }
     return checkResult;
-
   }
 
   /**
    * 密码校验
    */
-  bool checkPass(){
+  bool checkPass() {
     String _pass = _passwordController.text.toString();
     bool checkResult = true;
-    if(_pass==null||_pass==""){
+    if (_pass == null || _pass == "") {
       ToastUtil.showShortToast('密码不能为空');
-      checkResult= false;
-    }else if(_pass!=''&&_pass.length<6&&_pass.length>=32){
+      checkResult = false;
+    } else if (_pass != '' && _pass.length < 6 && _pass.length >= 32) {
       ToastUtil.showShortToast('密码长度不能小于6位大于32位');
-      checkResult= false;
-    }else{
-      checkResult= true;
+      checkResult = false;
+    } else {
+      checkResult = true;
     }
     return checkResult;
   }
@@ -413,67 +426,77 @@ class LoginState extends State<Login> {
   /**
    * 手机验证码校验
    */
-  bool checkCode(){
+  bool checkCode() {
     String _checkCode = _checkCodeController.text.toString();
     bool checkResult = true;
-    if(_checkCode==null||_checkCode==""){
+    if (_checkCode == null || _checkCode == "") {
       ToastUtil.showShortToast('验证码不能为空');
-      checkResult= false;
-    }else if(_checkCode!=''&&_checkCode.length!=6){
+      checkResult = false;
+    } else if (_checkCode != '' && _checkCode.length != 6) {
       ToastUtil.showShortToast('验证码必须为6位数字');
-      checkResult= false;
-    }else{
-      checkResult= true;
+      checkResult = false;
+    } else {
+      checkResult = true;
     }
     return checkResult;
-
   }
 
-  Future _loginAction() async{
+  Future _loginAction() async {
     //密码登录
     bool userNameCheck = checkLoignUser();
     String _passNum;
     String _codeNum;
-    if(userNameCheck&&_loginType == _loginPass){
+    var data;
+    if (userNameCheck && _loginType == _loginPass) {
       bool passCheck = checkPass();
-      if(passCheck){
-        _passNum = Md5Util().encryptByMD5ByHex(_passwordController.text.toString());
+      if (passCheck) {
+        _passNum =
+            Md5Util().encryptByMD5ByHex(_passwordController.text.toString());
+        data = await Http.instance.post(Constant.loginUrl, queryParameters: {
+          "phone": _userNameController.text.toString(),
+          "style": "1",
+          "sysPwd": _passNum,
+        });
       }
-    }else if(_loginType==_loginCode){
+    } else if (_loginType == _loginCode) {
       //验证码登录
-      if(checkCode()){
+      if (checkCode()) {
         _codeNum = _checkCodeController.text.toString();
+        data = await Http.instance.post(Constant.loginUrl, queryParameters: {
+          "phone": _userNameController.text.toString(),
+          "style": "1",
+          "code": _codeNum
+        });
       }
     }
-      var data = await Http.instance.post(Constant.loginUrl,queryParameters:{"phone":_userNameController.text.toString(),"style":"1","sysPwd":_passNum,"code":_codeNum});
-      if(data!=null){
-        JsonResult result = JsonResult.fromJson(data);
-        print('$result');
-        if(result.sign=='success'){
-          Map userMap = result.data['user'];
-          UserInfo userInfo = UserInfo.fromJson(userMap);
-          DataUtils.saveLoginInfo(userMap);
-          DataUtils.saveUserInfo(userMap);
-          //DataUtils.saveNoticeInfo(noticeMap);
-          SharedPreferenceUtil.saveUser(userInfo);
-          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
-            return new MyHomeApp();
-          }));
-          return true;
-        }else{
-          Fluttertoast.showToast(msg: result.desc);
-          return false;
-        }
 
+    if (data != null) {
+      JsonResult result = JsonResult.fromJson(data);
+      print('$result');
+      if (result.sign == 'success') {
+        var userMap = result.data['user'];
+        print('返回用户信息：$userMap');
+        UserInfo userInfo = UserInfo.fromJson(userMap);
+
+        DataUtils.saveLoginInfo(userMap);
+        DataUtils.saveUserInfo(userMap);
+        SharedPreferenceUtil.saveUser(userInfo);
+        Navigator.of(context).pushAndRemoveUntil(
+            new MaterialPageRoute(
+              //builder: (BuildContext context) => _isLogin==true?new MyHomeApp():new Login()
+                builder: (BuildContext context) =>new MyHomeApp()
+            ),
+                (Route route) => route == null);
+        return true;
+      } else {
+        Fluttertoast.showToast(msg: result.desc);
+        return false;
       }
-
-
-
-
-
-
+    }
 
   }
+
+
 
 
 }

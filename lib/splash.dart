@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'com/goldccm/visitor/util/DataUtils.dart';
 import 'home.dart';
-import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
-import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
 import 'package:visitor/com/goldccm/visitor/view/login/Login.dart';
 
 
@@ -15,20 +14,20 @@ class SplashPage extends StatefulWidget{
 
 class SplashState extends State<SplashPage> {
   Timer _t;
-  Future<UserInfo> _userInfo;
+//  Future<UserInfo> _userInfo;
+  bool isLogin;
 
   @override
-  Future initState() async {
+   initState()  {
     super.initState();
-    //_userInfo = DataUtils.getUserInfo();
-    //bool _isLogin =await DataUtils.isLogin();
+    checkIsLogin();
     _t = new Timer(const Duration(milliseconds: 1500), () {
       //延时操作启动页面后跳转到主页面
       try {
         Navigator.of(context).pushAndRemoveUntil(
             new MaterialPageRoute(
-                //builder: (BuildContext context) => _isLogin==true?new MyHomeApp():new Login()
-                builder: (BuildContext context) =>new Login()
+               builder: (BuildContext context) => isLogin==true?new MyHomeApp():new Login()
+                //builder: (BuildContext context) =>new MyHomeApp()
             ),
                 (Route route) => route == null);
       } catch (e) {
@@ -83,4 +82,9 @@ class SplashState extends State<SplashPage> {
 //    );
     //}
   }
+
+  void checkIsLogin() async{
+     isLogin = await DataUtils.isLogin();
+  }
+
 }

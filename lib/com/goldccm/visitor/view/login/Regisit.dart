@@ -48,7 +48,7 @@ class Regisit extends StatefulWidget {
 }
 
 class RegisitState extends State<Regisit> {
-  bool isCheck=true;
+  bool isAuth=true;
   bool isAgree=true;
   bool _codeBtnflag = true;
 
@@ -155,11 +155,11 @@ class RegisitState extends State<Regisit> {
                     child: new Row(
                       children: <Widget>[
                         new Checkbox(
-                            value: isCheck,
+                            value: isAuth,
                             activeColor: Colors.lightBlue,
                             onChanged: (bool){
                               setState(() {
-                                isCheck=bool;
+                                isAuth=bool;
                               });
                             }
                         ),
@@ -265,33 +265,36 @@ class RegisitState extends State<Regisit> {
    */
   void _register() async{
     if(checkLoignUser()&&checkCode()&&checkPass()&&checkConfirmPass()){
-      String phone = _userNameController.text.toString();
-      String code = _checkCodeController.text.toString();
-      String sysPwd = Md5Util.instance.encryptByMD5ByHex(_passwordController.text.toString());
-      var response = await Http.instance.post(Constant.registerUrl,queryParameters: {"phone":phone,"code":code,"sysPwd":sysPwd});
-      JsonResult result = JsonResult.fromJson(response);
-      if(result.sign=='success'){
-        var data = await Http.instance.post(Constant.loginUrl,queryParameters:{"phone":phone,"style":"1","sysPwd":sysPwd});
-        JsonResult loginResult = JsonResult.fromJson(data);
-        if(loginResult.sign=='success'){
-          Map userMap = result.data['user'];
-          UserInfo userInfo = UserInfo.fromJson(userMap);
-          DataUtils.saveLoginInfo(userMap);
-          DataUtils.saveUserInfo(userMap);
-          //DataUtils.saveNoticeInfo(noticeMap);
-          SharedPreferenceUtil.saveUser(userInfo);
-          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context){
-            return new MyHomeApp();
-          }));
+      if(isAgree){
+        String phone = _userNameController.text.toString();
+        String code = _checkCodeController.text.toString();
+        String sysPwd = Md5Util.instance.encryptByMD5ByHex(_passwordController.text.toString());
+        var response = await Http.instance.post(Constant.registerUrl,queryParameters: {"phone":phone,"code":code,"sysPwd":sysPwd});
+        JsonResult result = JsonResult.fromJson(response);
+        if(result.sign=='success'){
+          var data = await Http.instance.post(Constant.loginUrl,queryParameters:{"phone":phone,"style":"1","sysPwd":sysPwd});
+          JsonResult loginResult = JsonResult.fromJson(data);
+          if(loginResult.sign=='success'){
+            Map userMap = result.data['user'];
+            UserInfo userInfo = UserInfo.fromJson(userMap);
+            DataUtils.saveLoginInfo(userMap);
+            DataUtils.saveUserInfo(userMap);
+            //DataUtils.saveNoticeInfo(noticeMap);
+            SharedPreferenceUtil.saveUser(userInfo);
+            Navigator.push(context, new MaterialPageRoute(
+                builder: (BuildContext context) =>/*isAuth==true?new AuthCheck():*/new MyHomeApp()));
+          }else{
+            ToastUtil.showShortToast(loginResult.desc);
+            return ;
+          }
         }else{
-          ToastUtil.showShortToast(loginResult.desc);
+          ToastUtil.showShortToast(result.desc);
           return ;
         }
       }else{
-        ToastUtil.showShortToast(result.desc);
+        ToastUtil.showShortToast('请先同意联客用户协议');
         return ;
       }
-
     }
   }
 

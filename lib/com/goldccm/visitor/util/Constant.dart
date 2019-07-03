@@ -62,12 +62,12 @@ class Constant {
   /*
    * 获取公告
    */
-  static final String getNoticeListUrl = noticeUrl + "list/{pageNum}/{pageSize}";
+  static final String getNoticeListUrl = noticeUrl + "list";
 
   /*
    * 根据参数名获取参数信息
    */
-  static final String getParamUrl = paramUrl + "{param}";
+  static final String getParamUrl = paramUrl ;
 
   /*
    * 获取首页banner
@@ -177,7 +177,7 @@ class Constant {
   /*
    * 首页新闻列表
    */
-  static final String getNewsListUrl = newsUrl + "list/{pageNum}/{pageSize}";
+  static final String getNewsListUrl = newsUrl + "list/";
 
   /*
    * 查询是否有位确认记录

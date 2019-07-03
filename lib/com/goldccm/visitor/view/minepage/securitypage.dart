@@ -356,8 +356,8 @@ class ChangePwdPageState extends State<ChangePwdPage> {
       "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
       "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
       "factor": "20170831143600",
-      "newPassword":Md5Util.getInstance().encryptByMD5ByHex(_newPassword),
-      "oldPassword":Md5Util.getInstance().encryptByMD5ByHex(_oldPassword),
+      "newPassword":Md5Util().encryptByMD5ByHex(_newPassword),
+      "oldPassword":Md5Util().encryptByMD5ByHex(_oldPassword),
     });
     if (res != null) {
       Map map = jsonDecode(res);
@@ -574,8 +574,8 @@ class UpdateGesturePageState extends State<UpdateGesturePage> {
       "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
       "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
       "factor": "20170831143600",
-      "newPassword":Md5Util.getInstance().encryptByMD5ByHex(firstStr),
-      "oldPassword":Md5Util.getInstance().encryptByMD5ByHex(pastStr),
+      "newPassword":Md5Util().encryptByMD5ByHex(firstStr),
+      "oldPassword":Md5Util().encryptByMD5ByHex(pastStr),
     });
     if (res != null) {
       Map map = jsonDecode(res);
@@ -596,7 +596,7 @@ class GesturePage extends StatefulWidget {
     return GesturePageState();
   }
 }
-class GesturePageState extends State<GesturePage> {
+ class GesturePageState extends State<GesturePage> {
   var firstStr;
   var repeatStr;
   var _noticeStr = "请绘制解锁图案";
@@ -725,7 +725,7 @@ class GesturePageState extends State<GesturePage> {
       "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
       "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
       "factor": "20170831143600",
-      "gesturePwd":Md5Util.getInstance().encryptByMD5ByHex(firstStr),
+      "gesturePwd":Md5Util().encryptByMD5ByHex(firstStr),
     });
     if (res != null) {
       Map map = jsonDecode(res);

@@ -22,6 +22,7 @@ class DataUtils{
   static final String SP_ISSETTRANSPWD="ISSETTRANSPWD";
   static final String SP_COMPANYID="COMPANYID";
   static final String SP_WORKKEY="WORKKEY";
+  static final String SP_COMPANYNAME="COMPANYNAME";
   //需保存的提示信息
   static final String SP_NOTICE_TITLE="TITLE";
   static final String SP_NOTICE_CONTENT="CONTENT";
@@ -41,7 +42,7 @@ class DataUtils{
   /*
   保存登录信息
    */
-  static Future<UserInfo> saveUserInfo(Map data) async {
+  static  Future<UserInfo> saveUserInfo(Map data) async {
     if (data != null) {
       SharedPreferences sp = await SharedPreferences.getInstance();
       num id = data['id'];
@@ -57,7 +58,7 @@ class DataUtils{
       String createTime= data['createTime'];
       String province= data['province'];
       String city= data['city'];
-      String area= data['area='];
+      String area= data['area'];
       String addr= data['addr'];
       String isAuth= data['isAuth'];
       String authDate= data['authDate'];
@@ -76,6 +77,7 @@ class DataUtils{
       String failReason= data['failReason'];
       String soleCode= data['soleCode'];
       String validityDate= data['validityDate'];
+      String companyName = data['companyName'];
 
 
       await sp.setInt(SP_ID, id);
@@ -90,6 +92,7 @@ class DataUtils{
       await sp.setString(SP_ISSETTRANSPWD, isSetTransPwd);
       await sp.setInt(SP_COMPANYID, companyId);
       await sp.setString(SP_WORKKEY, workKey);
+      await sp.setString(SP_COMPANYNAME, companyName);
       UserInfo userInfo = new UserInfo(id :id,
         orgId:orgId,
         relationNo:relationNo,
@@ -119,6 +122,7 @@ class DataUtils{
         failReason:failReason,
         soleCode:soleCode,
         validityDate:validityDate,
+        companyName: companyName,
       );
 
 
@@ -178,6 +182,7 @@ class DataUtils{
     userInfo.token = sp.getString(SP_TOKEN);
     userInfo.companyId = sp.getInt(SP_COMPANYID);
     userInfo.workKey = sp.getString(SP_WORKKEY);
+    userInfo.companyName = sp.getString(SP_COMPANYNAME);
     return userInfo;
   }
 
@@ -216,6 +221,16 @@ class DataUtils{
     SharedPreferences sp = await SharedPreferences.getInstance();
     await sp.setString(SP_AC_TOKEN, "");
     await sp.setBool(SP_IS_LOGIN, false);
+  }
+
+  static savePararInfo(String name,String value) async{
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    await sp.setString(name.toUpperCase(), name);
+  }
+
+   static Future<String> getPararInfo(String name) async{
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    return sp.getString(name.toUpperCase());
   }
 
 

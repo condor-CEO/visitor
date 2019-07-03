@@ -32,4 +32,24 @@ class NoticeInfo{
       this.createTime=json['createTime'];
       this.cstatus=json['cstatus'];
    }
+
+   static List<NoticeInfo> getJsonFromDataList(var content){
+      List<NoticeInfo> _noticeList =[];
+      var mapData = content['rows'];
+      mapData.forEach((obj){
+         NoticeInfo noticeInfo = new NoticeInfo(
+         id:obj['id'],
+         orgId:obj['orgId'],
+         relationNo:obj['relationNo'],
+         noticeTitle:obj['noticeTitle'],
+         content:obj['content'],
+         createDate:obj['createDate'],
+         createTime:obj['createTime'],
+         cstatus:obj['cstatus'],
+
+         );
+         _noticeList.add(noticeInfo);
+      });
+return _noticeList;
+   }
 }

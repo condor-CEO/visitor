@@ -100,4 +100,10 @@ class UserInfo {
       hasApplyPermission= json['hasApplyPermission'];
    }
 
+   @override
+   String toString() {
+      return 'UserInfo{id: $id, orgId: $orgId, relationNo: $relationNo, realName: $realName, nickName: $nickName, loginName: $loginName, idType: $idType, idNO: $idNO, phone: $phone, createDate: $createDate, createTime: $createTime, province: $province, city: $city, area: $area, addr: $addr, isAuth: $isAuth, failReason: $failReason, authDate: $authDate, authTime: $authTime, idFrontImgUrl: $idFrontImgUrl, idOppositeImgUrl: $idOppositeImgUrl, idHandleImgUrl: $idHandleImgUrl, bankCardImgUrl: $bankCardImgUrl, workKey: $workKey, headImgUrl: $headImgUrl, token: $token, userName: $userName, qrcodeUrl: $qrcodeUrl, companyId: $companyId, soleCode: $soleCode, validityDate: $validityDate, companyName: $companyName, visitorId: $visitorId, lastLoginTime: $lastLoginTime, isGestureOpened: $isGestureOpened, ufId: $ufId, sortLetters: $sortLetters, hasApplyPermission: $hasApplyPermission}';
+   }
+
+
 }

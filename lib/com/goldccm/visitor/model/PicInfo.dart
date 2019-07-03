@@ -31,8 +31,4 @@ class PickInfo{
     path = json['path'];
   }
 
-
-
-
-
 }

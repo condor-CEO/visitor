@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/homepage.dart';
-import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
+import 'package:visitor/com/goldccm/visitor/view/homepage/homepage1.dart';
 
 
 class MyHomeApp extends StatefulWidget{
@@ -72,10 +71,10 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
      * 三个子界面
      */
     _pageList = [
-      new HomePage(),
-      new AddressPage(),
-      new HomePage(),
-      new MinePage(),
+      new HomePage1(),
+      new HomePage1(),
+      new HomePage1(),
+      new HomePage1(),
       //new HomePage(),
       //new FindPage(),
       //new MinePage(),
