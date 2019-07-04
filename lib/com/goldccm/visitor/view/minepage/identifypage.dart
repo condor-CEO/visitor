@@ -12,7 +12,6 @@ class IdentifyPage extends StatefulWidget {
 class IdentifyPageState extends State<IdentifyPage> {
   File _image;
   Future getImage() async {
-    print(1);
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     setState(() {
       _image = image;

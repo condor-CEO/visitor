@@ -52,7 +52,7 @@ class Constant {
   /*
    * 昵称头像修改
    */
-  static final String  updateNickAndHeadUr= userUrl + "nick";
+  static final String  updateNickAndHeadUrl= userUrl + "nick";
 
   /*
    * 获取用户的信息

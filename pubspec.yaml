@@ -26,7 +26,7 @@ dependencies:
   shared_preferences: ^0.5.3+1
   dio: ^2.1.0
   crypto: ^2.0.6
-  package_info: ^0.4.0+2
+  package_info: ^0.4.0+4
   gesture_password: ^0.0.4
   fluttertoast: ^3.1.0
   flutter_swiper: ^1.1.6
@@ -69,6 +69,14 @@ flutter:
     - asset/images/visitor_icon_action_visit.png
     - asset/images/visitor_icon_action_qrcode.png
     - asset/images/visitor_icon_action_more.png
+    - asset/images/visitor_icon_verify.png
+    - asset/images/visitor_icon_qrcode.png
+    - asset/images/visitor_icon_head.png
+    - asset/images/visitor_icon_nodata.png
+    - asset/images/visitor_icon_staff.png
+    - asset/images/visitor_icon_security.png
+    - asset/images/visitor_icon_setting.png
+    - asset/images/visitor_icon_next.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

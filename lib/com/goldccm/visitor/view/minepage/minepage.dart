@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
+import 'package:visitor/com/goldccm/visitor/model/JsonResult.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
+import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
+import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/companypage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/identifycodepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/identifypage.dart';
@@ -19,12 +24,14 @@ class MinePage extends StatefulWidget {
 }
 
 UserInfo _userInfo = new UserInfo();
-
+String _imageServerUrl;
+String _imageServerApiUrl;
 class MinePageState extends State<MinePage> {
   @override
   void initState() {
     super.initState();
     getUserInfo();
+    getImageServerApiUrl();
   }
 
   @override
@@ -57,7 +64,8 @@ class MinePageState extends State<MinePage> {
                       },
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                            'https://p.ssl.qhimg.com/dmfd/400_300_/t0120b2f23b554b8402.jpg'),
+                            _imageServerUrl+_userInfo.idHandleImgUrl,
+                        ),
                         radius: 100,
                       ),
                     ),
@@ -78,7 +86,7 @@ class MinePageState extends State<MinePage> {
                         ),
                       ),
                       Text(
-                        _userInfo.addr != null ? _userInfo.addr : '',
+                        _userInfo.companyName != null ? _userInfo.companyName : '',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15.0,
@@ -151,20 +159,32 @@ class MinePageState extends State<MinePage> {
   }
 
   getUserInfo() async {
-    String url = "http://192.168.101.20:8080/api_visitor/user/getUser";
-    var res = await Http().post(url, queryParameters: {
-      "userId": 27,
-      "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-      "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
-      "factor": "20170831143600"
+    Future<UserInfo> userInfo=DataUtils.getUserInfo();
+    Future<String>imageServerUrl = DataUtils.getPararInfo("imageServerUrl");
+    setState(() async {
+    await userInfo.then((onValue){
+        _userInfo=onValue;
+        auth=getAuth();
     });
-    if (res != null) {
-      Map map = jsonDecode(res);
-      setState(() {
-        _userInfo = UserInfo.fromJson(map['data']);
-        auth = getAuth();
-      });
-    }
+    await imageServerUrl.then((onValue){
+        _imageServerUrl=onValue;
+    });
+    });
+  }
+  getImageServerApiUrl() async {
+    String url = Constant.getParamUrl + "imageServerApiUrl";
+    var response = await Http.instance
+        .get(url, queryParameters: {"paramName": "imageServerApiUrl"});
+    if (!mounted) return;
+    setState(() {
+      JsonResult responseResult = JsonResult.fromJson(response);
+      if (responseResult.sign == 'success') {
+        _imageServerApiUrl = responseResult.data;
+        DataUtils.savePararInfo("imageServerApiUrl", _imageServerApiUrl);
+      } else {
+        ToastUtil.showShortToast(responseResult.desc);
+      }
+    });
   }
 
   Widget auth;
@@ -201,13 +221,64 @@ class HeadImagePage extends StatefulWidget{
   }
 }
 class HeadImagePageState extends State<HeadImagePage>{
+  File _image;
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
+    _uploadImg();
+  }
+  Future getPhoto() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      _image = image;
+    });
+    _uploadImg();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('修改头像'),
       ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            alignment: Alignment.center,
+            height: 300,
+            width: 300,
+            child: ClipOval(
+              child:_image == null
+                  ? Image.network(_imageServerUrl+_userInfo.idHandleImgUrl,width: 200,height: 200,fit:BoxFit.cover,)
+                  : Image.file(_image,fit: BoxFit.cover,width: 200,height: 200,),
+            ),
+          ),
+          Center(
+            child: RaisedButton(child:Text('点击从相册中选取照片'),onPressed:getImage),
+          ),
+          Center(
+            child: RaisedButton(child:Text('点击拍摄照片'),onPressed:getPhoto),
+          ),
+        ],
+      )
     );
   }
-
+  _uploadImg()async{
+      String url=_imageServerApiUrl;
+      var name=_image.path.split("/");
+      var filename=name[name.length-1];
+      FormData formData=FormData.from({
+        "userId":_userInfo.id,
+        "type":"3",
+        "file":new UploadFileInfo(_image,filename),
+      });
+      var res = await Http().post(url,data:formData);
+      Map map = jsonDecode(res);
+      print(map['data']['imageFileName']);
+      String nickurl=Constant.updateNickAndHeadUrl;
+      var nickres = await Http().postWithHeader(nickurl,queryParameters: {
+        "headImgUrl":map['data']['imageFileName'],
+      });
+  }
 }

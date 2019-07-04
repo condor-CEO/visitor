@@ -106,14 +106,15 @@ class Http{
   }
 
   // post请求封装
-  post(url,{ options, cancelToken, queryParameters}) async {
+  post(url,{ options, cancelToken, queryParameters,data}) async {
     print('post请求::: url：$url ,body: $queryParameters');
     Response response;
     try{
       response = await _dio.post(
           url,
           queryParameters:queryParameters !=null ? queryParameters : {},
-          cancelToken:cancelToken
+          cancelToken:cancelToken,
+          data:data!=null?data:{},
       );
       print(response);
     }on DioError catch(e){

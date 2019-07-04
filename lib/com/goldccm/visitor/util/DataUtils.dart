@@ -23,6 +23,8 @@ class DataUtils{
   static final String SP_COMPANYID="COMPANYID";
   static final String SP_WORKKEY="WORKKEY";
   static final String SP_COMPANYNAME="COMPANYNAME";
+  static final String SP_IDHANDLEIMGURL="IDHANDLEIMGURL";
+  static final String SP_HEADIMGURL="HEADIMGURL";
   //需保存的提示信息
   static final String SP_NOTICE_TITLE="TITLE";
   static final String SP_NOTICE_CONTENT="CONTENT";
@@ -93,6 +95,8 @@ class DataUtils{
       await sp.setInt(SP_COMPANYID, companyId);
       await sp.setString(SP_WORKKEY, workKey);
       await sp.setString(SP_COMPANYNAME, companyName);
+      await sp.setString(SP_IDHANDLEIMGURL,idHandleImgUrl);
+      await sp.setString(SP_HEADIMGURL,headImgUrl);
       UserInfo userInfo = new UserInfo(id :id,
         orgId:orgId,
         relationNo:relationNo,
@@ -183,6 +187,8 @@ class DataUtils{
     userInfo.companyId = sp.getInt(SP_COMPANYID);
     userInfo.workKey = sp.getString(SP_WORKKEY);
     userInfo.companyName = sp.getString(SP_COMPANYNAME);
+    userInfo.idHandleImgUrl = sp.getString(SP_IDHANDLEIMGURL);
+    userInfo.headImgUrl = sp.getString(SP_HEADIMGURL);
     return userInfo;
   }
 
@@ -225,7 +231,7 @@ class DataUtils{
 
   static savePararInfo(String name,String value) async{
     SharedPreferences sp = await SharedPreferences.getInstance();
-    await sp.setString(name.toUpperCase(), name);
+    await sp.setString(name.toUpperCase(), value);
   }
 
    static Future<String> getPararInfo(String name) async{
