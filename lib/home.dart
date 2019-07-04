@@ -3,6 +3,8 @@ import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/homepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 //import 'package:visitor/com/goldccm/visitor/view/homepage/homepage1.dart';
+import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
+import 'package:visitor/com/goldccm/visitor/view/minepage/settingpage.dart';
 
 
 class MyHomeApp extends StatefulWidget{
@@ -21,7 +23,7 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
 
   int _tabIndex = 0;
   var tabImages;
-  var appBarTitles = ['首页', '通讯录', '访客','我的'];
+  var appBarTitles = ['首页', '访客','通讯录', '我的'];
   var _pageList;
 
   /*
@@ -65,8 +67,8 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
      */
     tabImages = [
       [getTabImage('asset/images/visitor_tab_homepage_normal.png'), getTabImage('asset/images/visitor_tab_homepage_selected.png')],
-      [getTabImage('asset/images/visitor_tab_friends_normal.png'), getTabImage('asset/images/visitor_tab_friends_selected.png')],
       [getTabImage('asset/images/visitor_tab_visitors_normal.png'), getTabImage('asset/images/visitor_tab_visitors_selected.png')],
+      [getTabImage('asset/images/visitor_tab_friends_normal.png'), getTabImage('asset/images/visitor_tab_friends_selected.png')],
       [getTabImage('asset/images/visitor_tab_profile_center_normal.png'), getTabImage('asset/images/visitor_tab_profile_center_selected.png')]
     ];
     /*
@@ -85,7 +87,10 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   Widget build(BuildContext context) {
     Future<bool> _onWillPop()=>new Future.value(false);
     return new WillPopScope(child: Scaffold(
-        body: _pageList[_tabIndex],
+          body: IndexedStack(
+      index: _tabIndex,
+      children: _pageList,
+    ),
         bottomNavigationBar: new BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             new BottomNavigationBarItem(
