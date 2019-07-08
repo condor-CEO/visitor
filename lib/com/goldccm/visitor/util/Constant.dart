@@ -85,6 +85,11 @@ class Constant {
   static final String setGesturePwdUrl= userUrl + "setGesturePwd";
 
   /*
+   * 更新手势密码
+   */
+  static final String updateGesturePwdUrl= userUrl + "updateGesturePwd";
+
+  /*
    * 修改登录账号
    */
   static final String updatePhoneUrl = userUrl + "updatePhone";

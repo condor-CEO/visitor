@@ -35,7 +35,7 @@ class DataUtils{
       SharedPreferences sp = await SharedPreferences.getInstance();
       String accessToken = data['token'];
       num userId = data['id'];
-      await sp.setInt(SP_USER_ID, userId);//y用户ID
+      await sp.setInt(SP_USER_ID, userId);//用户ID
       await sp.setString(SP_AC_TOKEN, accessToken);//登录token
       await sp.setBool(SP_IS_LOGIN, true); // SP_IS_LOGIN标记是否登录
     }
@@ -46,6 +46,7 @@ class DataUtils{
    */
   static  Future<UserInfo> saveUserInfo(Map data) async {
     if (data != null) {
+      print(data);
       SharedPreferences sp = await SharedPreferences.getInstance();
       num id = data['id'];
       num orgId= data['orgId'];
@@ -169,7 +170,10 @@ class DataUtils{
   }
 
   static Future<UserInfo> getUserInfo() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
+    SharedPreferences sp;
+    await SharedPreferences.getInstance().then((value){
+          sp=value;
+    });
     bool isLogin = sp.getBool(SP_IS_LOGIN);
     if (isLogin == null || !isLogin) {
       return null;

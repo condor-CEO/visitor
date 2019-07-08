@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+///设置
 class SettingPage extends StatefulWidget{
   @override
   State<StatefulWidget> createState() {

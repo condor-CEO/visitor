@@ -34,7 +34,7 @@ class Http{
     headers['token'] = DataUtils.getAccessToken().toString();
     headers['userId'] = DataUtils.getUserId().toString();
     headers['factor'] = CommonUtil.getCurrentTime();
-    headers['threshold'] = CommonUtil.calWorkKey();
+//    headers['threshold'] = CommonUtil.calWorkKey();
     headers['requestVer'] = CommonUtil.getAppVersion();
     _dio.options.headers.addAll(headers);
     try{
@@ -61,10 +61,10 @@ class Http{
     headers['token'] = DataUtils.getAccessToken().toString();
     headers['userId'] = DataUtils.getUserId().toString();
     headers['factor'] = CommonUtil.getCurrentTime();
-    headers['threshold'] = CommonUtil.calWorkKey();
+//    headers['threshold'] = CommonUtil.calWorkKey();
     headers['requestVer'] = CommonUtil.getAppVersion();
     _dio.options.headers.addAll(headers);
-
+    print(DataUtils.getAccessToken().toString());
     try{
       response = await _dio.post(
           url,
@@ -126,7 +126,4 @@ class Http{
     }
     return response.data;
   }
-
-
-
 }

@@ -76,7 +76,7 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
      */
     _pageList = [
       new HomePage(),
-      new AddressPage(),
+      new HomePage(),
       new HomePage(),
       new MinePage(),
     ];
