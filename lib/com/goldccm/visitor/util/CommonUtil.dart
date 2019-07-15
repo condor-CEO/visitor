@@ -1,6 +1,8 @@
 import 'dart:math';
 
 //import 'Base64.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
+
 import 'DataUtils.dart';
 import 'Md5Util.dart';
 import 'dart:io';
@@ -14,10 +16,10 @@ class CommonUtil{
   //获取当前系统时间yyyymmddHHMMss
 
   static String getCurrentTime(){
-    var current = DateTime.now().toString();
-    return current;
-//    return current.year.toString()+current.month.toString().padLeft(2,'0')+current.day.toString().padLeft(2,'0')+current.hour.toString().padLeft(2,'0')+
-//    current.minute.toString().padLeft(2,'2')+current.second.toString().padLeft(2,'0');
+    var current = DateTime.now();
+//    return current;
+    return current.year.toString()+current.month.toString().padLeft(2,'0')+current.day.toString().padLeft(2,'0')+current.hour.toString().padLeft(2,'0')+
+    current.minute.toString().padLeft(2,'2')+current.second.toString().padLeft(2,'0');
   }
 
   static String getCurrentTimeMinis(){
@@ -26,13 +28,17 @@ class CommonUtil{
   }
 
   //计算当前的key，上送服务端校验
-  static String calWorkKey() {
-    String userId = Md5Util.instance .encryptByMD5ByHex(DataUtils.getUserId().toString().padLeft(12,'F'));
-    String token = Md5Util.instance.encryptByMD5ByHex(DataUtils.getAccessToken().toString());
+  static Future<String> calWorkKey() async{
+    UserInfo _userInfo;
+    await DataUtils.getUserInfo().then((value){
+      _userInfo = value;
+    });
+    print(_userInfo);
+    String userId = Md5Util.instance .encryptByMD5ByHex(_userInfo.id.toString().padLeft(12,'F'));
+    String token = Md5Util.instance.encryptByMD5ByHex(_userInfo.token.toString());
     String currDate = Md5Util.instance.encryptByMD5ByHex(getCurrentTime());
     String keyStr = userId.substring(6,12)+currDate.substring(2,14)+token.substring(5,10);
     return Md5Util.instance.encryptByMD5ByHex(keyStr).toUpperCase();
-
   }
 
   //获取平台信息

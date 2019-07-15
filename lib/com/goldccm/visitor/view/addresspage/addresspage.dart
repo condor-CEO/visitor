@@ -4,8 +4,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
-import 'package:visitor/com/goldccm/visitor/view/addresspage/findbynamepage.dart';
-import 'package:visitor/com/goldccm/visitor/view/addresspage/findbyphonepage.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/addfriend.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/frienddetail.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/newfriend.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/search.dart';
 
 class AddressPage extends StatefulWidget {
   @override
@@ -15,18 +17,21 @@ class AddressPage extends StatefulWidget {
 }
 
 var _keys = null;
-var _maps = null;
 
-  class AddressPageState extends State<AddressPage> {
+class AddressPageState extends State<AddressPage> {
+  Presenter presenter = new Presenter();
+  List<User> userLists;
   @override
   void initState() {
     super.initState();
-    getAddressInfo();
+    presenter.loadUserList();
+    userLists = presenter.getUserList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.black12,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           centerTitle: true,
@@ -35,24 +40,26 @@ var _maps = null;
             PopupMenuButton<Choice>(
               onSelected: (value) {
                 if (value.value == 1) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FindByPhonePage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddFriendPage()));
                 }
                 if (value.value == 2) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FindByNamePage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => NewFriendPage()));
                 }
               },
               itemBuilder: (BuildContext context) {
                 return choices.map((Choice choice) {
                   return PopupMenuItem<Choice>(
-                    value: choice,
-                    child: Text(choice.title),
-                  );
+                      value: choice,
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 0.0),
+                              child: Icon(choice.icon)),
+                          Text(choice.title),
+                        ],
+                      ));
                 }).toList();
               },
             ),
@@ -84,6 +91,9 @@ var _maps = null;
                                   hintText: '查找',
                                   border: InputBorder.none),
                               // onChanged: onSearchTextChanged,
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => FriendSearch()));
+                              },
                             ),
                           ),
                         ),
@@ -99,51 +109,41 @@ var _maps = null;
                     ),
                   ))),
             ),
+            Container(
+              color: Colors.white,
+              child: ListTile(
+                title: Text('新的朋友'),
+                leading: Icon(Icons.person_add)
+              ),
+            ),
+            Divider(height: 5,color: Colors.white12,),
             Expanded(child: _buildInfo()),
           ],
         ));
   }
 
   Widget _buildInfo() {
-    if (_keys != null && _keys != "") {
-      return ListView.builder(
-          itemCount: _keys.length != null ? _keys.length : 0,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: new Text(_keys[index]['realName'] != null
-                  ? _keys[index]['realName']
-                  : '暂无数据'),
-            );
-          });
-    } else {
-      return Column(
-        children: <Widget>[
-          Container(
-            child: Center(
-                child: Image.asset('asset/images/visitor_icon_nodata.png')),
-            padding: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
-          ),
-          Center(child: Text('暂无数据，请重新获取'))
-        ],
-      );
-    }
-  }
-
-  getAddressInfo() async {
-    String url =
-        "http://192.168.101.20:8080/api_visitor/userFriend/findUserFriend";
-    var res = await Http().post(url, queryParameters: {
-      "userId": 27,
-      "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-      "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
-      "factor": "20170831143600"
-    });
-    if (res != null) {
-      Map map = jsonDecode(res);
-      setState(() {
-        _keys = map['data'];
-      });
-    }
+    return ListView.separated(
+        itemCount: userLists.length != null ? userLists.length : 0,
+        separatorBuilder: (context,index){
+          return Container(
+            child: Divider(
+              height: 0,
+            ),
+          );
+        },
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            color: Colors.white,
+            child: ListTile(
+              title: Text(userLists[index].userName),
+              leading: Icon(Icons.person),
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FriendDetailPage()));
+              },
+            ),
+          );
+        });
   }
 }
 
@@ -151,6 +151,7 @@ class User {
   String userName;
   String phone;
   String idHandleImgUrl;
+  User({this.userName, this.phone, this.idHandleImgUrl});
 }
 
 class Choice {
@@ -160,7 +161,26 @@ class Choice {
   int value;
 }
 
+class Presenter {
+  List<User> userlists;
+  getUserList() {
+    return userlists;
+  }
+
+  loadUserList() {
+    userlists = new List<User>();
+    userlists.add(
+        new User(userName: 'a', phone: '15880485249', idHandleImgUrl: '11'));
+    userlists.add(
+        new User(userName: 'b', phone: '15880485249', idHandleImgUrl: '11'));
+    userlists.add(
+        new User(userName: 'c', phone: '15880485249', idHandleImgUrl: '11'));
+    userlists.add(
+        new User(userName: 'd', phone: '15880485249', idHandleImgUrl: '11'));
+  }
+}
+
 List<Choice> choices = <Choice>[
-  Choice(title: '通过手机号查找', icon: Icons.directions_car, value: 1),
-  Choice(title: '通过姓名查找', icon: Icons.directions_bike, value: 2),
+  Choice(title: '添加好友', icon: Icons.person_add, value: 1),
+  Choice(title: '新的朋友', icon: Icons.portrait, value: 2),
 ];

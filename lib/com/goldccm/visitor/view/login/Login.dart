@@ -450,9 +450,8 @@ class LoginState extends State<Login> {
     if (userNameCheck && _loginType == _loginPass) {
       bool passCheck = checkPass();
       if (passCheck) {
-        _passNum =
-            Md5Util().encryptByMD5ByHex(_passwordController.text.toString());
-        data = await Http.instance.post(Constant.loginUrl, queryParameters: {
+           _passNum = Md5Util().encryptByMD5ByHex(_passwordController.text.toString());
+           data = await Http.instance.post(Constant.loginUrl, queryParameters: {
           "phone": _userNameController.text.toString(),
           "style": "1",
           "sysPwd": _passNum,
@@ -477,7 +476,6 @@ class LoginState extends State<Login> {
         var userMap = result.data['user'];
         print('返回用户信息：$userMap');
         UserInfo userInfo = UserInfo.fromJson(userMap);
-
         DataUtils.saveLoginInfo(userMap);
         DataUtils.saveUserInfo(userMap);
         SharedPreferenceUtil.saveUser(userInfo);

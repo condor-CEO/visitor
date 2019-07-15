@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/homepage.dart';
-import 'package:visitor/com/goldccm/visitor/view/homepage/homepage1.dart';
+import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
+//import 'package:visitor/com/goldccm/visitor/view/homepage/homepage1.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/settingpage.dart';
 
@@ -74,12 +76,9 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
      */
     _pageList = [
       new HomePage(),
-      new HomePage(),
+      new AddressPage(),
       new HomePage(),
       new MinePage(),
-      //new HomePage(),
-      //new FindPage(),
-      //new MinePage(),
     ];
   }
 

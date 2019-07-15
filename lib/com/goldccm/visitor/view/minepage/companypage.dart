@@ -1,21 +1,30 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
+import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
+import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
+import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 
 var _keys = null;
 
+///公司管理
 class CompanyPage extends StatefulWidget{
+  CompanyPage({Key key,this.userInfo}):super(key:key);
+  final UserInfo userInfo;
   @override
   State<StatefulWidget> createState() {
     return CompanyPageState();
   }
 }
 class CompanyPageState extends State<CompanyPage>{
+  UserInfo userInfo;
   int groupValue=0;
   @override
   void initState() {
     super.initState();
     getCompanyInfo();
+    userInfo=widget.userInfo;
   }
   @override
   Widget build(BuildContext context) {
@@ -39,16 +48,16 @@ class CompanyPageState extends State<CompanyPage>{
                   Column(
                     children: <Widget>[
                       ListTile(
-                        title: Text('公司名称：'+_keys[index]['companyName'],style: TextStyle(fontSize: 14.0),),
+                        title: Text('公司名称：'+_keys[index]['companyName'],style: TextStyle(fontSize: Constant.fontSize),),
                       ),
                       ListTile(
-                        title: Text('部门名称：'+_keys[index]['sectionName'],style: TextStyle(fontSize: 14.0)),
+                        title: Text('部门名称：'+_keys[index]['sectionName'],style: TextStyle(fontSize: Constant.fontSize)),
                       ),
                       ListTile(
-                        title: Text('用户姓名：'+_keys[index]['userName'],style: TextStyle(fontSize: 14.0)),
+                        title: Text('用户姓名：'+_keys[index]['userName'],style: TextStyle(fontSize: Constant.fontSize)),
                       ),
                       ListTile(
-                        title: Text('邀请时间：'+_keys[index]['createDate'],style: TextStyle(fontSize: 14.0)),
+                        title: Text('邀请时间：'+_keys[index]['createDate'],style: TextStyle(fontSize: Constant.fontSize)),
                       ),
                     ],
                   ),
@@ -74,24 +83,46 @@ class CompanyPageState extends State<CompanyPage>{
       );
     }
   }
+  ///获取公司信息
   getCompanyInfo() async {
-    String url = "http://192.168.101.20:8080/api_visitor/companyUser/findApplySuc";
+    String url = Constant.serverUrl+Constant.findApplySucUrl;
+    String threshold = await CommonUtil.calWorkKey();
     var res = await Http().post(url, queryParameters: {
-      "userId": 27,
-      "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-      "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
-      "factor": "20170831143600",
+      "token": userInfo.token,
+      "userId": userInfo.id,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
+      "requestVer": CommonUtil.getAppVersion(),
     });
     if (res != null) {
       Map map = jsonDecode(res);
       setState(() {
         _keys = map['data'];
       });
+      print(_keys[0]['companyId']);
     }
   }
-  void updateGroupValue(int v){
-    setState(() {
-      groupValue=v;
+  ///更新默认公司
+  Future updateGroupValue(int v) async {
+    String url = Constant.serverUrl+Constant.updateCompanyIdAndRoleUrl;
+    String threshold = await CommonUtil.calWorkKey();
+    var res = Http().post(url,queryParameters: {
+      "token": userInfo.token,
+      "userId": userInfo.id,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
+      "requestVer": CommonUtil.getAppVersion(),
+      "companyId":_keys[v]['companyId'],
+      "role":_keys[v]['roleType'],
     });
+    Map map = jsonDecode(res);
+    if(map['verify']['sign']=="success"){
+      ToastUtil.showShortClearToast("修改公司成功");
+      setState(() {
+        groupValue=v;
+      });
+    }else{
+      ToastUtil.showShortClearToast("修改公司失败");
+    }
   }
 }

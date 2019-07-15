@@ -34,7 +34,7 @@ class Http{
     headers['token'] = DataUtils.getAccessToken().toString();
     headers['userId'] = DataUtils.getUserId().toString();
     headers['factor'] = CommonUtil.getCurrentTime();
-    headers['threshold'] = CommonUtil.calWorkKey();
+//    headers['threshold'] = CommonUtil.calWorkKey();
     headers['requestVer'] = CommonUtil.getAppVersion();
     _dio.options.headers.addAll(headers);
     try{
@@ -61,10 +61,10 @@ class Http{
     headers['token'] = DataUtils.getAccessToken().toString();
     headers['userId'] = DataUtils.getUserId().toString();
     headers['factor'] = CommonUtil.getCurrentTime();
-    headers['threshold'] = CommonUtil.calWorkKey();
+//    headers['threshold'] = CommonUtil.calWorkKey();
     headers['requestVer'] = CommonUtil.getAppVersion();
     _dio.options.headers.addAll(headers);
-
+    print(DataUtils.getAccessToken().toString());
     try{
       response = await _dio.post(
           url,
@@ -106,14 +106,15 @@ class Http{
   }
 
   // post请求封装
-  post(url,{ options, cancelToken, queryParameters}) async {
+  post(url,{ options, cancelToken, queryParameters,data}) async {
     print('post请求::: url：$url ,body: $queryParameters');
     Response response;
     try{
       response = await _dio.post(
           url,
           queryParameters:queryParameters !=null ? queryParameters : {},
-          cancelToken:cancelToken
+          cancelToken:cancelToken,
+          data:data!=null?data:{},
       );
       print(response);
     }on DioError catch(e){
@@ -125,7 +126,4 @@ class Http{
     }
     return response.data;
   }
-
-
-
 }
