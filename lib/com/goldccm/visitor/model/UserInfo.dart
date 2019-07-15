@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 import 'dart:convert';
 
 class UserInfo {
-   num id;
+   int id;
    num orgId;
    String relationNo;
    String realName; //真实姓名

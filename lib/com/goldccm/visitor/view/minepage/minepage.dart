@@ -43,149 +43,264 @@ class MinePageState extends State<MinePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.black12,
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,
-          title: const Text('我'),
+          title: const Text(
+            '我',
+            style: TextStyle(color: Colors.white),
+          ),
           elevation: 0,
+          backgroundColor: Colors.blue,
         ),
-        body: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(color: Colors.blue, boxShadow: [
-                BoxShadow(
-                  offset: Offset(0.0, 5.0),
-                  color: Colors.black12,
-                  blurRadius: 20.0,
-                )
-              ]),
-              height: 100,
-              child: Row(
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                height: 120,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HeadImagePage()));
+                        },
+                        child: CircleAvatar(
+                          backgroundImage: _imageServerUrl != null
+                              ? NetworkImage(
+                                  _imageServerUrl +
+                                      (_userInfo.headImgUrl != null
+                                          ? _userInfo.headImgUrl
+                                          : _userInfo.idHandleImgUrl),
+                                )
+                              : AssetImage(
+                                  'asset/images/visitor_icon_account.png'),
+                          radius: 100,
+                        ),
+                      ),
+                      width: 60.0,
+                      margin: EdgeInsets.all(20),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          _userInfo != null
+                              ? _userInfo.realName != null
+                                  ? _userInfo.realName
+                                  : '暂未获取到数据'
+                              : '暂未获取到数据',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        Text(
+                          companyName,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              ListView(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 children: <Widget>[
                   Container(
-                    child: GestureDetector(
+                    child: Divider(
+                      height: 10,
+                      color: Colors.white12,
+                    ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    child: Row(
+                        children: <Widget>[
+                          Material(
+                            color: Colors.white,
+                            child: InkWell(
+                              child:
+                              Container(
+                                width: 100,
+                                padding: EdgeInsets.all(15),
+                                child:Column(
+                                  children: <Widget>[
+                                    Icon(Icons.person),
+                                    Text('3条'),
+                                  ],
+                                ),
+                              ),
+                              onTap: (){
+                              },
+                              splashColor: Colors.black12,
+                              borderRadius: BorderRadius.circular(18.0),
+                              radius: 30,
+                            ),
+                          ),
+                          Material(
+                            color: Colors.white,
+                            child: InkWell(
+                              child:
+                              Container(
+                                width: 100,
+                                padding: EdgeInsets.all(15),
+                                child:Column(
+                                  children: <Widget>[
+                                    Icon(Icons.person),
+                                    Text('3条'),
+                                  ],
+                                ),
+                              ),
+                              onTap: (){
+                              },
+                              splashColor: Colors.black12,
+                              borderRadius: BorderRadius.circular(18.0),
+                              radius: 30,
+                            ),
+                          ),
+                          Material(
+                            color: Colors.white,
+                            child: InkWell(
+                              child:
+                              Container(
+                                width: 100,
+                                padding: EdgeInsets.all(15),
+                                child:Column(
+                                  children: <Widget>[
+                                    Icon(Icons.person),
+                                    Text('3条'),
+                                  ],
+                                ),
+                              ),
+                              onTap: (){
+                              },
+                              splashColor: Colors.black12,
+                              borderRadius: BorderRadius.circular(18.0),
+                              radius: 30,
+                            ),
+                          ),
+                        ],
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround),
+                  ),
+                  Container(
+                    child: Divider(
+                      height: 10,
+                      color: Colors.white12,
+                    ),
+                  ),
+//                  Container(
+//                    color: Colors.white,
+//                    child: auth != null
+//                        ? auth
+//                        : ListTile(
+//                            title: Text('实名认证',
+//                                style: TextStyle(fontSize: Constant.fontSize)),
+//                            leading: Image.asset(
+//                                'asset/images/visitor_icon_verify.png',
+//                                scale: 1.5),
+//                          ),
+//                  ),
+//                  Divider(height: 0.0),
+//                  Container(
+//                    color: Colors.white,
+//                    child: soleCode != null
+//                        ? soleCode
+//                        : ListTile(
+//                            title: Text('身份识别码',
+//                                style: TextStyle(fontSize: Constant.fontSize)),
+//                            leading: Image.asset(
+//                                'asset/images/visitor_icon_qrcode.png',
+//                                scale: 1.5),
+//                            trailing: Image.asset(
+//                                'asset/images/visitor_icon_next.png',
+//                                scale: 2.0),
+//                          ),
+//                  ),
+//                  Divider(height: 0.0),
+                  Container(
+                    color: Colors.white,
+                    child: ListTile(
+                      title: Text('公司管理',
+                          style: TextStyle(fontSize: Constant.fontSize)),
+                      leading: Image.asset(
+                          'asset/images/visitor_icon_staff.png',
+                          scale: 1.5),
+                      trailing: Image.asset(
+                          'asset/images/visitor_icon_next.png',
+                          scale: 2.0),
                       onTap: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HeadImagePage()));
+                                builder: (context) => CompanyPage(
+                                      userInfo: _userInfo,
+                                    )));
                       },
-                      child: CircleAvatar(
-                        backgroundImage: _imageServerUrl != null
-                            ? NetworkImage(
-                                _imageServerUrl +
-                                    (_userInfo.headImgUrl != null
-                                        ? _userInfo.headImgUrl
-                                        : _userInfo.idHandleImgUrl),
-                              )
-                            : AssetImage(
-                                'asset/images/visitor_icon_account.png'),
-                        radius: 100,
-                      ),
                     ),
-                    width: 60.0,
-                    margin: EdgeInsets.all(20),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        _userInfo != null
-                            ? _userInfo.realName != null
-                                ? _userInfo.realName
-                                : '暂未获取到数据'
-                            : '暂未获取到数据',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.0,
-                        ),
-                      ),
-                      Text(
-                        companyName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.0,
-                        ),
-                      ),
-                    ],
+                  Divider(height: 0.0),
+                  Container(
+                    color: Colors.white,
+                    child: ListTile(
+                      title: Text('安全管理',
+                          style: TextStyle(fontSize: Constant.fontSize)),
+                      leading: Image.asset(
+                          'asset/images/visitor_icon_security.png',
+                          scale: 1.5),
+                      trailing: Image.asset(
+                          'asset/images/visitor_icon_next.png',
+                          scale: 2.0),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SecurityPage(userInfo: _userInfo)));
+                      },
+                    ),
+                  ),
+                  Container(
+                    child: Divider(
+                      height: 10,
+                      color: Colors.white12,
+                    ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    child: ListTile(
+                      title: Text('设置',
+                          style: TextStyle(fontSize: Constant.fontSize)),
+                      leading: Image.asset(
+                          'asset/images/visitor_icon_setting.png',
+                          scale: 1.5),
+                      trailing: Image.asset(
+                          'asset/images/visitor_icon_next.png',
+                          scale: 2.0),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SettingPage()));
+                      },
+                    ),
                   ),
                 ],
               ),
-            ),
-            Expanded(
-              child: ListView(children: <Widget>[
-                auth != null
-                    ? auth
-                    : ListTile(
-                        title: Text('实名认证',
-                            style: TextStyle(fontSize: Constant.fontSize)),
-                        leading: Image.asset(
-                            'asset/images/visitor_icon_verify.png',
-                            scale: 1.5),
-                      ),
-                Divider(height: 0.0),
-                soleCode != null
-                    ? soleCode
-                    : ListTile(
-                        title: Text('身份识别码',
-                            style: TextStyle(fontSize: Constant.fontSize)),
-                        leading: Image.asset(
-                            'asset/images/visitor_icon_qrcode.png',
-                            scale: 1.5),
-                        trailing: Image.asset(
-                            'asset/images/visitor_icon_next.png',
-                            scale: 2.0),
-                      ),
-                Divider(height: 0.0),
-                ListTile(
-                  title: Text('公司管理',
-                      style: TextStyle(fontSize: Constant.fontSize)),
-                  leading: Image.asset('asset/images/visitor_icon_staff.png',
-                      scale: 1.5),
-                  trailing: Image.asset('asset/images/visitor_icon_next.png',
-                      scale: 2.0),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CompanyPage(
-                                  userInfo: _userInfo,
-                                )));
-                  },
-                ),
-                Divider(height: 0.0),
-                ListTile(
-                  title: Text('安全管理',
-                      style: TextStyle(fontSize: Constant.fontSize)),
-                  leading: Image.asset('asset/images/visitor_icon_security.png',
-                      scale: 1.5),
-                  trailing: Image.asset('asset/images/visitor_icon_next.png',
-                      scale: 2.0),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                SecurityPage(userInfo: _userInfo)));
-                  },
-                ),
-                Divider(height: 0.0),
-                ListTile(
-                  title:
-                      Text('设置', style: TextStyle(fontSize: Constant.fontSize)),
-                  leading: Image.asset('asset/images/visitor_icon_setting.png',
-                      scale: 1.5),
-                  trailing: Image.asset('asset/images/visitor_icon_next.png',
-                      scale: 2.0),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SettingPage()));
-                  },
-                ),
-              ]),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 
@@ -201,19 +316,45 @@ class MinePageState extends State<MinePage> {
       }));
     });
   }
+
   ///获取用户信息
   getUserInfo() async {
-    UserInfo userInfo = await DataUtils.getUserInfo();
-    String imageServerUrl = await DataUtils.getPararInfo("imageServerUrl");
-    if (userInfo != null) {
-      setState(() {
-        _userInfo = userInfo;
-        _imageServerUrl = imageServerUrl;
-        companyName = _userInfo.companyName;
-        auth = getAuth();
-        soleCode=getSoleCodeAuth();
-      });
-    }
+
+      UserInfo userInfo = await DataUtils.getUserInfo();
+      String imageServerUrl = await DataUtils.getPararInfo("imageServerUrl");
+      if (userInfo != null) {
+        setState(() {
+          _userInfo = userInfo;
+          _imageServerUrl = imageServerUrl;
+          companyName = _userInfo.companyName;
+          auth = getAuth();
+          soleCode = getSoleCodeAuth();
+        });
+      }else{
+        reloadUserInfo(userInfo);
+      }
+  }
+  reloadUserInfo(UserInfo userInfo){
+    Future.delayed(Duration(seconds: 1),() async {
+      UserInfo userInfo = await DataUtils.getUserInfo();
+      String imageServerUrl = await DataUtils.getPararInfo("imageServerUrl");
+      if (userInfo != null) {
+          setState(() {
+            _userInfo = userInfo;
+            companyName = _userInfo.companyName;
+            _imageServerUrl = imageServerUrl;
+            auth = getAuth();
+            soleCode = getSoleCodeAuth();
+          });
+         if(_userInfo.id==null){
+           print(_userInfo);
+           print(userInfo);
+           reloadUserInfo(userInfo);
+         }
+      }else{
+        reloadUserInfo(userInfo);
+      }
+    });
   }
   ///获取图片上传的url
   getImageServerApiUrl() async {
@@ -231,6 +372,7 @@ class MinePageState extends State<MinePage> {
       }
     });
   }
+
   ///实名认证栏
   Widget auth;
   Widget getAuth() {
@@ -274,6 +416,7 @@ class MinePageState extends State<MinePage> {
       );
     }
   }
+
   ///个人识别码栏
   Widget soleCode;
   Widget getSoleCodeAuth() {
@@ -306,6 +449,7 @@ class MinePageState extends State<MinePage> {
     }
   }
 }
+
 //头像修改
 class HeadImagePage extends StatefulWidget {
   @override
@@ -373,6 +517,7 @@ class HeadImagePageState extends State<HeadImagePage> {
           ],
         ));
   }
+
   ///修改后的头像上传和个人信息内的头像地址的修改
   _uploadImg() async {
     String url = _imageServerApiUrl;
