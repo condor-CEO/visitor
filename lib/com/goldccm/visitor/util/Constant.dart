@@ -14,6 +14,7 @@ class Constant {
   static final int connectTimeout=3000;
   static final int receiveTimeout=3000;
   static final double fontSize=14.0;
+  static final String webScoketUrl ="";
   /*
    * 登录
    */

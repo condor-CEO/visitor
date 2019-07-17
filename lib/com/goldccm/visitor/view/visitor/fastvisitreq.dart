@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:async';
 
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 
@@ -89,11 +88,28 @@ class FastVisitReqState extends State<FastVisitReq>{
                       print('comfirm$date');
                       if(date.isBefore(DateTime.now())){
                         ToastUtil.showShortToast('开始时间不能小于当前时间');
+                        _visitStartControl.text='';
                         _startNode.unfocus();
-                      }else{
-                        _visitStartControl.text=date.toString().substring(0,16);
-                        _startNode.unfocus();
+                        return;
                       }
+                      print('1111111111${_visitEndControl.text.toString()}');
+                      if(null!=_visitEndControl.text.toString()&&_visitEndControl.text.toString().length==16){
+                        if(date.isAfter(DateTime.parse(_visitEndControl.text.toString()))){
+                          ToastUtil.showShortToast('开始时间不能大于结束时间');
+                          _visitStartControl.text='';
+                          _startNode.unfocus();
+                          return;
+                        }
+
+                        if(date.day!=(DateTime.parse(_visitEndControl.text.toString()).day)){
+                          ToastUtil.showShortToast('访问时间请选择在同一天,请重新选择');
+                          _visitStartControl.text='';
+                          _endNode.unfocus();
+                          return;
+                        }
+                      }
+                      _visitStartControl.text=date.toString().substring(0,16);
+                      _startNode.unfocus();
 
                     } ,
                   );
@@ -142,13 +158,16 @@ class FastVisitReqState extends State<FastVisitReq>{
                             if(date.isBefore(DateTime.parse(_visitStartControl.text.toString()))){
                               ToastUtil.showShortToast('结束时间不能小于开始时间,请重新选择');
                               _endNode.unfocus();
+                              return;
                             }
 
                             if(date.day!=(DateTime.parse(_visitStartControl.text.toString()).day)){
                               ToastUtil.showShortToast('访问时间请选择在同一天,请重新选择');
                               _endNode.unfocus();
+                              return;
                             }
                             _visitEndControl.text=date.toString().substring(0,16);
+                            _endNode.unfocus();
 
                           } ,
                         );
@@ -205,12 +224,6 @@ class FastVisitReqState extends State<FastVisitReq>{
                 ),
 
               ),
-
-
-
-
-
-
             ],
           ),
         ),

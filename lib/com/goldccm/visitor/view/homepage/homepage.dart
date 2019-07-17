@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/component/Qrcode.dart';
+import 'package:visitor/com/goldccm/visitor/db/chatDao.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
+import 'package:visitor/com/goldccm/visitor/model/ChatMessage.dart';
 import 'package:visitor/com/goldccm/visitor/model/JsonResult.dart';
 import 'package:visitor/com/goldccm/visitor/model/QrcodeMode.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
@@ -51,6 +53,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+//    Future(getImageServerUrl()).then(getBanner()).then(getNoticeInfo()).then(getNewsInfoList());
     getImageServerUrl();
     getBanner();
     getNoticeInfo();
@@ -337,6 +340,8 @@ class HomePageState extends State<HomePage> {
 
   }
 
+
+
   getNoticeInfo() async {
     String url = Constant.getNoticeListUrl + "/1/10";
     var response = await Http.instance
@@ -437,6 +442,7 @@ class HomePageState extends State<HomePage> {
   }
 
   _visitiorCard(){
+    insertMessage();
 
   }
 
@@ -444,6 +450,23 @@ class HomePageState extends State<HomePage> {
     ToastUtil.showShortToast('敬请期待');
   }
 
-
+  insertMessage() async{
+    ChatDao  chatDao = new ChatDao();
+    ChatMessage message1 = new ChatMessage(
+      M_ID:2,
+      M_MessageContet:'bbbbbb',
+      M_Status:'1',
+      M_Time:'2019-07-12 15:22:25',
+      M_MessageType:'1',
+      M_IsSend:'1',
+      M_userId:1,
+      M_FriendId:3,
+      M_FnickName:'bbb',
+      M_FrealName:'bbb',
+      M_FheadImgUrl:'http://pic4.nipic.com/20091108/2904378_211137045663_2.jpg',
+    );
+    int i = await chatDao.insertNewMessage(message1);
+    print('插入成功数据$i');
+  }
 
 }

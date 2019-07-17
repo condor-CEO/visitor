@@ -86,7 +86,10 @@ void initState(){
   @override
   void dispose() {
     super.dispose();
-    timer.cancel();
+    if(timer!=null){
+      timer.cancel();
+    }
+
   }
 
 

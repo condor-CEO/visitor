@@ -5,6 +5,9 @@ import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 //import 'package:visitor/com/goldccm/visitor/view/homepage/homepage1.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/settingpage.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
+
 
 
 class MyHomeApp extends StatefulWidget{
@@ -25,6 +28,7 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   var tabImages;
   var appBarTitles = ['首页', '访客','通讯录', '我的'];
   var _pageList;
+  WebSocketChannel channel;
 
   /*
    * 根据选择获得对应的normal或是press的icon
@@ -58,6 +62,7 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   void initState() {
     super.initState();
     initData();
+    channel = IOWebSocketChannel.connect('ws://192.168.3.4:8088/echo');
   }
 
 
