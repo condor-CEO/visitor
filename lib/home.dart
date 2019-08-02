@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserModel.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
+import 'package:visitor/com/goldccm/visitor/view/contract/chatListItem.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/homepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 //import 'package:visitor/com/goldccm/visitor/view/homepage/homepage1.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/settingpage.dart';
+import 'package:visitor/com/goldccm/visitor/view/visitor/fastvisitreq.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
+
+import 'com/goldccm/visitor/util/MessageUtils.dart';
 
 
 
@@ -62,7 +69,6 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   void initState() {
     super.initState();
     initData();
-    channel = IOWebSocketChannel.connect('ws://192.168.3.4:8088/echo');
   }
 
 
@@ -81,8 +87,8 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
      */
     _pageList = [
       new HomePage(),
-      new AddressPage(),
-      new HomePage(),
+      new ChatList(channel:channel,),
+      new AddressPage(channel: channel,),
       new MinePage(),
     ];
   }
@@ -90,6 +96,8 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    int userId = Provider.of<UserModel>(context).info.id;
+    MessageUtils.setChannel(userId.toString());
     Future<bool> _onWillPop()=>new Future.value(false);
     return new WillPopScope(child: Scaffold(
           body: IndexedStack(

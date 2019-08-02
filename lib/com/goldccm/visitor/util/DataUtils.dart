@@ -6,7 +6,6 @@ class DataUtils {
   static final String SP_AC_TOKEN = "accessToken";
   static final String SP_IS_LOGIN = "isLogin"; // SP_IS_LOGIN标记是否登录
   static final String SP_USER_ID = "userid";
-
   //需保存的用户信息
   static final String SP_ID = "USERID";
   static final String SP_ORGID = "ORGID";
@@ -43,7 +42,6 @@ class DataUtils {
    */
   static Future<UserInfo> saveUserInfo(Map data) async{
     if (data != null) {
-      print(data);
       SharedPreferences sp;
       await SharedPreferences.getInstance().then((value) {
         sp = value;
@@ -81,7 +79,6 @@ class DataUtils {
       String soleCode = data['soleCode'];
       String validityDate = data['validityDate'];
       String companyName = data['companyName'];
-
       await sp.setInt(SP_ORGID, orgId);
       await sp.setString(SP_REALNAME, realName);
       await sp.setString(SP_LOGINNAME, loginName);
@@ -97,6 +94,7 @@ class DataUtils {
       await sp.setString(SP_WORKKEY, workKey);
       await sp.setString(SP_COMPANYNAME, companyName);
       await sp.setString(SP_IDHANDLEIMGURL, idHandleImgUrl);
+
       UserInfo userInfo = new UserInfo(
         id: id,
         orgId: orgId,
@@ -129,7 +127,6 @@ class DataUtils {
         validityDate: validityDate,
         companyName: companyName,
       );
-
       return userInfo;
     }
     return null;
@@ -172,24 +169,24 @@ class DataUtils {
       sp = value;
     });
     bool isLogin = sp.getBool(SP_IS_LOGIN);
-    if (isLogin == null || !isLogin) {
+    if (isLogin == null||!isLogin) {
       return null;
     }
     UserInfo userInfo = new UserInfo();
-    userInfo.id =  sp.getInt(SP_ID);
     userInfo.orgId =  sp.getInt(SP_ORGID);
     userInfo.realName =  sp.getString(SP_REALNAME);
     userInfo.loginName = sp.getString(SP_LOGINNAME);
     userInfo.idType = sp.getString(SP_IDTYPE);
+    userInfo.id =  sp.getInt(SP_ID);
     userInfo.idNO = sp.getString(SP_IDNO);
     userInfo.phone =  sp.getString(SP_PHONE);
     userInfo.isAuth =  sp.getString(SP_ISAUTH);
     userInfo.token = sp.getString(SP_TOKEN);
+    userInfo.headImgUrl =  sp.getString(SP_HEADIMGURL);
     userInfo.companyId = sp.getInt(SP_COMPANYID);
     userInfo.workKey =  sp.getString(SP_WORKKEY);
     userInfo.companyName = sp.getString(SP_COMPANYNAME);
     userInfo.idHandleImgUrl = sp.getString(SP_IDHANDLEIMGURL);
-    userInfo.headImgUrl =  sp.getString(SP_HEADIMGURL);
     return userInfo;
   }
 

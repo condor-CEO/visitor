@@ -26,8 +26,8 @@ class ChatListState extends State<ChatList> {
   @override
   void initState() {
     super.initState();
-    getMessageList();
-    widget.channel.stream.listen(this.onData, onError: onError, onDone: onDone);
+//    getMessageList();
+//    widget.channel.stream.listen(this.onData, onError: onError, onDone: onDone);
     // ignore: unnecessary_statements
     (() async {
       setState(() {
@@ -72,14 +72,14 @@ class ChatListState extends State<ChatList> {
       child: MessageCompent(headImgUrl: message.M_FheadImgUrl,
         realName: message.M_FrealName,
         latestTime: message.M_Time,
-        latestMsg: message.M_MessageContet,
+        latestMsg: message.M_MessageContent,
         isSend: message.M_IsSend,unreadCount: message.unreadCount,),
     );
   }
 
   onDone(){
     debugPrint("Socket is closed");
-    widget.channel=IOWebSocketChannel.connect('ws://192.168.3.4:8088/echo');
+    widget.channel=IOWebSocketChannel.connect('ws://192.168.10.154:8080/api_visitor/chat?token=27');
   }
 
   onError(err){
@@ -103,11 +103,13 @@ class ChatListState extends State<ChatList> {
   getMessageList() async{
     ChatDao  chatDao = new ChatDao();
     List<ChatMessage> list = await chatDao.getlatestMessage();
-    setState(() {
-      print('获取到几条信息：${list.length}');
-      print('获取到几条信息：${list[0].toString()}');
-      _chatHis = list;
-    });
+    if(list!=null) {
+      setState(() {
+        print('获取到几条信息：${list.length}');
+        print('获取到几条信息：${list[0].toString()}');
+        _chatHis = list;
+      });
+    }
   }
 
 }

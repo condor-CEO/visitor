@@ -28,19 +28,22 @@ class CommonUtil{
   }
 
   //计算当前的key，上送服务端校验
-  static Future<String> calWorkKey() async{
+  static Future<String> calWorkKey({UserInfo userInfo}) async{
     UserInfo _userInfo;
-    await DataUtils.getUserInfo().then((value){
-      _userInfo = value;
-    });
-    print(_userInfo);
+    if(userInfo!=null){
+      _userInfo=userInfo;
+    }
+    else {
+      await DataUtils.getUserInfo().then((value) {
+        _userInfo = value;
+      });
+    }
     String userId = Md5Util.instance .encryptByMD5ByHex(_userInfo.id.toString().padLeft(12,'F'));
     String token = Md5Util.instance.encryptByMD5ByHex(_userInfo.token.toString());
     String currDate = Md5Util.instance.encryptByMD5ByHex(getCurrentTime());
     String keyStr = userId.substring(6,12)+currDate.substring(2,14)+token.substring(5,10);
     return Md5Util.instance.encryptByMD5ByHex(keyStr).toUpperCase();
   }
-
   //获取平台信息
    static String getAppPlat(){
     String appPlat='';

@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
 import 'package:visitor/com/goldccm/visitor/model/JsonResult.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserModel.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/Md5Util.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
@@ -446,6 +448,7 @@ class LoginState extends State<Login> {
     bool userNameCheck = checkLoignUser();
     String _passNum;
     String _codeNum;
+    var user=Provider.of<UserModel>(context);
     var data;
     if (userNameCheck && _loginType == _loginPass) {
       bool passCheck = checkPass();
@@ -479,6 +482,7 @@ class LoginState extends State<Login> {
         DataUtils.saveLoginInfo(userMap);
         DataUtils.saveUserInfo(userMap);
         SharedPreferenceUtil.saveUser(userInfo);
+        user.init(userInfo);
         Navigator.of(context).pushAndRemoveUntil(
             new MaterialPageRoute(
               //builder: (BuildContext context) => _isLogin==true?new MyHomeApp():new Login()

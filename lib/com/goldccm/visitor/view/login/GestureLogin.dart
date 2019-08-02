@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gesture_password/gesture_password.dart';
 import 'package:flutter/material.dart';
 import 'package:gesture_password/gesture_password.dart';
@@ -7,6 +10,8 @@ import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
 import 'package:visitor/com/goldccm/visitor/util/Md5Util.dart';
+import 'package:visitor/com/goldccm/visitor/util/SharedPreferenceUtil.dart';
+import 'package:visitor/home.dart';
 
 class GestureLogin extends StatefulWidget {
   @override
@@ -110,5 +115,27 @@ class GestureLoginState extends State<GestureLogin> {
       "style": "2",
       "sysPwd": _passNum,
     });
+    if (res != null) {
+      Map result =jsonDecode(res);
+      print('$result');
+      if (result['verify']['sign'] == 'success') {
+        var userMap = result['data']['user'];
+        print('返回用户信息：$userMap');
+        UserInfo userInfo = UserInfo.fromJson(userMap);
+        DataUtils.saveLoginInfo(userMap);
+        DataUtils.saveUserInfo(userMap);
+        SharedPreferenceUtil.saveUser(userInfo);
+        Navigator.of(context).pushAndRemoveUntil(
+            new MaterialPageRoute(
+              //builder: (BuildContext context) => _isLogin==true?new MyHomeApp():new Login()
+                builder: (BuildContext context) =>new MyHomeApp()
+            ),
+                (Route route) => route == null);
+        return true;
+      } else {
+        Fluttertoast.showToast(msg: '请用账号密码登录');
+        return false;
+      }
+    }
   }
 }

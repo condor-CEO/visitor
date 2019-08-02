@@ -110,7 +110,7 @@ class HomePageState extends State<HomePage> {
               controller: _scrollController,
               slivers: <Widget>[
                 SliverPadding(
-                  padding: EdgeInsets.all(1.0),
+                  padding: EdgeInsets.all(0),
                   sliver: new SliverToBoxAdapter(
                     child: _buildBannerImage(),
                   ),
@@ -121,8 +121,6 @@ class HomePageState extends State<HomePage> {
                     child: _buildSwiperNotice(),
                   ),
                 ),
-
-
                 SliverPadding(
                   padding: const EdgeInsets.all(0.0),
                   sliver: new SliverGrid( //Grid
@@ -141,26 +139,22 @@ class HomePageState extends State<HomePage> {
                 ),
 
                 SliverPadding(
-                  padding: EdgeInsets.all(0.0),
+                  padding: EdgeInsets.only(top:0.0),
                   sliver: new SliverToBoxAdapter(
-                    child: new Divider(color: Colors.grey,),
+                    child: Container(
+                      decoration: new BoxDecoration(
+                        border: new Border(
+                            bottom: new BorderSide(color: Colors.black12, width: 5.0,)),
+                      ),
+                    )
                   ),
                 ),
-
                 SliverPadding(
-                  padding: EdgeInsets.only(left:20.0),
+                  padding: EdgeInsets.only(left:16.0),
                   sliver: new SliverToBoxAdapter(
-                    child: new Text('新闻公告'),
+                    child: new Text('新闻公告',style: TextStyle(fontSize: 18),),
                   ),
                 ),
-
-                SliverPadding(
-                  padding: EdgeInsets.only(left:0.0),
-                  sliver: new SliverToBoxAdapter(
-                    child: new Divider(color: Colors.black,),
-                  ),
-                ),
-
                 new SliverFixedExtentList(
                   itemExtent:140,
                   delegate: new SliverChildBuilderDelegate(
@@ -240,7 +234,7 @@ class HomePageState extends State<HomePage> {
     return new Container(
       decoration: new BoxDecoration(
         border: new Border(
-            bottom: new BorderSide(color: Colors.grey, width: 0.8)),
+            bottom: new BorderSide(color: Colors.black12, width: 5.0,)),
       ),
       height: 40.0,
       padding: EdgeInsets.only(left: 20.0, top: 12.0),
@@ -454,7 +448,7 @@ class HomePageState extends State<HomePage> {
     ChatDao  chatDao = new ChatDao();
     ChatMessage message1 = new ChatMessage(
       M_ID:2,
-      M_MessageContet:'bbbbbb',
+      M_MessageContent:'bbbbbb',
       M_Status:'1',
       M_Time:'2019-07-12 15:22:25',
       M_MessageType:'1',

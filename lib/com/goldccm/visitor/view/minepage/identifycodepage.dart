@@ -4,6 +4,8 @@ import 'package:visitor/com/goldccm/visitor/model/QrcodeMode.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/util/QrcodeHandler.dart';
 
+
+//个人识别码
 class IdentifyCodePage extends StatefulWidget {
   IdentifyCodePage({Key key, this.userInfo}) : super(key: key);
   final UserInfo userInfo;

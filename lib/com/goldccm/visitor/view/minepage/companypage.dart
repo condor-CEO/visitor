@@ -9,6 +9,7 @@ import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 var _keys = null;
 
 ///公司管理
+///userInfo接收来自上一级页面传递过来的变量
 class CompanyPage extends StatefulWidget{
   CompanyPage({Key key,this.userInfo}):super(key:key);
   final UserInfo userInfo;
@@ -98,15 +99,22 @@ class CompanyPageState extends State<CompanyPage>{
       Map map = jsonDecode(res);
       setState(() {
         _keys = map['data'];
+        int index=0;
+        for(var data in map['data']){
+          if(data['companyId']==userInfo.companyId){
+            groupValue=index;
+            break;
+          }
+          index++;
+        }
       });
-      print(_keys[0]['companyId']);
     }
   }
   ///更新默认公司
   Future updateGroupValue(int v) async {
     String url = Constant.serverUrl+Constant.updateCompanyIdAndRoleUrl;
     String threshold = await CommonUtil.calWorkKey();
-    var res = Http().post(url,queryParameters: {
+    var res = await Http().post(url,queryParameters: {
       "token": userInfo.token,
       "userId": userInfo.id,
       "factor": CommonUtil.getCurrentTime(),
