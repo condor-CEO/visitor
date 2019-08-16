@@ -6,8 +6,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class FriendDetailPage extends StatefulWidget {
   final User user;
-  final WebSocketChannel channel;
-  FriendDetailPage({Key key,this.user,this.channel}):super(key:key);
+  FriendDetailPage({Key key,this.user}):super(key:key);
   @override
   State<StatefulWidget> createState() {
     return FriendDetailPageState();
@@ -15,7 +14,6 @@ class FriendDetailPage extends StatefulWidget {
 }
 
 class FriendDetailPageState extends State<FriendDetailPage> {
-  Presenter _presenter = new Presenter();
   User _user;
   @override
   void initState() {
@@ -107,18 +105,12 @@ class FriendDetailPageState extends State<FriendDetailPage> {
                 style: TextStyle(fontSize: Constant.fontSize),
               ),
               onPressed: () async {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(channel: widget.channel,user: widget.user,)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(user: widget.user,)));
               },
             ),
           ),
         ),
       ],
     );
-  }
-}
-class Presenter {
-
-  getImgServerUrl() {
-    return null;
   }
 }

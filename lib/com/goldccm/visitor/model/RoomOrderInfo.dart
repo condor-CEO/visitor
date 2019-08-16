@@ -1,0 +1,34 @@
+class RoomOrderInfo<T>{
+  int id;
+  int roomID;
+  int applyUserID;
+  String applyDate;
+  String applyStartTime;
+  String applyEndTime;
+  String timeInterval;
+  int recordStatus;
+  String createTime;
+  String cancelTime;
+  String roomName;
+  int roomType;
+  String roomIntro;
+  String roomAddress;
+  String roomImage;
+
+  RoomOrderInfo({this.id, this.roomID, this.applyUserID, this.applyDate,
+    this.applyStartTime, this.applyEndTime, this.timeInterval, this.recordStatus,
+    this.createTime, this.cancelTime,this.roomName,this.roomType,this.roomIntro,this.roomAddress,this.roomImage});
+
+  RoomOrderInfo.fromJson(Map json){
+    this.id=json['id'];
+    this.roomID=json['room_id'];
+    this.applyUserID=json['apply_userid'];
+    this.applyDate=json['apply_date'];
+    this.applyStartTime=json['apply_start_time'];
+    this.applyEndTime=json['apply_end_time'];
+    this.timeInterval=json['time_interval'];
+    this.recordStatus=json['record_status'];
+    this.createTime=json['create_time'];
+    this.cancelTime=json['cancle_time'];
+  }
+}

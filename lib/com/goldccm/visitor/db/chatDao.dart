@@ -21,7 +21,7 @@ class ChatDao extends BaseDBProvider {
   @override
   tableSqlString() {
     return tableBaseString(table_name, primary_Key) + '''
-    M_ID integer not null,
+    M_ID integer not null autoincrement,
     M_MessageContet text,
     M_Status text,
     M_Time text,
@@ -77,10 +77,10 @@ class ChatDao extends BaseDBProvider {
   }
 
   //查询每个好友的最新消息以及未读信息条数
-  Future<List<ChatMessage>> getlatestMessage() async {
+  Future<List<ChatMessage>> getLatestMessage() async {
     Database db = await getDataBase();
     List<Map<String, dynamic>> listRes = await db.rawQuery(
-        "select c.unreadCount,a.* from tbl_ChatMessage a  join (select M_FriendId,max(M_Time) M_Time from tbl_ChatMessage group by M_FriendId) b on a.M_FriendId = b.M_FriendId and a.M_Time = b.M_Time left join (select M_FriendId,count(*) unreadCount from tbl_ChatMessage where M_status='0' group by M_FriendId) c on a.M_FriendId = c.M_FriendId order by a.M_Time desc");
+        "select c.unreadCount,a.* from tbl_ChatMessage a  join (select M_FriendId,max(M_Time) M_Time from tbl_ChatMessage where M_MessageType=1 group by M_FriendId) b on a.M_FriendId = b.M_FriendId and a.M_Time = b.M_Time left join (select M_FriendId,count(*) unreadCount from tbl_ChatMessage where M_status='0' group by M_FriendId) c on a.M_FriendId = c.M_FriendId  order by a.M_Time desc");
     if (listRes.length > 0) {
       List<ChatMessage> msgs = listRes.map((item) => ChatMessage.fromJson(item)).toList();
       return msgs;

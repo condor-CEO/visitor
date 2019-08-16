@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'com/goldccm/visitor/model/UserModel.dart';
 import 'splash.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   Provider.debugCheckInvalidValueType = null;
@@ -21,6 +21,14 @@ void main() {
           primaryColor:Colors.blue,
           accentColor: Colors.purple,
         ),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('zh','CH'),
+          const Locale('en','US'),
+        ],
         home: SplashPage(),
       )
     )

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:visitor/com/goldccm/visitor/db/chatDao.dart';
@@ -14,11 +13,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class MessageUtils {
   static WebSocketChannel _channel;
   static bool _isOpen = false;
-  static setChannel(String id) {
+  static setChannel(String id,String token) {
     if (_channel == null) {
       debugPrint('Websocket连接');
       _channel = IOWebSocketChannel.connect(
-          'ws://192.168.10.154:8080/api_visitor/chat?token=27');
+          'ws://192.168.10.154:8080/api_visitor/chat?userId=27&token=24d16d8a-f9d6-4249-8704-fa6a3fb76ac6');
       _connect();
     }
   }
@@ -34,8 +33,14 @@ class MessageUtils {
 
   static _onDone() {
     debugPrint("Websocket关闭");
-    _isOpen = false;
-    _channel = null;
+    Future.delayed(Duration(seconds: 5),(){
+      if (_channel == null) {
+        debugPrint('Websocket连接');
+        _channel = IOWebSocketChannel.connect(
+            'ws://192.168.10.129:8098/visitor/chat?token=27&token=24d16d8a-f9d6-4249-8704-fa6a3fb76ac6');
+        _connect();
+      }
+    });
   }
 
   static _onError(err) {
@@ -43,7 +48,10 @@ class MessageUtils {
     WebSocketChannelException ex = err;
     debugPrint(ex.message);
   }
-
+  //接收数据
+  //type=1是普通消息
+  //type=2是接收好友发送的访问邀约消息
+  //type=3是自己发送的访问邀约消息被通过或拒绝的回馈消息
   static _onData(event) {
     print(event);
     if (event == "0") {
@@ -60,19 +68,20 @@ class MessageUtils {
     ChatDao chatDao = new ChatDao();
     if (map['type'] == 1) {
       msg = new ChatMessage(
-        M_ID: 1,
         M_FriendId: int.parse(map['fromUserId'].toString()),
         M_Status: "0",
         M_IsSend: "1",
         M_MessageContent: map['message'].toString(),
-        M_Time: map['update_time'].toString(),
+        M_Time: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         M_MessageType: map['type'].toString(),
         M_userId: int.parse(map['toUserId'].toString()),
+        M_FrealName: map['realName'].toString(),
+        M_FheadImgUrl: map['headImgUrl'].toString(),
+        M_FnickName: map['nickName'].toString(),
       );
       chatDao.insertNewMessage(msg);
     } else if (map['type'] == 2) {
       msg = new ChatMessage(
-        M_ID: 2,
         M_cStatus: map['cstatus'].toString(),
         M_Status: "0",
         M_IsSend: "1",
@@ -88,7 +97,6 @@ class MessageUtils {
       chatDao.insertNewMessage(msg);
     } else if (map['type'] == 3) {
       msg = new ChatMessage(
-        M_ID: 3,
         M_FriendId: int.parse(map['fromUserId'].toString()),
         M_userId: int.parse(map['userId'].toString()),
         M_Status: "0",
@@ -102,6 +110,8 @@ class MessageUtils {
         M_MessageType: "2",
       );
       chatDao.insertNewMessage(msg);
+    }else{
+
     }
     if (msg == null) {
       debugPrint('插入数据库失败');
@@ -118,7 +128,11 @@ class MessageUtils {
     ChatDao chatDao = new ChatDao();
     chatDao.insertNewMessage(chatMsg);
   }
-
+  static getLatestMessage() async {
+    ChatDao chatDao = new ChatDao();
+    List<ChatMessage> list = await chatDao.getLatestMessage();
+    return list;
+  }
   static getUnreadMessageList(int id) async {
     ChatDao chatDao = new ChatDao();
     List<ChatMessage> list = await chatDao.getUnreadMessageListByUserId(id);

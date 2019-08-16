@@ -12,15 +12,17 @@ import 'package:visitor/com/goldccm/visitor/view/addresspage/frienddetail.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/newfriend.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/search.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
+///通讯录模块
+///提供一个用户好友列表
+///用于查看用户详情和开启聊天
 class AddressPage extends StatefulWidget {
-  final WebSocketChannel channel;
-  AddressPage({Key key,this.channel}):super(key:key);
   @override
   State<StatefulWidget> createState() {
     return AddressPageState();
   }
 }
+///_userList是存放好友信息的列表
+///_userModel是Provider管理的变量类
 class AddressPageState extends State<AddressPage> {
   Presenter _presenter = new Presenter();
   List<User> _userLists=new List<User>();
@@ -153,9 +155,9 @@ class AddressPageState extends State<AddressPage> {
             color: Colors.white,
             child: ListTile(
               title: Text(_userLists[index].userName),
-              leading: _userLists[index].idHandleImgUrl!=null?CircleAvatar(backgroundImage:NetworkImage(_presenter.getImageUrl()+_userLists[index].idHandleImgUrl),):CircleAvatar(backgroundImage: AssetImage("asset/images/visitor_icon_head.png"),),
+              leading: _userLists[index].idHandleImgUrl!=null?CircleAvatar(backgroundImage:NetworkImage(Constant.imageServerUrl+_userLists[index].idHandleImgUrl),):CircleAvatar(backgroundImage: AssetImage("asset/images/visitor_icon_head.png"),),
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>FriendDetailPage(user: _userLists[index],channel: widget.channel,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FriendDetailPage(user: _userLists[index],)));
               },
             ),
           );
@@ -163,6 +165,7 @@ class AddressPageState extends State<AddressPage> {
   }
 }
 
+/// 用户
 class User {
   String userName;
   String phone;
@@ -173,7 +176,6 @@ class User {
   String imageServerUrl;
   User({this.userName, this.phone, this.idHandleImgUrl,this.notice,this.companyName,this.userId,this.imageServerUrl,});
 }
-
 class Choice {
   Choice({this.title, this.icon, this.value});
   String title;
@@ -181,6 +183,8 @@ class Choice {
   int value;
 }
 
+///自定义类
+///用于存放变量和操作变量
 class Presenter {
   List<User> _userlists = new List<User>();
   String _imageUrl="";
@@ -199,8 +203,8 @@ class Presenter {
     }
     _imageUrl = await DataUtils.getPararInfo("imageServerUrl");
 //    String url = Constant.serverUrl+ Constant.fiFndUserFriendUrl;
-    String threshold = await CommonUtil.calWorkKey();
-    String url = "http://192.168.10.154:8080/api_visitor/userFriend/findUserFriend";
+//    String threshold = await CommonUtil.calWorkKey();
+    String url = Constant.testServerUrl+Constant.findUserFriendUrl;
     var res = await Http().post(url, queryParameters: {
 //      "token":  _userInfo.token,
 //      "userId": _userInfo.id,

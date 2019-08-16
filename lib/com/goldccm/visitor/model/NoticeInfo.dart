@@ -10,7 +10,7 @@ class NoticeInfo{
    String createDate;
    String createTime;
    String cstatus;
-
+   String orgType;
   NoticeInfo({
      this.id,
      this.orgId,
@@ -20,6 +20,7 @@ class NoticeInfo{
      this.createDate,
      this.createTime,
      this.cstatus,
+     this.orgType
 });
 
    NoticeInfo.fromJson(Map json){
@@ -31,6 +32,7 @@ class NoticeInfo{
       this.createDate=json['createDate'];
       this.createTime=json['createTime'];
       this.cstatus=json['cstatus'];
+      this.orgType=json['orgType'];
    }
 
    static List<NoticeInfo> getJsonFromDataList(var content){
@@ -46,7 +48,7 @@ class NoticeInfo{
          createDate:obj['createDate'],
          createTime:obj['createTime'],
          cstatus:obj['cstatus'],
-
+         orgType: obj['orgType']
          );
          _noticeList.add(noticeInfo);
       });

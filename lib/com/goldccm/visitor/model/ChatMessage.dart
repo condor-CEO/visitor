@@ -22,6 +22,8 @@ class ChatMessage {
   String M_province;
   String M_city;
   String M_cStatus;
+  String M_recordType;
+  String M_answerContent;
   int unreadCount;
 
   ChatMessage(
@@ -44,7 +46,9 @@ class ChatMessage {
       this.M_city,
       this.M_province,
       this.M_cStatus,
-      this.M_visitId});
+      this.M_visitId,
+      this.M_answerContent,
+      this.M_recordType});
 
   ChatMessage.fromJson(Map map) {
     this.M_ID = map['M_ID'];
@@ -54,7 +58,7 @@ class ChatMessage {
     this.M_MessageType = map['M_MessageType'];
     this.M_IsSend = map['M_IsSend'];
     this.M_userId = map['M_userId'];
-    this.M_FriendId = map['M_ID'];
+    this.M_FriendId = map['M_FriendId'];
     this.M_FnickName = map['M_FnickName'];
     this.M_FrealName = map['M_FrealName'];
     this.M_FheadImgUrl = map['M_FheadImgUrl'];
@@ -67,12 +71,14 @@ class ChatMessage {
     this.M_city = map['M_city'];
     this.M_province = map['M_province'];
     this.M_cStatus = map['M_cStatus'];
+    this.M_answerContent = map['M_answerContent'];
+    this.M_recordType = map['M_recordType'];
+
   }
 
   @override
   String toString() {
-    return 'ChatMessage{M_ID: $M_ID, M_MessageContent: $M_MessageContent, M_Status: $M_Status, M_Time: $M_Time, M_MessageType: $M_MessageType, M_IsSend: $M_IsSend, M_userId: $M_userId, M_FriendId: $M_FriendId, M_FnickName: $M_FnickName, M_FrealName: $M_FrealName, M_FheadImgUrl: $M_FheadImgUrl, M_visitId: $M_visitId, M_StartDate: $M_StartDate, M_EndDate: $M_EndDate, M_orgName: $M_orgName, M_companyName: $M_companyName, M_province: $M_province, M_city: $M_city, M_cStatus: $M_cStatus, unreadCount: $unreadCount}';
+    return 'ChatMessage{M_ID: $M_ID, M_MessageContent: $M_MessageContent, M_Status: $M_Status, M_Time: $M_Time, M_MessageType: $M_MessageType, M_IsSend: $M_IsSend, M_userId: $M_userId, M_FriendId: $M_FriendId, M_FnickName: $M_FnickName, M_FrealName: $M_FrealName, M_FheadImgUrl: $M_FheadImgUrl, M_visitId: $M_visitId, M_StartDate: $M_StartDate, M_EndDate: $M_EndDate, M_orgName: $M_orgName, M_companyName: $M_companyName, M_province: $M_province, M_city: $M_city, M_cStatus: $M_cStatus, M_recordType: $M_recordType, M_answerContent: $M_answerContent, unreadCount: $unreadCount}';
   }
-
 
 }

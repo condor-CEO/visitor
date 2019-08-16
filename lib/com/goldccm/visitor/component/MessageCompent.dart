@@ -6,14 +6,17 @@ class MessageCompent extends StatelessWidget {
   String latestTime; //最新消息发送时间
   String latestMsg; //最新消息
   String isSend; // 0-表示userid发送   1-表示FuserID发送
-  num unreadCount;//未读信息条数
+  num unreadCount; //未读信息条数
+  String imageServerUrl; //图片服务器地址
 
   MessageCompent(
       {this.headImgUrl,
       this.realName,
       this.latestTime,
       this.latestMsg,
-      this.isSend,this.unreadCount});
+      this.isSend,
+      this.unreadCount,
+      this.imageServerUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +37,14 @@ class MessageCompent extends StatelessWidget {
                       width: 50.0,
                       height: 50.0,
                       decoration: BoxDecoration(
-                        border: Border.all(width: 0.5, color: Colors.red),
+                        border: Border.all(width: 0.5, color: Colors.grey),
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(6.0),
                         image: DecorationImage(
-                          image: NetworkImage(headImgUrl),
+                          image: headImgUrl != null
+                              ? NetworkImage(imageServerUrl + headImgUrl)
+                              : AssetImage(
+                                  "asset/images/visitor_icon_head.png"),
                         ),
                       ),
                     ),
@@ -54,7 +60,7 @@ class MessageCompent extends StatelessWidget {
                   new Row(
                     children: <Widget>[
                       Container(
-                        child: new Text(realName,
+                        child: new Text(realName != null ? realName : "Unknow",
                             style: new TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,
@@ -86,8 +92,11 @@ class MessageCompent extends StatelessWidget {
                       padding: EdgeInsets.only(top: 5.0, left: 15.0),
                       child: Text(
                           isSend == '0'
-                              ? latestMsg
-                              : realName + ":" + latestMsg,
+                              ? latestMsg.toString()
+                              : (realName != null ? realName : "Unknow") +
+                                  ":" +
+                                  latestMsg.toString(),
+                          softWrap: true,
                           style: new TextStyle(
                               color: Colors.grey,
                               fontSize: 12,
@@ -107,7 +116,7 @@ class MessageCompent extends StatelessWidget {
   }
 
   Widget _buildBadge() {
-    if(null==unreadCount||unreadCount==0){
+    if (null == unreadCount || unreadCount == 0) {
       return Container();
     }
     return Container(

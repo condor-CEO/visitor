@@ -227,7 +227,7 @@ class Presenter {
   Future loadFriend() async {
     _friends.clear();
     String url = "http://192.168.10.154:8080/api_visitor/userFriend/findIsUserByPhone";
-    String threshold = await CommonUtil.calWorkKey();
+//    String threshold = await CommonUtil.calWorkKey();
     _imageUrl = await DataUtils.getPararInfo("imageServerUrl");
     if(_phoneStr!="") {
       var res = await Http().post(url, queryParameters: {
@@ -263,7 +263,7 @@ class Presenter {
     _request.clear();
     String url =
         "http://192.168.10.154:8080/api_visitor/userFriend/beAgreeingFriendList";
-    String threshold = await CommonUtil.calWorkKey();
+//    String threshold = await CommonUtil.calWorkKey();
     _imageUrl = await DataUtils.getPararInfo("imageServerUrl");
     var res = await Http().post(url, queryParameters: {
       "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",

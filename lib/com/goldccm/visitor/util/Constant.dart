@@ -1,5 +1,8 @@
 class Constant {
   static final String serverUrl = "http://47.99.209.40:8082/";
+  static final String testServerUrl = "http://192.168.10.154:8080/api_visitor/";
+  static final String imageServerUrl = "http://47.99.209.40/imgserver/";
+  static final String imageServerApiUrl = "http://47.99.209.40:8081/goldccm-imgServer/goldccm/image/gainData";
   static final String userUrl = "user/";
   static final String codeUrl = "code/";
   static final String userFriendUrl = "userFriend/";
@@ -11,10 +14,10 @@ class Constant {
   static final String appVersionUrl = "appVersion/";
   static final String companyUserUrl = "companyUser/";
   static final String newsUrl = "news/";
-  static final int connectTimeout=3000;
-  static final int receiveTimeout=3000;
-  static final double fontSize=14.0;
-  static final String webScoketUrl ="";
+  static final int connectTimeout = 3000;
+  static final int receiveTimeout = 3000;
+  static final double fontSize = 14.0;
+  static final String webScoketUrl = "";
   /*
    * 登录
    */

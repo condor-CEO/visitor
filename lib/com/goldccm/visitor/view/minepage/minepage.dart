@@ -18,6 +18,7 @@ import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/companypage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/securitypage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/settingpage.dart';
+import 'package:visitor/com/goldccm/visitor/view/submod/roomHistory.dart';
 
 //个人中心界面
 //包含个人信息显示、历史消息记录、公司管理、安全管理、设置
@@ -139,7 +140,7 @@ class MinePageState extends State<MinePage> {
                                 color: Colors.white,
                                 child: InkWell(
                                   child: Container(
-                                    width: 100,
+                                    width: 80,
                                     padding: EdgeInsets.all(15),
                                     child: Column(
                                       children: <Widget>[
@@ -158,7 +159,7 @@ class MinePageState extends State<MinePage> {
                                 color: Colors.white,
                                 child: InkWell(
                                   child: Container(
-                                    width: 100,
+                                    width: 80,
                                     padding: EdgeInsets.all(15),
                                     child: Column(
                                       children: <Widget>[
@@ -177,7 +178,7 @@ class MinePageState extends State<MinePage> {
                                 color: Colors.white,
                                 child: InkWell(
                                   child: Container(
-                                    width: 100,
+                                    width: 80,
                                     padding: EdgeInsets.all(15),
                                     child: Column(
                                       children: <Widget>[
@@ -187,6 +188,27 @@ class MinePageState extends State<MinePage> {
                                     ),
                                   ),
                                   onTap: () {},
+                                  splashColor: Colors.black12,
+                                  borderRadius: BorderRadius.circular(18.0),
+                                  radius: 30,
+                                ),
+                              ),
+                              Material(
+                                color: Colors.white,
+                                child: InkWell(
+                                  child: Container(
+                                    width: 80,
+                                    padding: EdgeInsets.all(15),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Icon(Icons.room),
+                                        Text('会议室'),
+                                      ],
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>RoomHistory (userInfo: _userInfo,)));
+                                  },
                                   splashColor: Colors.black12,
                                   borderRadius: BorderRadius.circular(18.0),
                                   radius: 30,
@@ -302,8 +324,6 @@ class MinePageState extends State<MinePage> {
           _imageServerUrl = imageServerUrl;
         });
         if (_userInfo.id == null) {
-          print(_userInfo);
-          print(userInfo);
           reloadUserInfo(userInfo);
         }
       } else {
@@ -315,8 +335,7 @@ class MinePageState extends State<MinePage> {
   ///获取图片上传的url
   getImageServerApiUrl() async {
     String url = Constant.getParamUrl + "imageServerApiUrl";
-    var response = await Http.instance
-        .get(url, queryParameters: {"paramName": "imageServerApiUrl"});
+    var response = await Http.instance.get(url, queryParameters: {"paramName": "imageServerApiUrl"});
     if (!mounted) return;
     setState(() {
       JsonResult responseResult = JsonResult.fromJson(response);

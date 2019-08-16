@@ -12,12 +12,13 @@ import 'package:visitor/com/goldccm/visitor/view/minepage/settingpage.dart';
 import 'package:visitor/com/goldccm/visitor/view/visitor/fastvisitreq.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
-
+import 'package:badges/badges.dart';
 import 'com/goldccm/visitor/util/MessageUtils.dart';
 
 
 
 class MyHomeApp extends StatefulWidget{
+
   @override
   HomeState createState()=> new HomeState();
 }
@@ -36,7 +37,6 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   var appBarTitles = ['首页', '访客','通讯录', '我的'];
   var _pageList;
   WebSocketChannel channel;
-
   /*
    * 根据选择获得对应的normal或是press的icon
    */
@@ -87,8 +87,8 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
      */
     _pageList = [
       new HomePage(),
-      new ChatList(channel:channel,),
-      new AddressPage(channel: channel,),
+      new ChatList(),
+      new AddressPage(),
       new MinePage(),
     ];
   }
@@ -97,7 +97,8 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     int userId = Provider.of<UserModel>(context).info.id;
-    MessageUtils.setChannel(userId.toString());
+    String token = Provider.of<UserModel>(context).info.token;
+    MessageUtils.setChannel(userId.toString(),token.toString());
     Future<bool> _onWillPop()=>new Future.value(false);
     return new WillPopScope(child: Scaffold(
           body: IndexedStack(

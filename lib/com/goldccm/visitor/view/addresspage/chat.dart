@@ -10,17 +10,15 @@ import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/MessageUtils.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/visitRequest.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class ChatPage extends StatefulWidget {
-  final WebSocketChannel channel;
   final User user;
-
-  ChatPage({Key key, this.channel, this.user}) : super(key: key);
-
+  ChatPage({Key key, this.user}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return ChatPageState();
@@ -62,7 +60,6 @@ class ChatPageState extends State<ChatPage> {
       List<ChatMessage> msgLists = await MessageUtils.getUnreadMessageList(widget.user.userId);
       if (msgLists != null) {
         for (ChatMessage msg in msgLists) {
-          print(msg);
           if (msg.M_MessageType == "1") {
             chatMessage message = new chatMessage(
               text: msg.M_MessageContent,
@@ -431,14 +428,12 @@ class ChatPageState extends State<ChatPage> {
         return Text('无连接');
         break;
       case ConnectionState.waiting:
-        print("loading");
         return Text('加载中');
         break;
       case ConnectionState.active:
         return Text('active');
         break;
       case ConnectionState.done:
-        print("done");
         if (snapshot.hasError) return Text('Error');
         return _buildMessageList();
         break;
@@ -757,260 +752,324 @@ class chatMessageState extends State<chatMessage>{
           ),
         );
       } else if (widget.type == "2") {
-        return Card(
-            margin:  EdgeInsets.fromLTRB(10, 10, 100, 10),
-            child: Container(
-              height: 200,
-              child: Column(
+//        return Card(
+//            margin:  EdgeInsets.fromLTRB(10, 10, 100, 10),
+//            child: Container(
+//              height: 200,
+//              child: Column(
+//                children: <Widget>[
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    child: widget.status=="applying"?Text('您已提交申请',style: TextStyle(color: Colors.red,fontSize: 20),):Text('您的申请已通过',style: TextStyle(color:Colors.green,fontSize: 20),),
+//                  )
+//                ],
+//              ),
+//            )
+//        );
+        return new Container(
+          margin: EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
-                      ],
+                    alignment: Alignment.centerRight,
+                    width: 250,
+                    child: Container(
+                      child: Text('你向对方发起了一条申请，等待回复中。',
+                          softWrap: true,
+                          style: TextStyle(fontSize: 17, color: Colors.white)),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: EdgeInsets.all(10),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: widget.status=="applying"?Text('您已提交申请',style: TextStyle(color: Colors.red,fontSize: 20),):Text('您的申请已通过',style: TextStyle(color:Colors.green,fontSize: 20),),
-                  )
                 ],
               ),
-            )
+              Container(
+                margin: EdgeInsets.only(left: 16.0),
+                child: CircleAvatar(
+                  child: Icon(Icons.more),
+                ),
+              ),
+            ],
+          ),
         );
       }
       else if (widget.type == "3") {
-        return Card(
-            margin:  EdgeInsets.fromLTRB(100, 10, 10, 10),
-            child: Container(
-              height: 200,
-              child: Column(
+//        return Card(
+//            margin:  EdgeInsets.fromLTRB(100, 10, 10, 10),
+//            child: Container(
+//              height: 200,
+//              child: Column(
+//                children: <Widget>[
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    child: widget.status=="applying"?Text('您已提交申请',style: TextStyle(color: Colors.blue,fontSize: 20),):widget.status=="applySuccess"?Text('您的申请已通过',style: TextStyle(color:Colors.green,fontSize: 20),):Text('您的申请已被拒绝',style: TextStyle(color:Colors.red,fontSize: 20),),
+//                  )
+//                ],
+//              ),
+//            )
+//        );
+        return new Container(
+          margin: EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(right: 16.0),
+                child: CircleAvatar(
+                  child: Icon(Icons.more),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+//                  Text('对方',style: Theme.of(context).textTheme.subhead,),
                   Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
+                      alignment: Alignment.centerLeft,
+                      width: 250,
+                      child: GestureDetector(
+                        child: Container(
+                          child: Text('对方回复了你的一条申请，点击查看详情。',
+                              softWrap: true,
+                              style: TextStyle(fontSize: 17, color: Colors.white)),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: EdgeInsets.all(10),
+                        ),
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>VisitRequest(startDate: widget.startDate,endDate: widget.endDate,visitor: widget.visitor,inviter: widget.inviter,isAccept: widget.status=="applying"?-2:widget.status=="applySuccess"?1:-1)));
+                        },
+                      )
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: widget.status=="applying"?Text('您已提交申请',style: TextStyle(color: Colors.blue,fontSize: 20),):widget.status=="applySuccess"?Text('您的申请已通过',style: TextStyle(color:Colors.green,fontSize: 20),):Text('您的申请已被拒绝',style: TextStyle(color:Colors.red,fontSize: 20),),
-                  )
                 ],
               ),
-            )
+            ],
+          ),
         );
       }
       else if(widget.type=="4"){
-        return Card(
-            margin:  EdgeInsets.fromLTRB(10, 10, 100, 10),
-            child: Container(
-              height: 210,
-              child: Column(
+        return new Container(
+          margin: EdgeInsets.symmetric(vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(right: 16.0),
+                child: CircleAvatar(
+                  child: Icon(Icons.more),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+//                  Text('对方',style: Theme.of(context).textTheme.subhead,),
                   Container(
                     alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
+                    width: 250,
+                    child: GestureDetector(
+                      child: Container(
+                        child: Text('对方发起一条申请，点击查看详情。',
+                            softWrap: true,
+                            style: TextStyle(fontSize: 17, color: Colors.white)),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        padding: EdgeInsets.all(10),
+                      ),
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>VisitRequest(id: widget.id,sendId: widget.sendId,startDate: widget.startDate,endDate: widget.endDate,visitor: widget.visitor,inviter: widget.inviter,isAccept: widget.isAccept,)));
+                      },
+                    )
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
-                    child:Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
-                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
-                      ],
-                    ),
-                  ),
-                  _isAccept!=0?Container(
-                      child:Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          _isAccept==1?Text('已通过',style: TextStyle(color: Colors.green,fontSize: 20)):Text('已拒绝',style: TextStyle(color: Colors.red,fontSize: 20))
-                        ],
-                      )
-                  ):Container(
-                      child:Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          new FlatButton(
-                            child: new Text("拒绝", style: TextStyle(color: Colors.red,fontSize: 18)),
-                            onPressed: () {
-                              _responseToApply(0);
-                              setState(() {
-                                _isAccept=-1;
-                              });
-                            },
-                          ),
-                          new FlatButton(
-                            child: new Text("通过", style: TextStyle(color: Colors.green,fontSize: 18)),
-                            onPressed: () {
-                              _responseToApply(1);
-                              setState(() {
-                                _isAccept=1;
-                              });
-                            },
-                          ),
-                        ],
-                      )
-                  )
                 ],
               ),
-            )
+            ],
+          ),
         );
-      }
-    }
-  }
-  _responseToApply(int select){
-    //拒绝请求
-    if(select == 0 ){
-        print("拒绝");
-        if (MessageUtils.isOpen()) {
-          var object = {
-            'toUserId': widget.sendId,
-            'cstatus':'applyFail',
-            'id':widget.id,
-            'answerContent':'回复',
-            'type': 3,
-          };
-          ChatMessage msg=new ChatMessage(
-            M_visitId: widget.id,
-            M_cStatus: 'applyFail',
-          );
-          var send = jsonEncode(object);
-          WebSocketChannel channel=MessageUtils.getChannel();
-          channel.sink.add(send);
-          //更新信息至本地数据库
-          MessageUtils.updateInviteMessage(msg);
-        } else {
-          ToastUtil.showShortToast("与服务器断开连接");
-        }
-    }
-    //通过请求
-    if(select == 1){
-      print("通过");
-      if (MessageUtils.isOpen()) {
-        var object = {
-          'toUserId': widget.sendId,
-          'cstatus':'applySuccess',
-          'id':widget.id,
-          'answerContent':'回复',
-          'type':3
-        };
-        ChatMessage msg=new ChatMessage(
-          M_visitId: widget.id,
-          M_cStatus: 'applySuccess',
-        );
-        var send = jsonEncode(object);
-        WebSocketChannel channel=MessageUtils.getChannel();
-        channel.sink.add(send);
-        //更新信息至本地数据库
-        MessageUtils.updateInviteMessage(msg);
-      } else {
-        ToastUtil.showShortToast("与服务器断开连接");
+//        return Card(
+//            margin:  EdgeInsets.fromLTRB(10, 10, 100, 10),
+//            child: Container(
+//              height: 210,
+//              child: Column(
+//                children: <Widget>[
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  Container(
+//                    alignment: Alignment.centerLeft,
+//                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
+//                    child:Column(
+//                      crossAxisAlignment: CrossAxisAlignment.start,
+//                      children: <Widget>[
+//                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
+//                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
+//                      ],
+//                    ),
+//                  ),
+//                  _isAccept!=0?Container(
+//                      child:Row(
+//                        mainAxisAlignment: MainAxisAlignment.center,
+//                        children: <Widget>[
+//                          _isAccept==1?Text('已通过',style: TextStyle(color: Colors.green,fontSize: 20)):Text('已拒绝',style: TextStyle(color: Colors.red,fontSize: 20))
+//                        ],
+//                      )
+//                  ):Container(
+//                      child:Row(
+//                        mainAxisAlignment: MainAxisAlignment.center,
+//                        children: <Widget>[
+//                          new FlatButton(
+//                            child: new Text("拒绝", style: TextStyle(color: Colors.red,fontSize: 18)),
+//                            onPressed: () {
+//                              _responseToApply(0);
+//                              setState(() {
+//                                _isAccept=-1;
+//                              });
+//                            },
+//                          ),
+//                          new FlatButton(
+//                            child: new Text("通过", style: TextStyle(color: Colors.green,fontSize: 18)),
+//                            onPressed: () {
+//                              _responseToApply(1);
+//                              setState(() {
+//                                _isAccept=1;
+//                              });
+//                            },
+//                          ),
+//                        ],
+//                      )
+//                  )
+//                ],
+//              ),
+//            )
+//        );
       }
     }
   }
@@ -1032,17 +1091,5 @@ class chatMessage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return chatMessageState();
   }
-  chatMessage(
-      {this.text,
-        this.type,
-        this.visitor,
-        this.inviter,
-        this.companyName,
-        this.startDate,
-        this.endDate,
-        this.status,
-        this.id,
-        this.sendId,
-        this.isAccept,
-      });
+  chatMessage({this.text, this.type, this.visitor, this.inviter, this.companyName, this.startDate, this.endDate, this.status, this.id, this.sendId, this.isAccept,});
 }

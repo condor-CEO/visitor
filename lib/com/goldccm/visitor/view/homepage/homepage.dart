@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:visitor/com/goldccm/visitor/component/Qrcode.dart';
 import 'package:visitor/com/goldccm/visitor/db/chatDao.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
@@ -6,6 +9,8 @@ import 'package:visitor/com/goldccm/visitor/model/ChatMessage.dart';
 import 'package:visitor/com/goldccm/visitor/model/JsonResult.dart';
 import 'package:visitor/com/goldccm/visitor/model/QrcodeMode.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserModel.dart';
+import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/QrcodeHandler.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
@@ -15,6 +20,9 @@ import 'package:visitor/com/goldccm/visitor/model/NoticeInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/NewsInfo.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/NewsView.dart';
+import 'package:visitor/com/goldccm/visitor/view/homepage/morefunction.dart';
+import 'package:visitor/com/goldccm/visitor/view/homepage/notice.dart';
+import 'package:visitor/com/goldccm/visitor/view/submod/roomlist.dart';
 import 'package:visitor/com/goldccm/visitor/view/visitor/fastvisitreq.dart';
 import 'dart:async';
 
@@ -34,7 +42,7 @@ class HomePageState extends State<HomePage> {
   List<String> imageList = [];
   List<String> noticeContentList = [];
   String imageServerUrl; //图片服务器地址
-  List<String> icomImage=['asset/images/open_door.png','asset/images/visitor_icon_action_visit.png','asset/images/visitor_icon_action_qrcode.png','asset/images/visitor_icon_action_more.png'];
+  List<String> icomImage=['asset/images/open_door.png','asset/images/visitor_icon_action_visit.png','asset/images/visitor_icon_action_qrcode.png','asset/images/visitor_icon_action_more.png',];
   List<String> iconTitle=['门禁卡','发起访问','访客二维码','全部'];
   var newsCurrentPage = 0;
   int totalSize = 0; //总条数
@@ -44,12 +52,9 @@ class HomePageState extends State<HomePage> {
   new TextStyle(color: const Color(0xFF999999), fontSize: 14.0);
   TextStyle titleStyle =
   new TextStyle(color: const Color(0xFF757575), fontSize: 14.0);
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<
-      RefreshIndicatorState>();
-  List<String> _iconType = ['_mineCard','_visitReq','_visitorCard','_more'];
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  List<String> _iconType = ['_mineCard','_visitReq','_visitorCard','_more',];
   UserInfo userInfo;
-
-
   @override
   void initState() {
     super.initState();
@@ -79,16 +84,42 @@ class HomePageState extends State<HomePage> {
 
 
   }
-
   @override
   void dispose() {
     super.dispose();
     _scrollController.dispose();
   }
-
+  initFun(String token,int id) async {
+    UserInfo userInfo=await DataUtils.getUserInfo();
+    String url = Constant.serverUrl + Constant.getUserInfoUrl;
+    String threshold = await CommonUtil.calWorkKey(userInfo: userInfo);
+    var res = await Http().post(url, queryParameters: {
+      "token": token,
+      "userId": id,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
+      "requestVer": CommonUtil.getAppVersion(),
+    });
+    if(res is String){
+      Map map = jsonDecode(res);
+      if(map['verify']['sign']=="success"){
+        if(map['data']['role']=="manage"){
+          setState(() {
+            icomImage.add("asset/images/visitor_icon_meetingroom.png");
+            iconTitle.add("会议室");
+            _iconType.add("_meetingRoom");
+          });
+        }
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
-
+    UserInfo _userInfo=Provider.of<UserModel>(context).info;
+    if(userInfo==null){
+      userInfo=_userInfo;
+      initFun(_userInfo.token,_userInfo.id);
+    }
     return new Scaffold(
         appBar: new AppBar(
           backgroundColor: Colors.lightBlue,
@@ -100,7 +131,13 @@ class HomePageState extends State<HomePage> {
                 fontSize: 17.0, color: Colors.white, fontFamily: '楷体_GB2312'),
           ),
           actions: <Widget>[
-            new ImageIcon(new AssetImage("asset/images/visitor_icon_message.png"))
+            Badge(
+              child: new IconButton(icon:Image.asset("asset/images/visitor_icon_message.png",height: 25,),onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>NoticePage()));
+              }),
+              badgeContent: Text('3',style: TextStyle(color: Colors.white),),
+              position: BadgePosition(top: 0,right: 5),
+            ),
           ],
         ),
         body: new RefreshIndicator(
@@ -268,8 +305,10 @@ class HomePageState extends State<HomePage> {
           _requestVisitor();
         }else if(iconType=='_visitorCard'){
           _visitiorCard();
-        }else if(iconType=='_more'){
+        }else if(iconType=='_more') {
           _more();
+        }else if(iconType=="_meetingRoom"){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>RoomList()));
         }
       },
       child: new Container(
@@ -302,7 +341,7 @@ class HomePageState extends State<HomePage> {
 
   Widget _buildItemImage(BuildContext context, int index) {
     return Image.network(
-      imageServerUrl+ imageList[index],
+      Constant.imageServerUrl+ imageList[index],
       fit: BoxFit.cover,
     );
   }
@@ -439,9 +478,8 @@ class HomePageState extends State<HomePage> {
     insertMessage();
 
   }
-
   _more(){
-    ToastUtil.showShortToast('敬请期待');
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>MoreFunction()));
   }
 
   insertMessage() async{
