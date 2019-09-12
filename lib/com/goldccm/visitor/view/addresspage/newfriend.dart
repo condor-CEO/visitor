@@ -25,31 +25,102 @@ class NewFriendPageState extends State<NewFriendPage> {
   List<Person> _request = new List();
   List<Person> _friends = new List();
   UserInfo _userInfo;
+  var _requestBuilderFuture;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('新的朋友'),
-          centerTitle: true,
+      appBar: AppBar(
+        title: const Text(
+          '新的朋友',
+          style: TextStyle(fontSize: 17.0),
         ),
-        body: RefreshIndicator(
-            child: CustomScrollView(
-              slivers: <Widget>[
-                _friendRequest(),
-                _findNew(),
-              ],
+        centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+      ),
+      body: FutureBuilder(
+        builder: _requestFuture,
+        future: _requestBuilderFuture,
+      ),
+    );
+  }
+
+  Widget _requestFuture(BuildContext context, AsyncSnapshot snapshot) {
+    switch (snapshot.connectionState) {
+      case ConnectionState.none:
+        return Text('无连接');
+        break;
+      case ConnectionState.waiting:
+        return Stack(
+          children: <Widget>[
+            Opacity(
+                opacity: 0.1,
+                child: ModalBarrier(
+                  color: Colors.black,
+                )
             ),
-            onRefresh: init));
+            Center(
+              child:Container(
+                padding: const EdgeInsets.all(30.0),
+                decoration: BoxDecoration(
+                  //黑色背景
+                    color: Colors.black87,
+                    //圆角边框
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Column(
+                  //控件里面内容主轴负轴剧中显示
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  //主轴高度最小
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                    Text(
+                      '加载中',
+                      style: TextStyle(color: Colors.white),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+        break;
+      case ConnectionState.active:
+        return Text('active');
+        break;
+      case ConnectionState.done:
+        if (snapshot.hasError) return Text(snapshot.error.toString());
+        return _buildRequestList();
+        break;
+      default:
+        return null;
+    }
+  }
+
+  _buildRequestList() {
+    return RefreshIndicator(
+        child: CustomScrollView(
+          slivers: <Widget>[
+            _friendRequest(),
+            _findNew(),
+          ],
+        ),
+        onRefresh: init);
   }
 
   Future init() async {
-      await presenter.loadRequest();
-      await presenter.loadConcacts();
-      await presenter.loadFriend();
-      setState(() {
-        _request = presenter.getRequest();
-        _friends = presenter.getFriend();
-      });
+    await presenter.loadRequest(_userInfo);
+    await presenter.loadConcacts();
+    await presenter.loadFriend(_userInfo);
+    setState(() {
+      _request = presenter.getRequest();
+      _friends = presenter.getFriend();
+    });
     return null;
   }
 
@@ -57,31 +128,45 @@ class NewFriendPageState extends State<NewFriendPage> {
   void initState() {
     super.initState();
     _userInfo = widget.userInfo;
-    init();
+    _requestBuilderFuture = init();
   }
 
   Widget _findNew() {
     return SliverList(
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
         return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  presenter.getImageUrl() + _friends[index].imageUrl),
+            leading: Container(
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    presenter.getImageUrl() + _friends[index].imageUrl),
+              ),
+              height: 50,
+              width: 50,
             ),
             title: Text('来自通讯录的好友'),
             subtitle: Text('${_friends[index].name}'),
             trailing: Container(
               child: SizedBox(
-                width: 70,
-                height: 40,
-                child: _friends[index].applyType==null?RaisedButton(
-                    textColor: Colors.white,
-                    color: Colors.green,
-                    child: Text('添加'),
-                    onPressed: () async {
-                      presenter.addFriend(_friends[index].name, _friends[index].phone);
-                    }):Align(child:Text('已添加'),alignment: Alignment.centerRight,)
-              ),
+                  width: 75,
+                  height: 35,
+                  child: _friends[index].applyType == null
+                      ? RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
+                          textColor: Colors.white,
+                          color: Colors.blue[200],
+                          child: Text(
+                            '添加',
+                            style: TextStyle(color: Colors.blue[600]),
+                          ),
+                          onPressed: () async {
+                            presenter.addFriend(_friends[index].name,
+                                _friends[index].phone, _userInfo);
+                          })
+                      : Align(
+                          child: Text('已添加'),
+                          alignment: Alignment.centerRight,
+                        )),
             ));
       }, childCount: _friends.length != null ? _friends.length : 0),
     );
@@ -92,29 +177,46 @@ class NewFriendPageState extends State<NewFriendPage> {
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
         return Column(children: <Widget>[
           ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(
-                    presenter.getImageUrl() + _request[index].imageUrl),
+              leading: Container(
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      presenter.getImageUrl() + _request[index].imageUrl),
+                ),
+                height: 50,
+                width: 50,
               ),
               title: Text(_request[index].name),
               subtitle: Text('留言'),
               trailing: Container(
                 child: SizedBox(
-                  width: 70,
-                  height: 40,
-                  child: _request[index].applyType==0?RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.green,
-                      child: Text('同意'),
-                      onPressed: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => remarkFriendPage(
-                                      userId: _request[index].userId,
-                                    ))).then((val) => {init()});
-                      }):Align(child:Text('已添加'),alignment: Alignment.centerRight,)
-                ),
+                    width: 75,
+                    height: 35,
+                    child: _request[index].applyType == 0
+                        ? RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)),
+                            textColor: Colors.white,
+                            color: Colors.blue[200],
+                            child: Text(
+                              '同意',
+                              style: TextStyle(color: Colors.blue[600]),
+                            ),
+                            onPressed: () async {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => remarkFriendPage(
+                                            userId: _request[index].userId,
+                                            userInfo: _userInfo,
+                                          ))).then((val) => {init()});
+                            })
+                        : Align(
+                            child: Text(
+                              '已添加',
+                              style: TextStyle(color: Colors.black45),
+                            ),
+                            alignment: Alignment.centerRight,
+                          )),
               )),
           Divider(height: 0),
         ]);
@@ -146,16 +248,15 @@ class Presenter {
   String _phoneStr = "";
   String _imageUrl;
 
-  Future<bool> agreeRequest(int friendId, String remark) async {
-    String url =
-        "http://192.168.10.154:8080/api_visitor/userFriend/agreeFriend";
+  Future<bool> agreeRequest(int friendId, String remark, UserInfo user) async {
+    String url = Constant.serverUrl + "userFriend/agreeFriend";
     String threshold = await CommonUtil.calWorkKey();
     var res = await Http().post(url, queryParameters: {
-      "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-      "factor": "20170831143600",
-      "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
+      "token": user.token,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
       "requestVer": CommonUtil.getAppVersion(),
-      "userId": "27",
+      "userId": user.id,
       "friendId": friendId,
       "type": "1",
       "remark": remark,
@@ -170,25 +271,27 @@ class Presenter {
     }
     return false;
   }
-  addFriend(String name,String phone) async {
-    String url = "http://192.168.10.154:8080/api_visitor/userFriend/addFriendByPhoneAndUser";
+
+  addFriend(String name, String phone, UserInfo user) async {
+    String url = Constant.serverUrl + "userFriend/addFriendByPhoneAndUser";
     String threshold = await CommonUtil.calWorkKey();
     var res = await Http().post(url, queryParameters: {
-      "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-      "factor":"20170831143600",
-      "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
+      "token": user.token,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
       "requestVer": CommonUtil.getAppVersion(),
-      "userId":"27",
-      "phone":phone,
-      "realName":name,
+      "userId": user.id,
+      "phone": phone,
+      "realName": name,
     });
-    if(res is String){
+    if (res is String) {
       Map map = jsonDecode(res);
       ToastUtil.showShortClearToast(map['verify']['desc']);
     }
   }
+
   loadConcacts() async {
-    _phoneStr="";
+    _phoneStr = "";
     PermissionStatus permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.contacts);
     if (permission.value != 2) {
@@ -224,18 +327,18 @@ class Presenter {
     return _request;
   }
 
-  Future loadFriend() async {
+  Future loadFriend(UserInfo user) async {
     _friends.clear();
-    String url = "http://192.168.10.154:8080/api_visitor/userFriend/findIsUserByPhone";
-//    String threshold = await CommonUtil.calWorkKey();
+    String url = Constant.serverUrl + "userFriend/findIsUserByPhone";
+    String threshold = await CommonUtil.calWorkKey();
     _imageUrl = await DataUtils.getPararInfo("imageServerUrl");
-    if(_phoneStr!="") {
+    if (_phoneStr != "") {
       var res = await Http().post(url, queryParameters: {
-        "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-        "factor": "20170831143600",
-        "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
+        "token": user.token,
+        "factor": CommonUtil.getCurrentTime(),
+        "threshold": threshold,
         "requestVer": CommonUtil.getAppVersion(),
-        "userId": "27",
+        "userId": user.id,
         "phoneStr": _phoneStr,
       });
       if (res is String) {
@@ -259,18 +362,17 @@ class Presenter {
     }
   }
 
-  Future loadRequest() async {
+  Future loadRequest(UserInfo user) async {
     _request.clear();
-    String url =
-        "http://192.168.10.154:8080/api_visitor/userFriend/beAgreeingFriendList";
-//    String threshold = await CommonUtil.calWorkKey();
+    String url = Constant.serverUrl + "userFriend/beAgreeingFriendList";
+    String threshold = await CommonUtil.calWorkKey();
     _imageUrl = await DataUtils.getPararInfo("imageServerUrl");
     var res = await Http().post(url, queryParameters: {
-      "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-      "factor": "20170831143600",
-      "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
+      "token": user.token,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
       "requestVer": CommonUtil.getAppVersion(),
-      "userId": "27",
+      "userId": user.id,
     });
     if (res is String) {
       Map map = jsonDecode(res);
@@ -286,8 +388,7 @@ class Presenter {
               imageUrl: userInfo['idHandleImgUrl'],
               userId: userInfo['id'],
               nickname: userInfo['nickName'],
-              applyType: userInfo['applyType']
-          );
+              applyType: userInfo['applyType']);
           _request.add(user);
         }
       }
@@ -297,7 +398,8 @@ class Presenter {
 
 class remarkFriendPage extends StatelessWidget {
   final int userId;
-  remarkFriendPage({Key key, this.userId}) : super(key: key);
+  final UserInfo userInfo;
+  remarkFriendPage({Key key, this.userId, this.userInfo}) : super(key: key);
   static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Presenter _presenter = new Presenter();
   String remark = "";
@@ -308,6 +410,7 @@ class remarkFriendPage extends StatelessWidget {
         child: Scaffold(
             appBar: AppBar(
               title: Text('朋友备注'),
+              centerTitle: true,
               actions: <Widget>[
                 Padding(
                   padding: EdgeInsets.all(10),
@@ -316,13 +419,13 @@ class remarkFriendPage extends StatelessWidget {
                     textColor: Colors.white,
                     child: new Text(
                       '完成',
-                      style: TextStyle(fontSize: Constant.fontSize),
+                      style: TextStyle(fontSize: Constant.normalFontSize),
                     ),
                     onPressed: () async {
                       if (formKey.currentState.validate()) {
                         formKey.currentState.save();
-                        _presenter.agreeRequest(userId, remark);
-                        Navigator.pop(context);
+                        var result=_presenter.agreeRequest(userId, remark, userInfo);
+                          Navigator.pop(context);
                       }
                     },
                   ),
@@ -353,7 +456,7 @@ class remarkFriendPage extends StatelessWidget {
                           borderSide:
                               BorderSide(color: Colors.black12, width: 1.0),
                         ),
-                        hintStyle: TextStyle(fontSize: Constant.fontSize),
+                        hintStyle: TextStyle(fontSize: Constant.normalFontSize),
                       ),
                       onSaved: (value) {
                         remark = value;

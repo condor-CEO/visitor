@@ -27,28 +27,38 @@ class AddFriendPageState extends State<AddFriendPage>{
     _userInfo=widget.userInfo;
   }
   addFriend() async {
-    String url = "http://192.168.10.154:8080/api_visitor/userFriend/addFriendByPhoneAndUser";
+    String url = Constant.serverUrl+"userFriend/addFriendByPhoneAndUser";
     String threshold = await CommonUtil.calWorkKey();
     var res = await Http().post(url, queryParameters: {
-      "token": "24d16d8a-f9d6-4249-8704-fa6a3fb76ac6",
-      "factor":"20170831143600",
-      "threshold": "71B7735F3E9EC0814B1DC612A1A4A7F0",
+      "token": _userInfo.token,
+      "factor":CommonUtil.getCurrentTime(),
+      "threshold": threshold,
       "requestVer": CommonUtil.getAppVersion(),
-      "userId":"27",
+      "userId":_userInfo.id,
       "phone":_phone,
       "realName":_name,
     });
     if(res is String){
       Map map = jsonDecode(res);
-      ToastUtil.showShortClearToast(map['verify']['desc']);
+      if(map['verify']['desc']=="success"){
+        ToastUtil.showShortClearToast(map['verify']['desc']);
+      }else{
+        ToastUtil.showShortClearToast(map['verify']['desc']);
+      }
     }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('添加好友'),
-        centerTitle:true,
+        title: const Text('添加好友',style: TextStyle(fontSize: 17.0),),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: _addFriend(),
     );
@@ -67,7 +77,7 @@ class AddFriendPageState extends State<AddFriendPage>{
               children: <Widget>[
                 Text(
                   '姓名',
-                  style: TextStyle(fontSize: Constant.fontSize),
+                  style: TextStyle(fontSize:  Constant.normalFontSize),
                 ),
                 Container(
                   width: 180,
@@ -76,7 +86,7 @@ class AddFriendPageState extends State<AddFriendPage>{
                     decoration: InputDecoration(
                       hintText: '请输入好友姓名',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(fontSize: Constant.fontSize),
+                      hintStyle: TextStyle(fontSize: Constant.normalFontSize),
                     ),
                     onSaved: (value){
                       _name=value;
@@ -99,7 +109,7 @@ class AddFriendPageState extends State<AddFriendPage>{
               children: <Widget>[
                 Text(
                   '手机号',
-                  style: TextStyle(fontSize: Constant.fontSize),
+                  style: TextStyle(fontSize: Constant.normalFontSize),
                 ),
                 Container(
                   width: 180,
@@ -108,7 +118,7 @@ class AddFriendPageState extends State<AddFriendPage>{
                     decoration: InputDecoration(
                       hintText: '请输入他的手机号码',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(fontSize: Constant.fontSize),
+                      hintStyle: TextStyle(fontSize:  Constant.normalFontSize),
                     ),
                     onSaved: (value){
                       _phone=value;
@@ -124,16 +134,17 @@ class AddFriendPageState extends State<AddFriendPage>{
             ),
           ),
           new Container(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            padding: EdgeInsets.fromLTRB(20, 100, 20, 0),
             child: new SizedBox(
-              width: 300.0,
+              width: MediaQuery.of(context).size.width,
               height: 50.0,
               child: new RaisedButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                 color: Colors.blue,
                 textColor: Colors.white,
                 child: new Text(
                   '添加好友',
-                  style: TextStyle(fontSize: Constant.fontSize),
+                  style: TextStyle(fontSize:  Constant.normalFontSize),
                 ),
                 onPressed: () async {
                   if(formKey.currentState.validate()){
@@ -144,42 +155,6 @@ class AddFriendPageState extends State<AddFriendPage>{
               ),
             ),
           ),
-          new Container(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: new SizedBox(
-              width: 300.0,
-              height: 50.0,
-              child: new RaisedButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: new Text(
-                  '申请访问',
-                  style: TextStyle(fontSize: Constant.fontSize),
-                ),
-                onPressed: () async {
-
-                },
-              ),
-            ),
-          ),
-          new Container(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: new SizedBox(
-              width: 300.0,
-              height: 50.0,
-              child: new RaisedButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: new Text(
-                  '邀约来访',
-                  style: TextStyle(fontSize: Constant.fontSize),
-                ),
-                onPressed: () async {
-
-                },
-              ),
-            ),
-          )
         ],
       ),
       )

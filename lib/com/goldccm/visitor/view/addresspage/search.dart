@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
@@ -38,8 +37,14 @@ class FriendSearchState extends State<FriendSearch> {
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: AppBar(
-        title: Text('搜索好友'),
+        title: Text('搜索好友',style: TextStyle(fontSize: 17.0),),
         centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: Column(
         children: <Widget>[
@@ -76,7 +81,7 @@ class FriendSearchState extends State<FriendSearch> {
                             color: Colors.grey,
                             iconSize: 18.0,
                             onPressed: () {
-                              onSearchTextChanged(textController.text);
+                              onSearchTextChanged("");
                             },
                           ),
                         ],

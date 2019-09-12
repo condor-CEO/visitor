@@ -54,7 +54,6 @@ class ChatPageState extends State<ChatPage> {
     _timer = null;
     super.dispose();
   }
-
   getUnreadMessage() async {
     if (widget.user.userId != null) {
       List<ChatMessage> msgLists = await MessageUtils.getUnreadMessageList(widget.user.userId);
@@ -78,6 +77,8 @@ class ChatPageState extends State<ChatPage> {
               companyName: widget.user.companyName,
               visitor: _userInfo.realName,
               inviter: widget.user.userName,
+              isAccept:msg.M_cStatus=="applying"?-2:msg.M_cStatus=="applySuccess"?1:-1,
+              recordType: msg.M_recordType,
             );
             setState(() {
               _message.insert(0, message);
@@ -95,6 +96,7 @@ class ChatPageState extends State<ChatPage> {
               id: msg.M_visitId,
               sendId: widget.user.userId,
               isAccept:msg.M_cStatus=="applying"?0:msg.M_cStatus=="applySuccess"?1:-1,
+              recordType: msg.M_recordType,
             );
             _timer?.cancel();
             _timer = null;
@@ -123,7 +125,6 @@ class ChatPageState extends State<ChatPage> {
     countDown();
     _messageBuilderFuture = getMessage();
   }
-
   getMessage() async {
     _message.clear();
     if (widget.user.userId != null) {
@@ -146,6 +147,8 @@ class ChatPageState extends State<ChatPage> {
               companyName: msg.M_companyName,
               visitor: _userInfo.realName,
               inviter: widget.user.userName,
+              isAccept:msg.M_cStatus=="applying"?-2:msg.M_cStatus.trim()=="applySuccess"?1:-1,
+              recordType: msg.M_recordType,
             );
              _message.insert(0, message);
           }
@@ -161,6 +164,7 @@ class ChatPageState extends State<ChatPage> {
               id: msg.M_visitId,
               sendId: widget.user.userId,
               isAccept:msg.M_cStatus=="applying"?0:msg.M_cStatus=="applySuccess"?1:-1,
+              recordType:msg.M_recordType,
             );
               _message.insert(0, message);
           }
@@ -182,8 +186,11 @@ class ChatPageState extends State<ChatPage> {
       _userInfo = user.info;
     }
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
-          title: Text('与${widget.user.userName}洽谈'),
+          title: Text('${widget.user.userName}',style:TextStyle(fontSize: 17.0),),
+          backgroundColor: Theme.of(context).appBarTheme.color,
+          leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
           centerTitle: true,
         ),
         body: Column(
@@ -201,6 +208,11 @@ class ChatPageState extends State<ChatPage> {
                       textColor: Colors.white,
                       child: new Text('邀约'),
                       onPressed: () {
+                        print(_userInfo);
+                        if(_userInfo.orgId==null){
+                          ToastUtil.showShortClearToast("您没有选择您的访问地址，无法发起邀约");
+                          return;
+                        }
                         showDialog(
                             context: context,
                             barrierDismissible: false,
@@ -230,6 +242,13 @@ class ChatPageState extends State<ChatPage> {
                                                               IstartDate = date;
                                                               inviteStartDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
                                                             });
+                                                          }else{
+                                                            setState(() {
+                                                              IstartDate = date;
+                                                              inviteStartDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+                                                              IendDate = null;
+                                                              inviteEndDate ="";
+                                                            });
                                                           }
                                                         },currentTime: DateTime.now(), locale: LocaleType.zh);
                                                       },
@@ -256,6 +275,8 @@ class ChatPageState extends State<ChatPage> {
                                                               IendDate = date;
                                                               inviteEndDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
                                                             });
+                                                          }else{
+                                                            ToastUtil.showShortClearToast("时间选择错误");
                                                           }
                                                         }, currentTime: DateTime.now(), locale: LocaleType.zh);
                                                       },
@@ -298,6 +319,11 @@ class ChatPageState extends State<ChatPage> {
                       textColor: Colors.white,
                       child: new Text('访问'),
                       onPressed: () {
+                        if(widget.user.orgId==null){
+                          print(widget.user.orgId);
+                          ToastUtil.showShortClearToast("对方没有访问地址,无法访问");
+                          return;
+                        }
                         showDialog(
                             context: context,
                             barrierDismissible: false,
@@ -327,6 +353,13 @@ class ChatPageState extends State<ChatPage> {
                                                               startDate = date;
                                                               visitStartDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
                                                             });
+                                                          }else{
+                                                            setState(() {
+                                                              startDate = date;
+                                                              visitStartDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
+                                                              endDate = null;
+                                                              visitEndDate ="";
+                                                            });
                                                           }
                                                         },currentTime: DateTime.now(), locale: LocaleType.zh);
                                                       },
@@ -353,6 +386,8 @@ class ChatPageState extends State<ChatPage> {
                                                               endDate = date;
                                                               visitEndDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(date);
                                                             });
+                                                          }else{
+                                                            ToastUtil.showShortClearToast("时间选择错误");
                                                           }
                                                         }, currentTime: DateTime.now(), locale: LocaleType.zh);
                                                       },
@@ -464,7 +499,9 @@ class ChatPageState extends State<ChatPage> {
               onSubmitted: _handleSubmmited,
               decoration: InputDecoration.collapsed(),
               onChanged: (String text) {
-                _isComposing = text.length > 0;
+                setState(() {
+                  _isComposing = text.length > 0;
+                });
               },
             ),
           ),
@@ -512,7 +549,7 @@ class ChatPageState extends State<ChatPage> {
          M_FriendId: widget.user.userId,
          M_StartDate: inviteStartDate,
          M_EndDate: inviteEndDate,
-         M_Status: "1",
+         M_Status: "0",
          M_IsSend: "0",
          M_companyName: widget.user.companyName,
          M_MessageType: "2",
@@ -521,7 +558,6 @@ class ChatPageState extends State<ChatPage> {
        MessageUtils.insertSingleMessage(chatMessage);
        //插入到当前页面消息中
        setState(() {
-         _message.insert(0, message);
          _isComposing = false;
        });
      } else {
@@ -558,7 +594,7 @@ class ChatPageState extends State<ChatPage> {
         M_FriendId: widget.user.userId,
         M_StartDate: visitStartDate,
         M_EndDate: visitEndDate,
-        M_Status: "1",
+        M_Status: "0",
         M_IsSend: "0",
         M_companyName: widget.user.companyName,
         M_MessageType: "2",
@@ -567,7 +603,6 @@ class ChatPageState extends State<ChatPage> {
       MessageUtils.insertSingleMessage(chatMessage);
       //插入到当前页面消息中
       setState(() {
-        _message.insert(0, message);
         _isComposing = false;
       });
     } else {
@@ -594,7 +629,7 @@ class ChatPageState extends State<ChatPage> {
       String time = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
       ChatMessage chat = new ChatMessage(
           M_userId: 27,
-          M_Status: "1",
+          M_Status: "0",
           M_Time: time,
           M_IsSend: "0",
           M_MessageType: "1",
@@ -606,72 +641,20 @@ class ChatPageState extends State<ChatPage> {
       MessageUtils.insertSingleMessage(chat);
       //插入到当前页面消息中
       setState(() {
-        _message.insert(0, message);
         _isComposing = false;
       });
     } else {
       ToastUtil.showShortToast("与服务器断开连接");
     }
   }
-  _responseToApply(int select,int id){
-    //拒绝请求
-    if(select == 0 ){
-      print("拒绝");
-      if (MessageUtils.isOpen()) {
-        var object = {
-          'toUserId': widget.user.userId,
-          'cstatus':'applyFail',
-          'id':id,
-          'answerContent':'回复',
-          'type': 3,
-        };
-        ChatMessage msg=new ChatMessage(
-          M_visitId: id,
-          M_cStatus: 'applyFail',
-        );
-        var send = jsonEncode(object);
-        WebSocketChannel channel=MessageUtils.getChannel();
-        channel.sink.add(send);
-        //更新信息至本地数据库
-        MessageUtils.updateInviteMessage(msg);
-      } else {
-        ToastUtil.showShortToast("与服务器断开连接");
-      }
-    }
-    //通过请求
-    if(select == 1){
-      print("通过");
-      if (MessageUtils.isOpen()) {
-        var object = {
-          'toUserId':  widget.user.userId,
-          'cstatus':'applySuccess',
-          'id':id,
-          'answerContent':'回复',
-          'type':3
-        };
-        ChatMessage msg=new ChatMessage(
-          M_visitId: id,
-          M_cStatus: 'applySuccess',
-        );
-        var send = jsonEncode(object);
-        WebSocketChannel channel=MessageUtils.getChannel();
-        channel.sink.add(send);
-        //更新信息至本地数据库
-        MessageUtils.updateInviteMessage(msg);
-      } else {
-        ToastUtil.showShortToast("与服务器断开连接");
-      }
-    }
-  }
 }
 
 
 class chatMessageState extends State<chatMessage>{
-  int _isAccept = 0;
+  int _isAccpet=0;
   @override
   void initState() {
     super.initState();
-    _isAccept=widget.isAccept;
   }
   @override
   Widget build(BuildContext context) {
@@ -752,63 +735,6 @@ class chatMessageState extends State<chatMessage>{
           ),
         );
       } else if (widget.type == "2") {
-//        return Card(
-//            margin:  EdgeInsets.fromLTRB(10, 10, 100, 10),
-//            child: Container(
-//              height: 200,
-//              child: Column(
-//                children: <Widget>[
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    child: widget.status=="applying"?Text('您已提交申请',style: TextStyle(color: Colors.red,fontSize: 20),):Text('您的申请已通过',style: TextStyle(color:Colors.green,fontSize: 20),),
-//                  )
-//                ],
-//              ),
-//            )
-//        );
         return new Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
@@ -845,63 +771,6 @@ class chatMessageState extends State<chatMessage>{
         );
       }
       else if (widget.type == "3") {
-//        return Card(
-//            margin:  EdgeInsets.fromLTRB(100, 10, 10, 10),
-//            child: Container(
-//              height: 200,
-//              child: Column(
-//                children: <Widget>[
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    child: widget.status=="applying"?Text('您已提交申请',style: TextStyle(color: Colors.blue,fontSize: 20),):widget.status=="applySuccess"?Text('您的申请已通过',style: TextStyle(color:Colors.green,fontSize: 20),):Text('您的申请已被拒绝',style: TextStyle(color:Colors.red,fontSize: 20),),
-//                  )
-//                ],
-//              ),
-//            )
-//        );
         return new Container(
           margin: EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
@@ -933,7 +802,7 @@ class chatMessageState extends State<chatMessage>{
                           padding: EdgeInsets.all(10),
                         ),
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>VisitRequest(startDate: widget.startDate,endDate: widget.endDate,visitor: widget.visitor,inviter: widget.inviter,isAccept: widget.status=="applying"?-2:widget.status=="applySuccess"?1:-1)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>VisitRequest(startDate: widget.startDate,endDate: widget.endDate,visitor: widget.visitor,inviter: widget.inviter,isAccept: widget.isAccept)));
                         },
                       )
                   ),
@@ -975,7 +844,11 @@ class chatMessageState extends State<chatMessage>{
                         padding: EdgeInsets.all(10),
                       ),
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>VisitRequest(id: widget.id,sendId: widget.sendId,startDate: widget.startDate,endDate: widget.endDate,visitor: widget.visitor,inviter: widget.inviter,isAccept: widget.isAccept,)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>VisitRequest(id: widget.id,sendId: widget.sendId,startDate: widget.startDate,endDate: widget.endDate,visitor: widget.visitor,inviter: widget.inviter,isAccept: _isAccpet!=0&&_isAccpet!=null?_isAccpet:widget.isAccept,recordType: widget.recordType,))).then((val){
+                           setState(() {
+                             _isAccpet=val;
+                           });
+                        });
                       },
                     )
                   ),
@@ -984,92 +857,6 @@ class chatMessageState extends State<chatMessage>{
             ],
           ),
         );
-//        return Card(
-//            margin:  EdgeInsets.fromLTRB(10, 10, 100, 10),
-//            child: Container(
-//              height: 210,
-//              child: Column(
-//                children: <Widget>[
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('开始时间',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.startDate,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('结束',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.endDate,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical: 0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('申请人',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.visitor,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  Container(
-//                    alignment: Alignment.centerLeft,
-//                    padding: EdgeInsets.symmetric(vertical:0,horizontal: 10),
-//                    child:Column(
-//                      crossAxisAlignment: CrossAxisAlignment.start,
-//                      children: <Widget>[
-//                        Text('审批者',style: TextStyle(fontWeight: FontWeight.w500,)),
-//                        Text(widget.inviter,style: TextStyle(color: Colors.grey),),
-//                      ],
-//                    ),
-//                  ),
-//                  _isAccept!=0?Container(
-//                      child:Row(
-//                        mainAxisAlignment: MainAxisAlignment.center,
-//                        children: <Widget>[
-//                          _isAccept==1?Text('已通过',style: TextStyle(color: Colors.green,fontSize: 20)):Text('已拒绝',style: TextStyle(color: Colors.red,fontSize: 20))
-//                        ],
-//                      )
-//                  ):Container(
-//                      child:Row(
-//                        mainAxisAlignment: MainAxisAlignment.center,
-//                        children: <Widget>[
-//                          new FlatButton(
-//                            child: new Text("拒绝", style: TextStyle(color: Colors.red,fontSize: 18)),
-//                            onPressed: () {
-//                              _responseToApply(0);
-//                              setState(() {
-//                                _isAccept=-1;
-//                              });
-//                            },
-//                          ),
-//                          new FlatButton(
-//                            child: new Text("通过", style: TextStyle(color: Colors.green,fontSize: 18)),
-//                            onPressed: () {
-//                              _responseToApply(1);
-//                              setState(() {
-//                                _isAccept=1;
-//                              });
-//                            },
-//                          ),
-//                        ],
-//                      )
-//                  )
-//                ],
-//              ),
-//            )
-//        );
       }
     }
   }
@@ -1087,9 +874,10 @@ class chatMessage extends StatefulWidget {
   final int sendId;
   final int id;
   final int isAccept;
+  final String recordType;
   @override
   State<StatefulWidget> createState() {
     return chatMessageState();
   }
-  chatMessage({this.text, this.type, this.visitor, this.inviter, this.companyName, this.startDate, this.endDate, this.status, this.id, this.sendId, this.isAccept,});
+  chatMessage({this.text, this.type, this.visitor, this.inviter, this.companyName, this.startDate, this.endDate, this.status, this.id, this.sendId, this.isAccept,this.recordType});
 }

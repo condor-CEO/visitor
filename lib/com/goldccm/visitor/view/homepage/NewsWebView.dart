@@ -8,8 +8,8 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 class NewsWebPage extends StatefulWidget{
   final String  news_url;
   final String title;
-
-  NewsWebPage(this.news_url,this.title);
+  final bool news_bar;
+  NewsWebPage({this.news_url,this.title,this.news_bar});
 
   @override
   State<StatefulWidget> createState()=>new NewsWebPageState(news_url,title);
@@ -73,8 +73,7 @@ void parseResult() {
 Widget build(BuildContext context) {
   List<Widget> titleContent = [];
   titleContent.add(new Text(
-//      title,
-    "新闻详情",
+      title,
     style: new TextStyle(color: Colors.white),
   ));
   if (loading) {
@@ -83,7 +82,7 @@ Widget build(BuildContext context) {
   }
   titleContent.add(new Container(width: 50.0));
   // WebviewScaffold是插件提供的组件，用于在页面上显示一个WebView并加载URL
-  return new WebviewScaffold(
+  return widget.news_bar==null?new WebviewScaffold(
     key: scaffoldKey,
     url:news_url, // 登录的URL
     appBar: new AppBar(
@@ -96,6 +95,12 @@ Widget build(BuildContext context) {
     withZoom: true,  // 允许网页缩放
     withLocalStorage: true, // 允许LocalStorage
     withJavascript: true, // 允许执行js代码
+  ):new WebviewScaffold(
+    key: scaffoldKey,
+    url:news_url, // 登录的URL
+    withZoom: true,  // 允许网页缩放
+    withLocalStorage: true, // 允许LocalStorage
+    withJavascript: true, // 允许执行js代码
   );
 }
 
@@ -103,9 +108,9 @@ Widget build(BuildContext context) {
 void dispose() {
   // 回收相关资源
   // Every listener should be canceled, the same should be done with this stream.
-  onUrlChanged.cancel();
-  onStateChanged.cancel();
-  flutterWebViewPlugin.dispose();
+  onUrlChanged?.cancel();
+  onStateChanged?.cancel();
+  flutterWebViewPlugin?.dispose();
   super.dispose();
 }
 

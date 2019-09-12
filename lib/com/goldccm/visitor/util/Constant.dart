@@ -1,8 +1,15 @@
 class Constant {
-  static final String serverUrl = "http://47.99.209.40:8082/";
-  static final String testServerUrl = "http://192.168.10.154:8080/api_visitor/";
-  static final String imageServerUrl = "http://47.99.209.40/imgserver/";
-  static final String imageServerApiUrl = "http://47.99.209.40:8081/goldccm-imgServer/goldccm/image/gainData";
+  //actual
+    static final String imageServerApiUrl = "http://47.98.205.206:8081/goldccm-imgServer/goldccm/image/gainData";
+    static final String serverUrl = "http://47.96.71.163:8082/visitor/";
+    static final String webSocketServerUrl ="ws://47.96.71.163:8082/visitor/";
+    static final String imageServerUrl = "http://47.98.205.206/imgserver/";
+  //local test
+//  static final String serverUrl = "http://192.168.10.61:8080/api_visitor/";
+//  static final String webSocketServerUrl ="ws://192.168.10.61:8080/api_visitor/";
+//  static final String imageServerApiUrl="http://192.168.10.61:8082/goldccm-imgServer/goldccm/image/gainData";
+//  static final String imageServerUrl = "http://47.99.209.40/imgserver/";
+  //////////////////////////////////////////////
   static final String userUrl = "user/";
   static final String codeUrl = "code/";
   static final String userFriendUrl = "userFriend/";
@@ -16,8 +23,8 @@ class Constant {
   static final String newsUrl = "news/";
   static final int connectTimeout = 3000;
   static final int receiveTimeout = 3000;
-  static final double fontSize = 14.0;
-  static final String webScoketUrl = "";
+  static final double normalFontSize = 16.0;
+  static final String USERAGREEMENTAPIURL = "http://xiaosong6.idverify.cn:8082/xieyi.html";
   /*
    * 登录
    */
@@ -201,10 +208,21 @@ class Constant {
   /*
    * 用户的公司（状态为确认）
    */
-  static final String findApplySucUrl = companyUserUrl + "findApplySuc";
-
+   static final String findApplySucUrl = companyUserUrl + "findApplySuc";
   /*
    * 切换默认公司
    */
-  static final String updateCompanyIdAndRoleUrl = userUrl + "updateCompanyIdAndRole";
+   static final String updateCompanyIdAndRoleUrl = userUrl + "updateCompanyIdAndRole";
+  /*
+   * 获取访问历史记录
+   */
+   static final String visitHistoryUrl = visitorRecodeUrl + "inviteRecord";
+  /*
+   * 获取邀约历史记录
+   */
+   static final String inviteHistoryUrl = visitorRecodeUrl + "inviteRecord";
+  /*
+   * 获取好友历史记录
+   */
+   static final String friendHistoryUrl = visitorRecodeUrl + "inviteRecord";
 }

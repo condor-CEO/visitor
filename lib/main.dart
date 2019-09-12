@@ -20,6 +20,10 @@ void main() {
           brightness: Brightness.light,
           primaryColor:Colors.blue,
           accentColor: Colors.purple,
+          backgroundColor: Colors.white,
+          appBarTheme: AppBarTheme(
+            color: Colors.blue[700],
+          )
         ),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
@@ -31,6 +35,6 @@ void main() {
         ],
         home: SplashPage(),
       )
-    )
+    ),
   );
 }

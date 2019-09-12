@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/component/MessageCompent.dart';
 import 'package:visitor/com/goldccm/visitor/model/ChatMessage.dart';
@@ -30,7 +29,6 @@ class ChatListState extends State<ChatList> {
   }
   getLatestMessage() async {
     List<ChatMessage> list=await MessageUtils.getLatestMessage();
-//    print(list);
     setState(() {
       _chatHis=list;
     });
@@ -48,13 +46,14 @@ class ChatListState extends State<ChatList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(backgroundColor: Colors.lightBlue,
+      appBar: new AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.color,
         centerTitle: true,
         title: new Text(
           "访客",
           textAlign: TextAlign.center,
           style: new TextStyle(
-              fontSize: 17.0, color: Colors.white, fontFamily: '楷体_GB2312'),
+              fontSize: 18.0, color: Colors.white),
         ),
       ),
       body: new ListView.builder(

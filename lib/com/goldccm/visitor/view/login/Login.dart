@@ -361,9 +361,8 @@ class LoginState extends State<Login> {
     });
   }
 
-  /**
-   * 获取验证码
-   */
+  // 获取验证码
+
   Future<bool> getCheckCode() async {
     bool _userNameCheck = checkLoignUser();
     if (_userNameCheck) {
@@ -406,10 +405,7 @@ class LoginState extends State<Login> {
     }
     return checkResult;
   }
-
-  /**
-   * 密码校验
-   */
+   // 密码校验
   bool checkPass() {
     String _pass = _passwordController.text.toString();
     bool checkResult = true;
@@ -454,7 +450,7 @@ class LoginState extends State<Login> {
       bool passCheck = checkPass();
       if (passCheck) {
            _passNum = Md5Util().encryptByMD5ByHex(_passwordController.text.toString());
-           data = await Http.instance.post(Constant.loginUrl, queryParameters: {
+           data = await Http.instance.post(Constant.serverUrl+Constant.loginUrl, queryParameters: {
           "phone": _userNameController.text.toString(),
           "style": "1",
           "sysPwd": _passNum,
@@ -464,7 +460,7 @@ class LoginState extends State<Login> {
       //验证码登录
       if (checkCode()) {
         _codeNum = _checkCodeController.text.toString();
-        data = await Http.instance.post(Constant.loginUrl, queryParameters: {
+        data = await Http.instance.post(Constant.serverUrl+Constant.loginUrl, queryParameters: {
           "phone": _userNameController.text.toString(),
           "style": "1",
           "code": _codeNum
@@ -474,7 +470,6 @@ class LoginState extends State<Login> {
 
     if (data != null) {
       JsonResult result = JsonResult.fromJson(data);
-      print('$result');
       if (result.sign == 'success') {
         var userMap = result.data['user'];
         print('返回用户信息：$userMap');
@@ -485,8 +480,7 @@ class LoginState extends State<Login> {
         user.init(userInfo);
         Navigator.of(context).pushAndRemoveUntil(
             new MaterialPageRoute(
-              //builder: (BuildContext context) => _isLogin==true?new MyHomeApp():new Login()
-                builder: (BuildContext context) =>new MyHomeApp()
+              builder: (BuildContext context) => new MyHomeApp(),
             ),
                 (Route route) => route == null);
         return true;

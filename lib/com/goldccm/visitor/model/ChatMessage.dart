@@ -73,7 +73,6 @@ class ChatMessage {
     this.M_cStatus = map['M_cStatus'];
     this.M_answerContent = map['M_answerContent'];
     this.M_recordType = map['M_recordType'];
-
   }
 
   @override

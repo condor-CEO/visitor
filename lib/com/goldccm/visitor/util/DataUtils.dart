@@ -38,7 +38,7 @@ class DataUtils {
   }
 
   /*
-  保存登录信息
+  保存用户信息
    */
   static Future<UserInfo> saveUserInfo(Map data) async{
     if (data != null) {
@@ -126,6 +126,80 @@ class DataUtils {
         soleCode: soleCode,
         validityDate: validityDate,
         companyName: companyName,
+      );
+      return userInfo;
+    }
+    return null;
+  }
+  /*
+  更新用户信息
+   */
+  static Future<UserInfo> updateUserInfo(UserInfo data) async{
+    if (data != null) {
+      SharedPreferences sp;
+      await SharedPreferences.getInstance().then((value) {
+        sp = value;
+      });
+      int id = data.id;
+      num orgId = data.orgId;
+      String relationNo = data.relationNo;
+      String realName = data.realName;
+      String nickName = data.nickName;
+      String loginName = data.loginName;
+      String idType = data.idType;
+      String idNO = data.idNO;
+      String phone = data.phone;
+      String createDate = data.createDate;
+      String createTime = data.createTime;
+      String province = data.province;
+      String city = data.city;
+      String area = data.area;
+      String addr = data.addr;
+      String isAuth = data.isAuth;
+      String authDate = data.authDate;
+      String authTime = data.authTime;
+      String idFrontImgUrl = data.idFrontImgUrl;
+      String idOppositeImgUrl = data.idOppositeImgUrl;
+      String idHandleImgUrl = data.idHandleImgUrl;
+      String bankCardImgUrl = data.bankCardImgUrl;
+      String headImgUrl = data.headImgUrl;
+      String token = data.token;
+      await sp.setInt(SP_ORGID, orgId);
+      await sp.setString(SP_REALNAME, realName);
+      await sp.setString(SP_LOGINNAME, loginName);
+      await sp.setString(SP_IDTYPE, idType);
+      await sp.setString(SP_IDNO, idNO);
+      await sp.setString(SP_PHONE, phone);
+      await sp.setString(SP_ISAUTH, isAuth);
+      await sp.setString(SP_TOKEN, token);
+      await sp.setString(SP_HEADIMGURL, headImgUrl);
+      await sp.setInt(SP_ID, id);
+      await sp.setString(SP_IDHANDLEIMGURL, idHandleImgUrl);
+
+      UserInfo userInfo = new UserInfo(
+        id: id,
+        orgId: orgId,
+        relationNo: relationNo,
+        realName: realName,
+        nickName: nickName,
+        loginName: loginName,
+        idType: idType,
+        idNO: idNO,
+        phone: phone,
+        createDate: createDate,
+        createTime: createTime,
+        province: province,
+        city: city,
+        addr: addr,
+        isAuth: isAuth,
+        authDate: authDate,
+        authTime: authTime,
+        idFrontImgUrl: idFrontImgUrl,
+        idOppositeImgUrl: idOppositeImgUrl,
+        idHandleImgUrl: idHandleImgUrl,
+        bankCardImgUrl: bankCardImgUrl,
+        headImgUrl: headImgUrl,
+        token: token,
       );
       return userInfo;
     }

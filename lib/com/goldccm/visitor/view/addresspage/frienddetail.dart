@@ -27,6 +27,11 @@ class FriendDetailPageState extends State<FriendDetailPage> {
       appBar: AppBar(
         title: Text('好友信息'),
         centerTitle: true,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: _drawDetail(),
     );
@@ -81,7 +86,7 @@ class FriendDetailPageState extends State<FriendDetailPage> {
                     ),
                   ),
                   Text(
-                    "所属公司："+(_user.companyName != null ? _user.companyName : '所属公司为空') ,
+                    "所属公司："+(_user.companyName != null ? _user.companyName : '无') ,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 15.0,
@@ -102,7 +107,7 @@ class FriendDetailPageState extends State<FriendDetailPage> {
               textColor: Colors.white,
               child: new Text(
                 '洽谈',
-                style: TextStyle(fontSize: Constant.fontSize),
+                style: TextStyle(fontSize:  Constant.normalFontSize),
               ),
               onPressed: () async {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(user: widget.user,)));

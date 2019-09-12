@@ -65,7 +65,7 @@ class CommonUtil{
 
    //获取app版本信息
 static String  getAppVersion(){
-    String appVersion="";
+    String appVersion="1.0.0";
     //异步获取
    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
      appVersion = packageInfo.version;

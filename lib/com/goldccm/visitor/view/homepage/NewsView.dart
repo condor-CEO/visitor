@@ -21,7 +21,18 @@ class NewsView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           new Expanded(
-              flex: 2,
+            flex: 3,
+            child: new Container(
+              height: 120,
+              padding: EdgeInsets.all(10),
+              child: new Image.network(
+                Constant.imageServerUrl + newsInfo.newsImageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          new Expanded(
+              flex: 4,
               child: new Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -37,6 +48,7 @@ class NewsView extends StatelessWidget {
                                 text: newsInfo.newsName,
                                 style: new TextStyle(
                                     fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
                                     color: Colors.black,
                                     fontFamily: '楷体_GB2312')),
                             maxLines: 1,
@@ -45,20 +57,8 @@ class NewsView extends StatelessWidget {
                           // child:new Text(newsInfo.newsName,overflow: TextOverflow.ellipsis,style: new TextStyle(fontSize: 15.0,color: Colors.black,fontFamily: '楷体_GB2312' )),
                           ),
                     ),
-                    new Row(children: <Widget>[
-                      new Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10.0,
-                            left: 10.0,
-                          ),
-                          child: new Text(newsInfo.newsDate,
-                              style: new TextStyle(
-                                  fontSize: 14.0,
-                                  color: Colors.black,
-                                  fontFamily: '楷体_GB2312')))
-                    ]),
                     new Container(
-                        height: 80,
+                        height: 70,
                         child: (new Padding(
                             padding: const EdgeInsets.only(
                               top: 5.0,
@@ -73,18 +73,20 @@ class NewsView extends StatelessWidget {
                                       fontFamily: '楷体_GB2312')),
                               maxLines: 4,
                               overflow: TextOverflow.ellipsis,
-                            ))))
+                            )))),
+                    new Row(children: <Widget>[
+                      new Padding(
+                          padding: const EdgeInsets.only(
+                            top: 0.0,
+                            left: 10.0,
+                          ),
+                          child: new Text(newsInfo.newsDate,
+                              style: new TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                  fontFamily: '楷体_GB2312')))
+                    ])
                   ])),
-          new Expanded(
-            flex: 1,
-            child: new Container(
-              height: 110,
-              child: new Image.network(
-                Constant.imageServerUrl + newsInfo.newsImageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-          )
         ],
       ),
     );

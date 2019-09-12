@@ -46,7 +46,7 @@ class GestureLoginState extends State<GestureLogin> {
             "手势密码登录",
             textAlign: TextAlign.center,
             style: new TextStyle(
-                fontSize: 18.0, color: Colors.white, fontFamily: '楷体_GB2312'),
+                fontSize: 18.0, color: Colors.white,),
           ),
         ),
         body: new Column(children: <Widget>[
@@ -56,7 +56,7 @@ class GestureLoginState extends State<GestureLogin> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Image.asset("asset/images/visitor_logo.png"),
+                new Image.asset("asset/icons/手势密码用户@2x.png",scale: 1.7,),
               ],
             ),
           ),
@@ -127,7 +127,6 @@ class GestureLoginState extends State<GestureLogin> {
         SharedPreferenceUtil.saveUser(userInfo);
         Navigator.of(context).pushAndRemoveUntil(
             new MaterialPageRoute(
-              //builder: (BuildContext context) => _isLogin==true?new MyHomeApp():new Login()
                 builder: (BuildContext context) =>new MyHomeApp()
             ),
                 (Route route) => route == null);

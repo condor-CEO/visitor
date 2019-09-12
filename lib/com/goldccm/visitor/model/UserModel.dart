@@ -12,10 +12,11 @@ class UserModel with ChangeNotifier{
   Future init(UserInfo userInfo) async {
     if(userInfo!=null) {
       _userInfo = userInfo;
-    }
-    var user = await DataUtils.getUserInfo();
-    if(user!=null){
-      _userInfo=user;
+    }else{
+      var user = await DataUtils.getUserInfo();
+      if(user!=null){
+        _userInfo=user;
+      }
     }
     notifyListeners();
   }

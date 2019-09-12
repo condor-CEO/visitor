@@ -9,7 +9,7 @@ class ChatDao extends BaseDBProvider {
   String table_name = "tbl_ChatMessage";
 
   //主键
-  String primary_Key = "_id";
+  String primary_Key = "M_ID";
 
   @override
   tableName() {
@@ -21,7 +21,6 @@ class ChatDao extends BaseDBProvider {
   @override
   tableSqlString() {
     return tableBaseString(table_name, primary_Key) + '''
-    M_ID integer not null autoincrement,
     M_MessageContet text,
     M_Status text,
     M_Time text,
@@ -39,7 +38,9 @@ class ChatDao extends BaseDBProvider {
     M_companyName text,
     M_province text,
     M_city text,
-    M_cStatus text  
+    M_cStatus text,
+    M_recordType text,
+    M_answerContent text
     )
     ''';
   }
@@ -94,6 +95,7 @@ class ChatDao extends BaseDBProvider {
     List<Map<String, dynamic>> listRes =
         await db.query(table_name, where: 'M_FriendId = ?', whereArgs: [id]);
     if (listRes.length > 0) {
+      print(listRes);
       List<ChatMessage> msgs = listRes.map((item) => ChatMessage.fromJson(item)).toList();
       return msgs;
     }
@@ -112,7 +114,13 @@ class ChatDao extends BaseDBProvider {
     }
     return null;
   }
-
+  //删除最后一条消息
+  Future<int> removeLastMessage() async{
+    Database db = await getDataBase();
+    int count = await db.rawDelete(
+        'delete from tbl_ChatMessage where M_ID =(select max(M_ID) from tbl_ChatMessage)');
+    return count;
+  }
   //查询所有未读消息
   Future<int> getNoRedMessage() async {
     Database db = await getDataBase();
@@ -133,7 +141,14 @@ class ChatDao extends BaseDBProvider {
   Future updateMessage(ChatMessage chatMessage) async {
     Database db = await getDataBase();
     int count = await db.rawUpdate(
-        'update tbl_ChatMessage set M_cStatus = ?  where M_visitId = ? ', [chatMessage.M_cStatus,chatMessage.M_visitId]);
+        'update tbl_ChatMessage set M_cStatus = ?  where M_IsSend = 0 and M_StartDate = ? and M_EndDate = ? ', [chatMessage.M_cStatus,chatMessage.M_StartDate,chatMessage.M_EndDate]);
+    return count;
+  }
+  //更新访问信息
+  Future updateMessageByVisitId(ChatMessage chatMessage) async {
+    Database db = await getDataBase();
+    int count = await db.rawUpdate(
+        'update tbl_ChatMessage set M_cStatus = ?  where M_visitId=? ', [chatMessage.M_cStatus,chatMessage.M_visitId]);
     return count;
   }
   //删除会话信息
@@ -146,7 +161,6 @@ class ChatDao extends BaseDBProvider {
   //消息转map
   Map<String, dynamic> toMap(ChatMessage msg) {
     Map<String, dynamic> map = {
-      'M_ID': msg.M_ID,
       'M_MessageContet': msg.M_MessageContent,
       'M_Status': msg.M_Status,
       'M_Time': msg.M_Time,
@@ -165,6 +179,8 @@ class ChatDao extends BaseDBProvider {
       'M_province': msg.M_province,
       'M_city': msg.M_city,
       'M_cStatus': msg.M_cStatus,
+      'M_recordType':msg.M_recordType,
+      'M_answerContent':msg.M_answerContent,
     };
     return map;
   }
