@@ -42,6 +42,7 @@ class AddFriendPageState extends State<AddFriendPage>{
       Map map = jsonDecode(res);
       if(map['verify']['desc']=="success"){
         ToastUtil.showShortClearToast(map['verify']['desc']);
+        Navigator.pop(context);
       }else{
         ToastUtil.showShortClearToast(map['verify']['desc']);
       }

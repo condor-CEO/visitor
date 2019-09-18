@@ -6,7 +6,6 @@ class NewsView extends StatelessWidget {
   final NewsInfo newsInfo;
   final String imageServerUrl;
   NewsView(this.newsInfo, this.imageServerUrl);
-
   @override
   Widget build(BuildContext context) {
     return new Padding(

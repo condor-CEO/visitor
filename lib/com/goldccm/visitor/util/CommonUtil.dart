@@ -30,7 +30,7 @@ class CommonUtil{
   //计算当前的key，上送服务端校验
   static Future<String> calWorkKey({UserInfo userInfo}) async{
     UserInfo _userInfo;
-    if(userInfo!=null){
+    if(userInfo!=null&&userInfo.id!=null){
       _userInfo=userInfo;
     }
     else {

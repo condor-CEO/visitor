@@ -19,6 +19,7 @@ class NoticePage extends StatefulWidget {
 class NoticePageState extends State<NoticePage> {
   var _noticeBuilderFuture;
   List<Notice> _lists = <Notice>[];
+  bool notEmpty=true;
   @override
   void initState() {
     super.initState();
@@ -50,6 +51,9 @@ class NoticePageState extends State<NoticePage> {
           _lists.insert(0, notice);
         }
       }else{
+        setState(() {
+          notEmpty=false;
+        });
         ToastUtil.showShortToast(map['verify']['desc']);
       }
     }
@@ -65,9 +69,18 @@ class NoticePageState extends State<NoticePage> {
         backgroundColor: Theme.of(context).appBarTheme.color,
         leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
       ),
-      body: FutureBuilder(
+      body: notEmpty==true?FutureBuilder(
         builder: noticeFuture,
         future: _noticeBuilderFuture,
+      ):Column(
+        children: <Widget>[
+          Container(
+            child: Center(
+                child: Image.asset('asset/images/visitor_icon_nodata.png')),
+            padding: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
+          ),
+          Center(child: Text('暂无公告'))
+        ],
       ),
     );
   }

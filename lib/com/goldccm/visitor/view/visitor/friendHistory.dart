@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
+import 'package:visitor/com/goldccm/visitor/model/FriendInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/VisitInfo.dart';
 import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/newfriend.dart';
 
 class FriendHistory extends StatefulWidget{
   final UserInfo userInfo;
@@ -19,11 +21,12 @@ class FriendHistory extends StatefulWidget{
 
 class FriendHistoryState extends State<FriendHistory>{
   int count = 1;
-  List<VisitInfo> _friendLists = <VisitInfo>[];
+  List<FriendInfo> _friendLists = <FriendInfo>[];
   ScrollController _scrollController = new ScrollController();
   bool isPerformingRequest = false;
   bool notEmpty=true;
   var _friendBuilderFuture;
+  UserInfo _userInfo;
   @override
   void initState() {
     super.initState();
@@ -51,19 +54,48 @@ class FriendHistoryState extends State<FriendHistory>{
             title: Text('加载中'),
           );
         } else {
-          return ListTile(
-            title: Text(_friendLists[index].companyName),
-            subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(_friendLists[index].startDate),
-                  Text(_friendLists[index].endDate),
-                ]
-            ),
-            onTap: () {
-
-            },
-          );
+          return     ListTile(
+              leading: Container(
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      Constant.imageServerUrl + _friendLists[index].imageUrl),
+                ),
+                height: 50,
+                width: 50,
+              ),
+              title: Text( _friendLists[index].name),
+              subtitle: Text('留言'),
+              trailing: Container(
+                child: SizedBox(
+                    width: 75,
+                    height: 35,
+                    child:  _friendLists[index].applyType == 0
+                        ? RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0)),
+                        textColor: Colors.white,
+                        color: Colors.blue[200],
+                        child: Text(
+                          '同意',
+                          style: TextStyle(color: Colors.blue[600]),
+                        ),
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => remarkFriendPage(
+                                    userId:  _friendLists[index].userId,
+                                    userInfo:widget.userInfo
+                                  )));
+                        })
+                        : Align(
+                      child: Text(
+                        '已添加',
+                        style: TextStyle(color: Colors.black45),
+                      ),
+                      alignment: Alignment.centerRight,
+                    )),
+              ));
         }
       },
       separatorBuilder: (BuildContext context, int index) {
@@ -94,23 +126,29 @@ class FriendHistoryState extends State<FriendHistory>{
         if (res is String) {
           Map map = jsonDecode(res);
           if(map['verify']['sign']=="success"){
-            if(map['data']['total']==0){
+            if(map['data'].length==0){
               setState(() {
                 isPerformingRequest = true;
                 notEmpty = false;
               });
             }else{
-              for (var data in map['data']['rows']) {
-                VisitInfo visitInfo = new VisitInfo(
-
+              for (var data in map['data']) {
+                FriendInfo info = new FriendInfo(
+                  name: data['realName'],
+                  applyType: data['applyType'],
+                  phone: data['phone'],
+                  imageUrl: data['idHandleImgUrl'],
+                  userId: data['userId']
                 );
-                _friendLists.add(visitInfo);
+                if(info.userId!=widget.userInfo.id){
+                  _friendLists.add(info);
+                }
               }
               setState(() {
                 count++;
                 isPerformingRequest = false;
               });
-              if (map['data']['rows'].length < 10) {
+              if (map['data'].length < 10) {
                 setState(() {
                   count--;
                   isPerformingRequest = true;

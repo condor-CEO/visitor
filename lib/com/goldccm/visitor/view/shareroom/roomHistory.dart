@@ -76,7 +76,10 @@ class RoomHistoryState extends State<RoomHistory> {
                   roomName: data['room_name'],
                   roomAddress: data['room_addr'],
                   roomIntro: data['room_short_content'],
+                  tradeNO: data['trade_no'],
+                  tradeStatus: data['trade_status'],
                   roomImage: data['room_image'],
+                  roomSize: data['room_size'],
                   roomType: data['room_type']);
               _roomLists.add(roomOrderInfo);
             }
@@ -175,7 +178,10 @@ class RoomHistoryState extends State<RoomHistory> {
                 roomAddress: data['room_addr'],
                 roomIntro: data['room_short_content'],
                 roomImage: data['room_image'],
+                tradeNO: data['trade_no'],
+                tradeStatus: data['trade_status'],
                 roomType: data['room_type'],
+                gate: data['mode'],
                 price: data['price'].toString());
             _roomLists.add(roomOrderInfo);
           }
@@ -274,14 +280,15 @@ class RoomHistoryState extends State<RoomHistory> {
                     : '预定已取消'),
               ],
             ),
+            trailing: _roomLists[index].tradeNO==null?Text("待支付"):_roomLists[index].tradeStatus=="1"?Text("待支付"):_roomLists[index].tradeStatus=="2"?Text('已支付'):Text('已关闭'),
             onTap: () {
-              Navigator.push(
+              (_roomLists[index].tradeNO==null||_roomLists[index].tradeStatus=="1"||_roomLists[index].tradeStatus=="2")?Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => RoomBook(
                             order: _roomLists[index],
                             userInfo: widget.userInfo,
-                          )));
+                          ))):ToastUtil.showShortClearToast("订单超时，已关闭支付渠道，请重新下订单。");
             },
           );
         }

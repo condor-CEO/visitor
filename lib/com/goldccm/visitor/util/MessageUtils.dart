@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visitor/com/goldccm/visitor/db/chatDao.dart';
 import 'package:visitor/com/goldccm/visitor/model/ChatMessage.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
@@ -39,7 +41,9 @@ class MessageUtils {
       }
   }
   static closeChannel(){
-    _channel.sink?.close();
+    if(_channel!=null){
+      _channel.sink?.close();
+    }
   }
   static isOpen() {
     return _isOpen;
@@ -50,7 +54,7 @@ class MessageUtils {
     _isOpen = true;
   }
 
-  static _onDone() {
+  static _onDone() async {
     debugPrint("Websocket关闭");
     _channel=null;
     _isOpen = false;
@@ -91,6 +95,7 @@ class MessageUtils {
           M_FrealName: map['realName'].toString(),
           M_FheadImgUrl: map['headImgUrl'].toString(),
           M_FnickName: map['nickName'].toString(),
+          M_orgId: map['orgId'],
         );
         chatDao.insertNewMessage(msg);
       } else if (map['type'] == 2) {

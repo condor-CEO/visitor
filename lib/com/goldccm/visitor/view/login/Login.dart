@@ -132,7 +132,7 @@ class LoginState extends State<Login> {
                         ]),
                     new Padding(
                       padding: const EdgeInsets.only(top: 80.0),
-                      child: new Image.asset("asset/images/visitor_logo.png"),
+                      child: new Image.asset("asset/icons/ic_launcher.png"),
                     ),
                     new Padding(
                         padding: const EdgeInsets.only(

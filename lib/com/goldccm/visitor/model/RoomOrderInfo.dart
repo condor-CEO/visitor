@@ -11,14 +11,18 @@ class RoomOrderInfo<T>{
   String cancelTime;
   String roomName;
   int roomType;
+  int roomSize;
   String roomIntro;
   String roomAddress;
   String roomImage;
   String price;
+  String tradeNO;
+  String tradeStatus;
+  int gate;
 
-  RoomOrderInfo({this.id, this.roomID, this.applyUserID, this.applyDate,
+  RoomOrderInfo({this.id, this.roomID, this.applyUserID, this.applyDate,this.roomSize,
     this.applyStartTime, this.applyEndTime, this.timeInterval, this.recordStatus,
-    this.createTime, this.cancelTime,this.roomName,this.roomType,this.roomIntro,this.roomAddress,this.roomImage,this.price});
+    this.createTime, this.cancelTime,this.roomName,this.roomType,this.roomIntro,this.roomAddress,this.roomImage,this.price,this.tradeNO,this.tradeStatus,this.gate});
 
   RoomOrderInfo.fromJson(Map json){
     this.id=json['id'];

@@ -21,12 +21,14 @@ import 'package:visitor/com/goldccm/visitor/model/BannerInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/NoticeInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/NewsInfo.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/NewsView.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/notice.dart';
 import 'package:visitor/com/goldccm/visitor/view/shareroom/RoomList.dart';
 import 'package:visitor/com/goldccm/visitor/view/visitor/fastvisitreq.dart';
 import 'dart:async';
 
+import '../../../../../home.dart';
 import 'NewsWebView.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,7 +44,9 @@ class HomePageState extends State<HomePage> {
   List<String> imageList = [];
   List<String> noticeContentList = [];
   String imageServerUrl; //图片服务器地址
-  List<FunctionLists> _lists=[FunctionLists(iconImage:'asset/icons/门禁卡icon@2x.png',iconTitle: '门禁卡',iconType: '_mineCard'),FunctionLists(iconImage:'asset/icons/会议室icon@2x.png',iconTitle: '会议室',iconType: '_meetingRoom'),FunctionLists(iconImage:'asset/icons/发起访问icon@2x.png',iconTitle: '发起访问',iconType: '_visitReq'),FunctionLists(iconImage:'asset/icons/访客二维码icon@2x.png',iconTitle: '访客二维码',iconType: '_visitorCard'),FunctionLists(iconImage:'asset/icons/全部icon@2x.png',iconTitle: '全部',iconType: '_more')];
+  List<FunctionLists> _addLists=[FunctionLists(iconImage:'asset/icons/门禁卡icon@2x.png',iconTitle: '门禁卡',iconType: '_mineCard'),FunctionLists(iconImage:'asset/icons/会议室icon@2x.png',iconTitle: '会议室',iconType: '_meetingRoom'),];
+  List<FunctionLists> _baseLists=[FunctionLists(iconImage:'asset/icons/发起访问icon@2x.png',iconTitle: '发起访问',iconType: '_visitReq'),FunctionLists(iconImage:'asset/icons/访客二维码icon@2x.png',iconTitle: '访客二维码',iconType: '_visitorCard'),FunctionLists(iconImage:'asset/icons/全部icon@2x.png',iconTitle: '全部',iconType: '_more')];
+  List<FunctionLists> _lists=[];
   var newsCurrentPage = 0;
   int totalSize = 0; //总条数
   ScrollController _scrollController = new ScrollController();
@@ -51,7 +55,8 @@ class HomePageState extends State<HomePage> {
   new TextStyle(color: const Color(0xFF999999), fontSize: 14.0);
   TextStyle titleStyle =
   new TextStyle(color: const Color(0xFF757575), fontSize: 14.0);
-  UserInfo userInfo;
+  UserInfo  userInfo=new UserInfo();
+  UserInfo _userInfo=new UserInfo();
   final double expandedHight = 200.0;
   @override
   void initState() {
@@ -63,6 +68,7 @@ class HomePageState extends State<HomePage> {
     getBanner();
     getNoticeInfo();
     getNewsInfoList();
+    getUserInfo();
     _scrollController.addListener(() {
       var maxScroll = _scrollController.position.maxScrollExtent;
       var pixel = _scrollController.position.pixels;
@@ -101,7 +107,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     UserInfo _userInfo=Provider.of<UserModel>(context).info;
-    if(userInfo==null){
+    if(userInfo==null||userInfo.id==null){
       userInfo=_userInfo;
     }
     return Scaffold(
@@ -331,7 +337,41 @@ class HomePageState extends State<HomePage> {
           fontSize: 14.0, fontFamily: '楷体_GB2312', color: Colors.black,fontWeight: FontWeight.w500),
     );
   }
+  ///获取用户信息
+  getUserInfo() async {
+    UserInfo userInfo = await DataUtils.getUserInfo();
+    String imageServerUrl = await DataUtils.getPararInfo("imageServerUrl");
+    if (userInfo != null) {
+      setState(() {
+        _userInfo = userInfo;
+        getPrivilege();
+      });
+    } else {
+      reloadUserInfo(userInfo);
+    }
+  }
 
+  //重载用户信息
+  //为了防止第一次登录时用户信息获取延迟
+  //设定一个递归函数直到获取到用户的信息
+  reloadUserInfo(UserInfo userInfo) {
+    Future.delayed(Duration(seconds: 1), () async {
+      UserInfo userInfo = await DataUtils.getUserInfo();
+      String imageServerUrl = await DataUtils.getPararInfo("imageServerUrl");
+      if (userInfo != null) {
+        if (_userInfo.id == null) {
+          reloadUserInfo(userInfo);
+        }else {
+          setState(() {
+            _userInfo = userInfo;
+            getPrivilege();
+          });
+        }
+      } else {
+        reloadUserInfo(userInfo);
+      }
+    });
+  }
   getBanner() async {
     var response = await Http.instance.get(Constant.getBannerUrl);
 //    new Timer(Duration(milliseconds: 500),(){
@@ -415,7 +455,41 @@ class HomePageState extends State<HomePage> {
     } );
 
   }
+//个人中心角色权限获取
+  Future getPrivilege() async {
+    String url = Constant.serverUrl+"userAppRole/getRoleMenu";
+    String threshold = await CommonUtil.calWorkKey(userInfo: _userInfo);
+    var res = await Http().post(url, queryParameters: {
+      "token": _userInfo.token,
+      "userId": _userInfo.id,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
+      "requestVer": CommonUtil.getAppVersion(),
+      "userId":"45",
+      "orgId":"20",
+    });
+    //附加权限
+    if(res != null){
+      if(res is String){
+        Map map = jsonDecode(res);
+        if(map['data']!=null){
+          for(int i=0;i<map['data'].length;i++){
+            for(int j=0;j<_addLists.length;j++){
+              if(_addLists[j].iconTitle==map['data'][i]['menu_name']){
+                _lists.add(_addLists[j]);
+              }
+            }
+          }
+        }
+      }
+    }else{
 
+    }
+    //基础权限
+    for(int i=0;i<_baseLists.length;i++){
+      _lists.add(_baseLists[i]);
+    }
+  }
   Future<bool> checkAuth() async{
     userInfo = await DataUtils.getUserInfo();
     if(userInfo!=null&&userInfo.isAuth=='T'){
@@ -445,10 +519,7 @@ class HomePageState extends State<HomePage> {
 
   }
   _requestVisitor(){
-    Navigator.push(context,
-        new MaterialPageRoute(builder: (BuildContext context) {
-          return new FastVisitReq();
-        }));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>MyHomeApp(tabIndex: 2,)));
   }
   _visitiorCard(){
     ToastUtil.showShortToast("暂未开放，敬请期待");

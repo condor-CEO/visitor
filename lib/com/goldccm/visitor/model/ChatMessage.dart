@@ -15,6 +15,7 @@ class ChatMessage {
   String M_FrealName;
   String M_FheadImgUrl;
   int M_visitId;
+  String M_orgId;
   String M_StartDate;
   String M_EndDate;
   String M_orgName;
@@ -25,7 +26,6 @@ class ChatMessage {
   String M_recordType;
   String M_answerContent;
   int unreadCount;
-
   ChatMessage(
       {this.M_ID,
       this.M_MessageContent,
@@ -42,6 +42,7 @@ class ChatMessage {
       this.M_StartDate,
       this.M_EndDate,
       this.M_orgName,
+        this.M_orgId,
       this.M_companyName,
       this.M_city,
       this.M_province,
@@ -69,6 +70,7 @@ class ChatMessage {
     this.M_orgName = map['M_orgName'];
     this.M_companyName = map['M_companyName'];
     this.M_city = map['M_city'];
+    this.M_orgId = map['M_orgId'];
     this.M_province = map['M_province'];
     this.M_cStatus = map['M_cStatus'];
     this.M_answerContent = map['M_answerContent'];
@@ -77,7 +79,7 @@ class ChatMessage {
 
   @override
   String toString() {
-    return 'ChatMessage{M_ID: $M_ID, M_MessageContent: $M_MessageContent, M_Status: $M_Status, M_Time: $M_Time, M_MessageType: $M_MessageType, M_IsSend: $M_IsSend, M_userId: $M_userId, M_FriendId: $M_FriendId, M_FnickName: $M_FnickName, M_FrealName: $M_FrealName, M_FheadImgUrl: $M_FheadImgUrl, M_visitId: $M_visitId, M_StartDate: $M_StartDate, M_EndDate: $M_EndDate, M_orgName: $M_orgName, M_companyName: $M_companyName, M_province: $M_province, M_city: $M_city, M_cStatus: $M_cStatus, M_recordType: $M_recordType, M_answerContent: $M_answerContent, unreadCount: $unreadCount}';
+    return 'ChatMessage{M_ID: $M_ID, M_MessageContent: $M_MessageContent, M_Status: $M_Status, M_Time: $M_Time, M_MessageType: $M_MessageType, M_IsSend: $M_IsSend, M_userId: $M_userId, M_FriendId: $M_FriendId, M_FnickName: $M_FnickName, M_FrealName: $M_FrealName, M_FheadImgUrl: $M_FheadImgUrl, M_visitId: $M_visitId, M_StartDate: $M_StartDate, M_EndDate: $M_EndDate, M_orgName: $M_orgName, M_companyName: $M_companyName, M_province: $M_province, M_city: $M_city, M_cStatus: $M_cStatus, M_recordType: $M_recordType, M_answerContent: $M_answerContent, unreadCount: $unreadCount,M:orgId: $M_orgId}';
   }
 
 }

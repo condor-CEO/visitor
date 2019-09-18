@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserModel.dart';
 import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
+import 'package:visitor/com/goldccm/visitor/util/MessageUtils.dart';
+import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/addfriend.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/frienddetail.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/newfriend.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/search.dart';
+import 'package:visitor/com/goldccm/visitor/view/login/Login.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:lpinyin/lpinyin.dart';
 
@@ -30,6 +34,7 @@ class AddressPageState extends State<AddressPage> {
   Presenter _presenter = new Presenter();
   List<User> _userLists = new List<User>();
   UserModel _userModel;
+  UserInfo _userInfo =new UserInfo();
   bool initFlag = false;
   var alphabet = [
     '☀',
@@ -64,7 +69,7 @@ class AddressPageState extends State<AddressPage> {
   @override
   void initState() {
     super.initState();
-    _handleRefresh();
+    _initRefresh();
   }
 
   @override
@@ -299,12 +304,22 @@ class AddressPageState extends State<AddressPage> {
                 ),
               ],
             ),
-            onRefresh: _handleRefresh));
+            onRefresh: _handleRefresh
+        )
+    );
   }
 
   Future _handleRefresh() async {
+      await _presenter.loadUserList(_userInfo,_userModel);
+      setState(() {
+        _userLists = _presenter.getUserList();
+        initFlag = _presenter.getFlag();
+      });
+      return null;
+  }
+  Future _initRefresh() async {
     Future.delayed(Duration(seconds: 2), () async {
-      await _presenter.loadUserList(_userModel);
+      await _presenter.loadUserList(_userInfo,_userModel);
       setState(() {
         _userLists = _presenter.getUserList();
         initFlag = _presenter.getFlag();
@@ -312,7 +327,36 @@ class AddressPageState extends State<AddressPage> {
       return null;
     });
   }
+  ///获取用户信息
+  getUserInfo() async {
+    UserInfo userInfo = await DataUtils.getUserInfo();
+    if (userInfo != null) {
+      setState(() {
+        _userInfo = userInfo;
+      });
+    } else {
+      reloadUserInfo(userInfo);
+    }
+  }
 
+  //重载用户信息
+  //为了防止第一次登录时用户信息获取延迟
+  //设定一个递归函数直到获取到用户的信息
+  reloadUserInfo(UserInfo userInfo) {
+    Future.delayed(Duration(seconds: 1), () async {
+      UserInfo userInfo = await DataUtils.getUserInfo();
+      if (userInfo != null) {
+        setState(() {
+          _userInfo = userInfo;
+        });
+        if (_userInfo.id == null) {
+          reloadUserInfo(userInfo);
+        }
+      } else {
+        reloadUserInfo(userInfo);
+      }
+    });
+  }
   Widget _buildInfoWithoutData() {
     return Column(
       children: <Widget>[
@@ -611,7 +655,7 @@ class User {
   int userId;
   String imageServerUrl;
   String firstZiMu;
-  int orgId;
+  String orgId;
   User(
       {this.userName,
       this.phone,
@@ -649,18 +693,23 @@ class Presenter {
     return initFlag;
   }
 
-  loadUserList(UserModel userModel) async {
+  loadUserList(UserInfo _userInfo,UserModel userModel) async {
     _userlists.clear();
-    UserInfo _userInfo = await DataUtils.getUserInfo();
-    if (_userInfo == null) {
-      _userInfo = userModel.info;
+    UserInfo userInfo = await DataUtils.getUserInfo();
+    if(userInfo.id==null){
+      if(_userInfo.id !=null){
+        userInfo = _userInfo;
+      }
+      else if (userModel.info.id!=null) {
+        userInfo = userModel.info;
+      }
     }
     _imageUrl = await DataUtils.getPararInfo("imageServerUrl");
     String threshold = await CommonUtil.calWorkKey();
     String url = Constant.serverUrl + Constant.findUserFriendUrl;
     var res = await Http().post(url, queryParameters: {
-      "token": _userInfo.token,
-      "userId": _userInfo.id,
+      "token": userInfo.token,
+      "userId": userInfo.id,
       "factor": CommonUtil.getCurrentTime(),
       "threshold": threshold,
       "requestVer": CommonUtil.getAppVersion(),
@@ -679,7 +728,7 @@ class Presenter {
               companyName: userInfo['companyName'],
               userId: userInfo['id'],
               notice: userInfo['remark'],
-              orgId: userInfo['orgId'],
+              orgId: userInfo['orgId'].toString(),
               imageServerUrl: _imageUrl,
               firstZiMu: PinyinHelper.getFirstWordPinyin(userInfo['realName'])
                   .substring(0, 1)
@@ -694,6 +743,10 @@ class Presenter {
         } else {
           initFlag = true;
         }
+      }
+    }else{
+      if(res['verify']['sign']=="tokenFail"){
+        ToastUtil.showShortClearToast("您的账号在另一台设备登录，请退出重新登录");
       }
     }
   }

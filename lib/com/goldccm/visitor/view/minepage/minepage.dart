@@ -36,11 +36,14 @@ class MinePage extends StatefulWidget {
 //_imageServerUrl是图片访问服务器地址
 //_imageServerApiUrl是图书上传服务器地址
 UserInfo _userInfo = new UserInfo();
+UserInfo userInfo=new UserInfo();
 String _imageServerUrl;
 String _imageServerApiUrl;
 
 class MinePageState extends State<MinePage> {
-  List<FunctionLists> _list=[FunctionLists(iconImage: 'asset/icons/实名认证V.png',iconTitle: '实名认证',iconType: '_verify'),FunctionLists(iconImage: 'asset/icons/会议室icon@2x.png',iconTitle:'会议室',iconType:'_meetingRoom'),FunctionLists(iconImage: 'asset/icons/公司管理@2x.png',iconTitle:'公司管理',iconType: '_companySetting' ),FunctionLists(iconImage:'asset/icons/安全管理@2x.png',iconTitle:'安全管理',iconType: '_securitySetting' ),FunctionLists(iconImage:'asset/icons/设置@2x.png',iconTitle: '设置',iconType:'_setting' )];
+  List<FunctionLists> _addlist=[FunctionLists(iconImage: 'asset/icons/实名认证V.png',iconTitle: '实名认证',iconType: '_verify'),FunctionLists(iconImage: 'asset/icons/会议室icon@2x.png',iconTitle:'会议室',iconType:'_meetingRoom'),FunctionLists(iconImage: 'asset/icons/公司管理@2x.png',iconTitle:'公司管理',iconType: '_companySetting' ),];
+  List<FunctionLists> _baseList=[FunctionLists(iconImage:'asset/icons/安全管理@2x.png',iconTitle:'安全管理',iconType: '_securitySetting' ),FunctionLists(iconImage:'asset/icons/设置@2x.png',iconTitle: '设置',iconType:'_setting' )];
+  List<FunctionLists> _list = [];
   ScrollController _minescrollController = new ScrollController();
   final double expandedHeight = 65.0;
   double get top {
@@ -62,15 +65,46 @@ class MinePageState extends State<MinePage> {
       var maxScroll = _minescrollController.position.maxScrollExtent;
       var pixel = _minescrollController.position.pixels;
       if(maxScroll==pixel){
-        setState(() {
-
-        });
+        setState(() {});
       }else{
-        setState(() {
-
-        });
+        setState(() {});
       }
     });
+  }
+  //个人中心角色权限获取
+  Future getPrivilege() async {
+    String url = Constant.serverUrl+"userAppRole/getRoleMenu";
+    String threshold = await CommonUtil.calWorkKey(userInfo: _userInfo);
+    var res = await Http().post(url, queryParameters: {
+      "token": _userInfo.token,
+      "userId": _userInfo.id,
+      "factor": CommonUtil.getCurrentTime(),
+      "threshold": threshold,
+      "requestVer": CommonUtil.getAppVersion(),
+      "userId":"45",
+      "orgId":"20",
+    });
+    //附加权限
+    if(res != null){
+      if(res is String){
+        Map map = jsonDecode(res);
+        if(map['data']!=null){
+          for(int i=0;i<map['data'].length;i++){
+            for(int j=0;j<_addlist.length;j++){
+                if(_addlist[j].iconTitle==map['data'][i]['menu_name']){
+                  _list.add(_addlist[j]);
+                }
+            }
+          }
+        }
+      }
+    }else{
+
+    }
+    //基础权限
+    for(int i=0;i<_baseList.length;i++){
+      _list.add(_baseList[i]);
+    }
   }
   @override
   void dispose() {
@@ -79,6 +113,10 @@ class MinePageState extends State<MinePage> {
   }
   @override
   Widget build(BuildContext context) {
+    UserInfo _userInfo=Provider.of<UserModel>(context).info;
+    if(userInfo==null||userInfo.id==null){
+      userInfo=_userInfo;
+    }
     var user = Provider.of<UserModel>(context);
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -317,6 +355,7 @@ class MinePageState extends State<MinePage> {
       setState(() {
         _userInfo = userInfo;
         _imageServerUrl = imageServerUrl;
+        getPrivilege();
       });
     } else {
       reloadUserInfo(userInfo);
@@ -331,12 +370,14 @@ class MinePageState extends State<MinePage> {
       UserInfo userInfo = await DataUtils.getUserInfo();
       String imageServerUrl = await DataUtils.getPararInfo("imageServerUrl");
       if (userInfo != null) {
-        setState(() {
-          _userInfo = userInfo;
-          _imageServerUrl = imageServerUrl;
-        });
         if (_userInfo.id == null) {
           reloadUserInfo(userInfo);
+        }else {
+          setState(() {
+            _userInfo = userInfo;
+            _imageServerUrl = imageServerUrl;
+            getPrivilege();
+          });
         }
       } else {
         reloadUserInfo(userInfo);
@@ -407,7 +448,7 @@ class HeadImagePageState extends State<HeadImagePage> {
               child: ClipOval(
                 child: _image == null
                     ? Image.network(
-                        _imageServerUrl +
+                        Constant.imageServerUrl +
                             (_userInfo.headImgUrl != null
                                 ? _userInfo.headImgUrl
                                 : _userInfo.idHandleImgUrl),

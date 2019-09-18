@@ -46,6 +46,7 @@ class RoomListState extends State<RoomList>{
               roomStatus: room['room_status'].toString(),
               roomManager: room['room_manager'].toString(),
               roomType: room['room_type'],
+              roomSize: room['room_size'],
               roomImage: room['room_image'],
               roomCancelHour: room['rooom_cancle_hour'],
               roomOrgCode: room['room_orgcode'],

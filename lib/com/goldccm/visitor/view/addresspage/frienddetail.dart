@@ -51,7 +51,7 @@ class FriendDetailPageState extends State<FriendDetailPage> {
                 child: CircleAvatar(
                   backgroundImage:_user.idHandleImgUrl != null
                       ? NetworkImage(
-                          _user.imageServerUrl + _user.idHandleImgUrl,
+                         Constant.imageServerUrl+ _user.idHandleImgUrl,
                         )
                       : AssetImage('asset/images/visitor_icon_account.png'),
                   radius: 100,

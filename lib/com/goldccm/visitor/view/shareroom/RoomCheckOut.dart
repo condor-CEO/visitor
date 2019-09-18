@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
 import 'package:visitor/com/goldccm/visitor/model/RoomInfo.dart';
+import 'package:visitor/com/goldccm/visitor/model/RoomOrderInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
@@ -21,7 +22,8 @@ class RoomCheckOut extends StatefulWidget{
   final String startTime;
   final String endTime;
   final int count;
-  RoomCheckOut({Key key,this.roomInfo,this.userInfo,this.day,this.timeLines,this.startTime,this.endTime,this.count}):super(key:key);
+  final RoomOrderInfo roomOrderInfo;
+  RoomCheckOut({Key key,this.roomInfo,this.userInfo,this.day,this.timeLines,this.startTime,this.endTime,this.count,this.roomOrderInfo}):super(key:key);
   @override
   State<StatefulWidget> createState() {
     return RoomCheckoutState();
@@ -214,7 +216,8 @@ class RoomCheckoutState extends State<RoomCheckOut>{
         "subject": widget.roomInfo.roomName,
         "body": widget.roomInfo.roomName+","+widget.roomInfo.roomAddress+","+widget.startTime+"-"+widget.endTime,
         "total_amount":"0.01",
-        "buyer_id":widget.userInfo.id,
+        "user_id":widget.userInfo.id,
+        "apply_id":widget.roomOrderInfo.id,
       }));
       if(res is String){
         if(res !=null){

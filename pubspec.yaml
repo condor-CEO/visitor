@@ -110,6 +110,7 @@ flutter:
     - asset/images/visitor_icon_next.png
     - asset/images/visitor_icon_head.png
     - asset/images/visitor_icon_nodata.png
+    - asset/icons/ic_launcher.png
     - asset/images/visitor_icon_security.png
     - asset/images/visitor_icon_setting.png
     - asset/images/visitor_icon_account.png

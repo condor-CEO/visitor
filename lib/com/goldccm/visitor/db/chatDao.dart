@@ -40,6 +40,7 @@ class ChatDao extends BaseDBProvider {
     M_city text,
     M_cStatus text,
     M_recordType text,
+    M_orgId text,
     M_answerContent text
     )
     ''';
@@ -181,6 +182,7 @@ class ChatDao extends BaseDBProvider {
       'M_cStatus': msg.M_cStatus,
       'M_recordType':msg.M_recordType,
       'M_answerContent':msg.M_answerContent,
+      'M_orgId':msg.M_orgId,
     };
     return map;
   }

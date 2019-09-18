@@ -52,14 +52,15 @@ class VisitHistoryState extends State<VisitHistory>{
           );
         } else {
           return ListTile(
-            title: Text(_visitLists[index].companyName),
+            title: Text(_visitLists[index].companyName!=null?_visitLists[index].companyName:""),
             subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(_visitLists[index].startDate),
-                  Text(_visitLists[index].endDate),
+                  Text(_visitLists[index].startDate!=null?_visitLists[index].startDate:""),
+                  Text(_visitLists[index].endDate!=null?"至 ${_visitLists[index].endDate}":""),
                 ]
             ),
+            trailing: Text(_visitLists[index].cstatus!=null?(_visitLists[index].cstatus=="applying"?"审核中":_visitLists[index].cstatus=="applySuccess"?"已通过":"未通过"):""),
             onTap: () {
 
             },
@@ -102,7 +103,16 @@ class VisitHistoryState extends State<VisitHistory>{
             }else{
               for (var data in map['data']['rows']) {
                 VisitInfo visitInfo = new VisitInfo(
-
+                  companyName: data['realName'],
+                  visitDate: data['visitDate'],
+                  visitTime: data['visitTime'],
+                  userId: data['userId'].toString(),
+                  visitorId: data['visitorId'].toString(),
+                  reason: data['reason'],
+                  cstatus: data['cstatus'],
+                  dateType: data['dateType'],
+                  endDate: data['endDate'],
+                  startDate: data['startDate'],
                 );
                 _visitLists.add(visitInfo);
               }

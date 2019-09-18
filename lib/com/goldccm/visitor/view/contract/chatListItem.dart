@@ -67,8 +67,8 @@ class ChatListState extends State<ChatList> {
     ChatMessage message = _chatHis[index];
     return new InkWell(
       onTap: () {
-        User user =new User(userId: message.M_FriendId,userName: message.M_FrealName,idHandleImgUrl: message.M_FheadImgUrl,imageServerUrl: Constant.imageServerUrl);;
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(user:user,)));
+        User user =new User(userId: message.M_FriendId,userName: message.M_FrealName,idHandleImgUrl: message.M_FheadImgUrl,imageServerUrl: Constant.imageServerUrl,orgId:message.M_orgId.toString());
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(user:user)));
       },
       child: MessageCompent(
         headImgUrl: message.M_FheadImgUrl,

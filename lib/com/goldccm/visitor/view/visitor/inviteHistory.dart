@@ -51,14 +51,15 @@ class InviteHistoryState extends State<InviteHistory>{
           );
         } else {
           return ListTile(
-            title: Text(_inviteLists[index].companyName),
+            title: Text(_inviteLists[index].companyName!=null?_inviteLists[index].companyName:""),
             subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(_inviteLists[index].startDate),
-                Text(_inviteLists[index].endDate),
-              ]
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(_inviteLists[index].startDate!=null?_inviteLists[index].startDate:""),
+                  Text(_inviteLists[index].endDate!=null?"至 ${_inviteLists[index].endDate}":""),
+                ]
             ),
+            trailing: Text(_inviteLists[index].cstatus!=null?(_inviteLists[index].cstatus=="applying"?"审核中":_inviteLists[index].cstatus=="applySuccess"?"已通过":"未通过"):""),
             onTap: () {
 
             },
@@ -101,7 +102,16 @@ class InviteHistoryState extends State<InviteHistory>{
             }else{
               for (var data in map['data']['rows']) {
                 VisitInfo visitInfo = new VisitInfo(
-
+                  companyName: data['realName'],
+                  visitDate: data['visitDate'],
+                  visitTime: data['visitTime'],
+                  userId: data['userId'].toString(),
+                  visitorId: data['visitorId'].toString(),
+                  reason: data['reason'],
+                  cstatus: data['cstatus'],
+                  dateType: data['dateType'],
+                  endDate: data['endDate'],
+                  startDate: data['startDate'],
                 );
                 _inviteLists.add(visitInfo);
               }

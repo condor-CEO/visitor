@@ -11,7 +11,6 @@ import 'package:visitor/com/goldccm/visitor/util/MessageUtils.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/visitRequest.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -63,6 +62,7 @@ class ChatPageState extends State<ChatPage> {
             chatMessage message = new chatMessage(
               text: msg.M_MessageContent,
               type: msg.M_IsSend,
+              imageURL: msg.M_IsSend=="0"?_userInfo.idHandleImgUrl:widget.user.idHandleImgUrl,
             );
             setState(() {
               _message.insert(0, message);
@@ -77,6 +77,7 @@ class ChatPageState extends State<ChatPage> {
               companyName: widget.user.companyName,
               visitor: _userInfo.realName,
               inviter: widget.user.userName,
+              imageURL: msg.M_IsSend=="0"?_userInfo.idHandleImgUrl:widget.user.idHandleImgUrl,
               isAccept:msg.M_cStatus=="applying"?-2:msg.M_cStatus=="applySuccess"?1:-1,
               recordType: msg.M_recordType,
             );
@@ -95,6 +96,7 @@ class ChatPageState extends State<ChatPage> {
               inviter: _userInfo.realName,
               id: msg.M_visitId,
               sendId: widget.user.userId,
+              imageURL: msg.M_IsSend=="0"?_userInfo.idHandleImgUrl:widget.user.idHandleImgUrl,
               isAccept:msg.M_cStatus=="applying"?0:msg.M_cStatus=="applySuccess"?1:-1,
               recordType: msg.M_recordType,
             );
@@ -135,6 +137,7 @@ class ChatPageState extends State<ChatPage> {
             chatMessage message = new chatMessage(
               text: msg.M_MessageContent,
               type: msg.M_IsSend,
+              imageURL: msg.M_IsSend=="0"?_userInfo.idHandleImgUrl:widget.user.idHandleImgUrl,
             );
             _message.insert(0, message);
           }
@@ -148,6 +151,7 @@ class ChatPageState extends State<ChatPage> {
               visitor: _userInfo.realName,
               inviter: widget.user.userName,
               isAccept:msg.M_cStatus=="applying"?-2:msg.M_cStatus.trim()=="applySuccess"?1:-1,
+              imageURL: msg.M_IsSend=="0"?_userInfo.idHandleImgUrl:widget.user.idHandleImgUrl,
               recordType: msg.M_recordType,
             );
              _message.insert(0, message);
@@ -164,6 +168,7 @@ class ChatPageState extends State<ChatPage> {
               id: msg.M_visitId,
               sendId: widget.user.userId,
               isAccept:msg.M_cStatus=="applying"?0:msg.M_cStatus=="applySuccess"?1:-1,
+              imageURL: msg.M_IsSend=="0"?_userInfo.idHandleImgUrl:widget.user.idHandleImgUrl,
               recordType:msg.M_recordType,
             );
               _message.insert(0, message);
@@ -208,7 +213,6 @@ class ChatPageState extends State<ChatPage> {
                       textColor: Colors.white,
                       child: new Text('邀约'),
                       onPressed: () {
-                        print(_userInfo);
                         if(_userInfo.orgId==null){
                           ToastUtil.showShortClearToast("您没有选择您的访问地址，无法发起邀约");
                           return;
@@ -319,8 +323,8 @@ class ChatPageState extends State<ChatPage> {
                       textColor: Colors.white,
                       child: new Text('访问'),
                       onPressed: () {
+                        print(widget.user.orgId);
                         if(widget.user.orgId==null){
-                          print(widget.user.orgId);
                           ToastUtil.showShortClearToast("对方没有访问地址,无法访问");
                           return;
                         }
@@ -561,7 +565,8 @@ class ChatPageState extends State<ChatPage> {
          _isComposing = false;
        });
      } else {
-       ToastUtil.showShortToast("与服务器断开连接");
+       ToastUtil.showShortClearToast("与服务器断开连接，请从设置中退出，然后重新登录");
+//       MessageUtils.reconnect();
      }
    }
   void _handleVisiting() {
@@ -599,6 +604,7 @@ class ChatPageState extends State<ChatPage> {
         M_companyName: widget.user.companyName,
         M_MessageType: "2",
         M_ID: 2,
+
       );
       MessageUtils.insertSingleMessage(chatMessage);
       //插入到当前页面消息中
@@ -606,7 +612,8 @@ class ChatPageState extends State<ChatPage> {
         _isComposing = false;
       });
     } else {
-      ToastUtil.showShortToast("与服务器断开连接");
+      ToastUtil.showShortClearToast("与服务器断开连接，请从设置中退出，然后重新登录");
+//      MessageUtils.reconnect();
     }
   }
 
@@ -637,6 +644,7 @@ class ChatPageState extends State<ChatPage> {
           M_MessageContent: text,
           M_FrealName: widget.user.userName,
           M_FheadImgUrl: widget.user.idHandleImgUrl,
+          M_orgId: widget.user.orgId.toString(),
           M_ID: 1);
       MessageUtils.insertSingleMessage(chat);
       //插入到当前页面消息中
@@ -644,7 +652,8 @@ class ChatPageState extends State<ChatPage> {
         _isComposing = false;
       });
     } else {
-      ToastUtil.showShortToast("与服务器断开连接");
+      ToastUtil.showShortClearToast("与服务器断开连接，请从设置中退出，然后重新登录");
+//      MessageUtils.reconnect();
     }
   }
 }
@@ -692,7 +701,8 @@ class chatMessageState extends State<chatMessage>{
               Container(
                 margin: EdgeInsets.only(left: 16.0),
                 child: CircleAvatar(
-                  child: Icon(Icons.more),
+                  backgroundImage:widget.imageURL!=null?NetworkImage(Constant.imageServerUrl+widget.imageURL):AssetImage("asset/images/visitor_icon_head.png"),
+//                  child: widget.imageURL!=null?Image.network(Constant.imageServerUrl+widget.imageURL):Icon(Icons.more),
                 ),
               ),
             ],
@@ -708,7 +718,8 @@ class chatMessageState extends State<chatMessage>{
               Container(
                 margin: EdgeInsets.only(right: 16.0),
                 child: CircleAvatar(
-                  child: Icon(Icons.more),
+                  backgroundImage:widget.imageURL!=null?NetworkImage(Constant.imageServerUrl+widget.imageURL):AssetImage("asset/images/visitor_icon_head.png"),
+//                  child: widget.imageURL!=null?Image.network(Constant.imageServerUrl+widget.imageURL):Icon(Icons.more),
                 ),
               ),
               Column(
@@ -763,7 +774,8 @@ class chatMessageState extends State<chatMessage>{
               Container(
                 margin: EdgeInsets.only(left: 16.0),
                 child: CircleAvatar(
-                  child: Icon(Icons.more),
+                  backgroundImage:widget.imageURL!=null?NetworkImage(Constant.imageServerUrl+widget.imageURL):AssetImage("asset/images/visitor_icon_head.png"),
+//                  child: widget.imageURL!=null?Image.network(Constant.imageServerUrl+widget.imageURL):Icon(Icons.more),
                 ),
               ),
             ],
@@ -780,7 +792,8 @@ class chatMessageState extends State<chatMessage>{
               Container(
                 margin: EdgeInsets.only(right: 16.0),
                 child: CircleAvatar(
-                  child: Icon(Icons.more),
+                  backgroundImage:widget.imageURL!=null?NetworkImage(Constant.imageServerUrl+widget.imageURL):AssetImage("asset/images/visitor_icon_head.png"),
+//                  child: widget.imageURL!=null?Image.network(Constant.imageServerUrl+widget.imageURL):Icon(Icons.more),
                 ),
               ),
               Column(
@@ -822,7 +835,8 @@ class chatMessageState extends State<chatMessage>{
               Container(
                 margin: EdgeInsets.only(right: 16.0),
                 child: CircleAvatar(
-                  child: Icon(Icons.more),
+                  backgroundImage:widget.imageURL!=null?NetworkImage(Constant.imageServerUrl+widget.imageURL):AssetImage("asset/images/visitor_icon_head.png"),
+//                  child: widget.imageURL!=null?Image.network(Constant.imageServerUrl+widget.imageURL):Icon(Icons.more),
                 ),
               ),
               Column(
@@ -872,6 +886,7 @@ class chatMessage extends StatefulWidget {
   final String startDate;
   final String endDate;
   final int sendId;
+  final String imageURL;
   final int id;
   final int isAccept;
   final String recordType;
@@ -879,5 +894,5 @@ class chatMessage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return chatMessageState();
   }
-  chatMessage({this.text, this.type, this.visitor, this.inviter, this.companyName, this.startDate, this.endDate, this.status, this.id, this.sendId, this.isAccept,this.recordType});
+  chatMessage({this.text, this.type, this.visitor, this.inviter, this.companyName, this.startDate, this.endDate, this.status, this.id, this.sendId, this.isAccept,this.recordType,this.imageURL});
 }

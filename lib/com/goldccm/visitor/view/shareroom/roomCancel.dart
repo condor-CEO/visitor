@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:visitor/com/goldccm/visitor/component/Qrcode.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
+import 'package:visitor/com/goldccm/visitor/model/QrcodeMode.dart';
 import 'package:visitor/com/goldccm/visitor/model/RoomInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/RoomOrderInfo.dart';
 import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
+import 'package:visitor/com/goldccm/visitor/util/QrcodeHandler.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 import 'package:visitor/com/goldccm/visitor/view/shareroom/RoomCheckOut.dart';
 
@@ -78,7 +81,7 @@ class RoomBookState extends State<RoomBook> {
               child: new SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 50.0,
-                child: widget.order.recordStatus==1?new FlatButton(
+                child: (widget.order.tradeStatus=="1"||widget.order.tradeNO==null)?new FlatButton(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                   color: Colors.blue,
                   textColor: Colors.white,
@@ -87,17 +90,12 @@ class RoomBookState extends State<RoomBook> {
                     String applyDate=widget.order.applyDate;
                     var diff= DateTime.now().difference(DateTime.parse(applyDate));
                     if(diff.inDays<=6&&diff.inDays>=0){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>RoomCheckOut(userInfo: widget.userInfo,timeLines: widget.order.timeInterval,startTime: widget.order.applyStartTime,endTime: widget.order.applyEndTime,count: widget.order.timeInterval.split(",").length,roomInfo: _roomInfo,day: diff.inDays,)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>RoomCheckOut(userInfo: widget.userInfo,timeLines: widget.order.timeInterval,startTime: widget.order.applyStartTime,endTime: widget.order.applyEndTime,count: widget.order.timeInterval.split(",").length,roomInfo: _roomInfo,day: diff.inDays,roomOrderInfo: widget.order,)));
                     }else{
                       ToastUtil.showShortClearToast("超过支付时间");
                     }
                   },
-                ):new FlatButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-                  color: Colors.blue,
-                  textColor: Colors.white,
-                  child: new Text('已支付',style: TextStyle(fontSize: 18.0),),
-                ),
+                ):switchPassWay(widget.order.gate),
               ),
             ),
             Container(
@@ -111,7 +109,7 @@ class RoomBookState extends State<RoomBook> {
                   textColor: Colors.white,
                   child: new Text('取消预定',style: TextStyle(fontSize: 18.0),),
                   onPressed: () async {
-                    cancelOrder(widget.order);
+//                    cancelOrder(widget.order);
                   },
                 ),
               ),
@@ -120,5 +118,46 @@ class RoomBookState extends State<RoomBook> {
         ),
       ),
     );
+  }
+  Widget switchPassWay(int status){
+    if(status==1){
+      return new FlatButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        color: Colors.blue,
+        textColor: Colors.white,
+        child: new Text('人脸扫描进出',style: TextStyle(fontSize: 18.0),),
+        onPressed: () async {
+
+        },
+      );
+    }
+    else if(status==2){
+      return new FlatButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        color: Colors.blue,
+        textColor: Colors.white,
+        child: new Text('显示二维码',style: TextStyle(fontSize: 18.0),),
+        onPressed: () async {
+          QrcodeMode model = new QrcodeMode(userInfo: widget.userInfo,totalPages: 1,bitMapType: 4,roomOrderInfo: widget.order);
+          List<String> qrMsg = QrcodeHandler.buildQrcodeData(model);
+          print('$qrMsg[0]');
+          Navigator.push(context,
+              new MaterialPageRoute(builder: (BuildContext context) {
+                return new Qrcode(qrCodecontent:qrMsg);
+              }));
+
+        },
+      );
+    }else{
+      return new FlatButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        color: Colors.blue,
+        textColor: Colors.white,
+        child: new Text('未知方式，请到现场联系工作人员开门',style: TextStyle(fontSize: 18.0),),
+        onPressed: () async {
+
+        },
+      );
+    }
   }
 }

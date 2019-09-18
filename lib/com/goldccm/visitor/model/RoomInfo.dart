@@ -9,6 +9,7 @@ class RoomInfo<T>{
   String roomOpenTime;
   String roomCloseTime;
   String roomPrice;
+  int roomSize;
   String roomManager;
   String roomStatus;
   String roomOrgCode;
@@ -18,7 +19,7 @@ class RoomInfo<T>{
   RoomInfo({this.id, this.roomName, this.roomType, this.roomIntro,this.roomAddress,
       this.roomImage, this.roomOpenTime, this.roomCloseTime, this.roomPrice,
       this.roomManager, this.roomStatus, this.roomOrgCode, this.roomCancelHour,
-      this.roomPercent});
+      this.roomPercent,this.roomSize});
 
   RoomInfo.fromJson(Map json){
     this.id=json['id'];
