@@ -7,7 +7,7 @@ import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 class DBManager {
   static const int _VERSION = 1; //数据库版本号
 
-  static const String _DBNAME = "visitor_chat.db"; //数据库名称
+  static const String _DBNAME = "visitor_chatmessage.db"; //数据库名称
 
   static Database _dataBase; //数据库实例
 
@@ -15,17 +15,14 @@ class DBManager {
     var databasePath = await getDatabasesPath();
     String dbName = _DBNAME;
     String path = databasePath + dbName;
-
     if (CommonUtil.getAppPlat() == 'ios') {
       path = databasePath + "/" + dbName;
     }
-
     _dataBase = await openDatabase(path, version: _VERSION,
         onCreate: (Database db, int version) async {
       //新建数据库语句
     });
   }
-
   //获取当前数据库实例
   static Future<Database> getCurrentDatabase() async {
     if (_dataBase == null) {

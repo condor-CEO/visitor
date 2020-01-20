@@ -9,6 +9,7 @@ import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 var _keys = null;
 
 ///公司管理
+///userInfo接收来自上一级页面传递过来的变量
 class CompanyPage extends StatefulWidget{
   CompanyPage({Key key,this.userInfo}):super(key:key);
   final UserInfo userInfo;
@@ -29,9 +30,12 @@ class CompanyPageState extends State<CompanyPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: Text('公司管理'),
-        centerTitle:true,
+        centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
       ),
       body:_buildInfo(),
     );
@@ -42,29 +46,87 @@ class CompanyPageState extends State<CompanyPage>{
           itemCount: _keys.length != null ? _keys.length : 0,
           itemBuilder: (BuildContext context, int index) {
             return Card(
+              margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)
+              ),
               child:
               Stack(
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text('公司名称：'+_keys[index]['companyName'],style: TextStyle(fontSize: Constant.fontSize),),
-                      ),
-                      ListTile(
-                        title: Text('部门名称：'+_keys[index]['sectionName'],style: TextStyle(fontSize: Constant.fontSize)),
-                      ),
-                      ListTile(
-                        title: Text('用户姓名：'+_keys[index]['userName'],style: TextStyle(fontSize: Constant.fontSize)),
-                      ),
-                      ListTile(
-                        title: Text('邀请时间：'+_keys[index]['createDate'],style: TextStyle(fontSize: Constant.fontSize)),
-                      ),
-                    ],
+                  Container(
+                    height: MediaQuery.of(context).size.height/3.7,
+                    width: MediaQuery.of(context).size.width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
+                          child: RichText(
+                              text: TextSpan(
+                                  text: '公司名称    ',
+                                  style: TextStyle(fontSize: 16.0,color: Colors.black),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: _keys[index]['companyName'],
+                                      style: TextStyle(color: Colors.black45),
+                                    ),
+                                  ]
+                              )
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
+                          child:   RichText(
+                              text: TextSpan(
+                                  text: '部门名称    ',
+                                  style: TextStyle(fontSize: 16.0,color: Colors.black),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: _keys[index]['sectionName'],
+                                      style: TextStyle(color: Colors.black45),
+                                    ),
+                                  ]
+                              )
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
+                          child:RichText(
+                              text: TextSpan(
+                                  text: '用户姓名    ',
+                                  style: TextStyle(fontSize: 16.0,color: Colors.black),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: _keys[index]['userName'],
+                                      style: TextStyle(color: Colors.black45),
+                                    ),
+                                  ]
+                              )
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
+                          child: RichText(
+                              text: TextSpan(
+                                  text: '邀请时间    ',
+                                  style: TextStyle(fontSize: 16.0,color: Colors.black),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: _keys[index]['createDate'],
+                                      style: TextStyle(color: Colors.black45),
+                                    ),
+                                  ]
+                              )
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Positioned(
-                    child: Radio(value:index, groupValue: groupValue, onChanged: (T){updateGroupValue(T);}),
+                    child: Radio(value:index, groupValue: groupValue, onChanged: (T){updateGroupValue(T);},activeColor: Colors.blue,),
                     right: 10.0,
-                    top:80.0,
+                    top:60.0,
                   ),
                 ],
               ),
@@ -96,17 +158,29 @@ class CompanyPageState extends State<CompanyPage>{
     });
     if (res != null) {
       Map map = jsonDecode(res);
-      setState(() {
-        _keys = map['data'];
-      });
-      print(_keys[0]['companyId']);
+      if (map['verify']['sign'] == "success")
+        if(map['data']==null) {
+          ToastUtil.showShortClearToast("暂无数据");
+        }else{
+        setState(() {
+          _keys = map['data'];
+          int index = 0;
+          for (var data in map['data']) {
+            if (data['companyId'] == userInfo.companyId) {
+              groupValue = index;
+              break;
+            }
+            index++;
+          }
+        });
+      }
     }
   }
   ///更新默认公司
   Future updateGroupValue(int v) async {
     String url = Constant.serverUrl+Constant.updateCompanyIdAndRoleUrl;
     String threshold = await CommonUtil.calWorkKey();
-    var res = Http().post(url,queryParameters: {
+    var res = await Http().post(url,queryParameters: {
       "token": userInfo.token,
       "userId": userInfo.id,
       "factor": CommonUtil.getCurrentTime(),

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
+import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/chat.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class FriendDetailPage extends StatefulWidget {
+  final User user;
+  FriendDetailPage({Key key,this.user}):super(key:key);
   @override
   State<StatefulWidget> createState() {
     return FriendDetailPageState();
@@ -10,15 +14,11 @@ class FriendDetailPage extends StatefulWidget {
 }
 
 class FriendDetailPageState extends State<FriendDetailPage> {
-  UserDetail _userDetail;
-  Presenter _presenter = new Presenter();
-  String _imageServerUrl;
+  User _user;
   @override
   void initState() {
     super.initState();
-    _presenter.loadDetail();
-    _userDetail = _presenter.getDetail();
-    _imageServerUrl = _presenter.getImgServerUrl();
+    _user=widget.user;
   }
 
   @override
@@ -27,6 +27,11 @@ class FriendDetailPageState extends State<FriendDetailPage> {
       appBar: AppBar(
         title: Text('好友信息'),
         centerTitle: true,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: _drawDetail(),
     );
@@ -44,9 +49,9 @@ class FriendDetailPageState extends State<FriendDetailPage> {
               Container(
                 height: 60,
                 child: CircleAvatar(
-                  backgroundImage: _imageServerUrl != null
+                  backgroundImage:_user.idHandleImgUrl != null
                       ? NetworkImage(
-                          _imageServerUrl + _userDetail.headImgUrl,
+                         Constant.imageServerUrl+ _user.idHandleImgUrl,
                         )
                       : AssetImage('asset/images/visitor_icon_account.png'),
                   radius: 100,
@@ -59,7 +64,7 @@ class FriendDetailPageState extends State<FriendDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    _userDetail.name != null ? _userDetail.name : '昵称',
+                    _user.userName != null ? _user.userName : '昵称',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18.0,
@@ -67,21 +72,21 @@ class FriendDetailPageState extends State<FriendDetailPage> {
                     ),
                   ),
                   Text(
-                    "手机号码："+(_userDetail.phone != null ? _userDetail.phone : '手机号码'),
+                    "手机号码："+(_user.phone != null ? _user.phone : '手机号码'),
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 15.0,
                     ),
                   ),
                   Text(
-                    "备注："+(_userDetail.notice != null ? _userDetail.notice : '备注'),
+                    "备注："+(_user.notice != null ? _user.notice : '备注为空'),
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 15.0,
                     ),
                   ),
                   Text(
-                    "所属公司："+(_userDetail.company != null ? _userDetail.company : '所属公司') ,
+                    "所属公司："+(_user.companyName != null ? _user.companyName : '无') ,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 15.0,
@@ -102,42 +107,15 @@ class FriendDetailPageState extends State<FriendDetailPage> {
               textColor: Colors.white,
               child: new Text(
                 '洽谈',
-                style: TextStyle(fontSize: Constant.fontSize),
+                style: TextStyle(fontSize:  Constant.normalFontSize),
               ),
               onPressed: () async {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(user: widget.user,)));
               },
             ),
           ),
         ),
       ],
     );
-  }
-}
-
-class UserDetail {
-  String name;
-  String phone;
-  String notice;
-  String company;
-  String headImgUrl;
-  UserDetail({name, phone, notice, company, headImgUrl});
-}
-
-class Presenter {
-  UserDetail userDetail = new UserDetail();
-  loadDetail() {
-    userDetail.phone = "15880485249";
-    userDetail.notice = "this is a message";
-    userDetail.name = "乘风";
-    userDetail.company = "福建小松安信";
-  }
-
-  getDetail() {
-    return userDetail;
-  }
-
-  getImgServerUrl() {
-    return null;
   }
 }

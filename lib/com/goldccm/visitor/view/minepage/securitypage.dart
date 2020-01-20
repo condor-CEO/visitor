@@ -9,6 +9,8 @@ import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/Md5Util.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
+import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
+import 'package:provider/provider.dart';
 
 class SecurityPage extends StatefulWidget {
   SecurityPage({Key key, this.userInfo}) : super(key: key);
@@ -31,21 +33,25 @@ class SecurityPageState extends State<SecurityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: Text('安全管理'),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
       ),
       body: ListView(
         children: <Widget>[
           ListTile(
-            title: Text('换绑手机', style: TextStyle(fontSize: Constant.fontSize)),
+            title: Text('换绑手机', style: TextStyle(fontSize: Constant.normalFontSize,fontWeight:FontWeight.w600)),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 widget.userInfo.phone != null
                     ? Text(widget.userInfo.phone,
-                        style: TextStyle(fontSize: Constant.fontSize))
+                        style: TextStyle(fontSize:  Constant.normalFontSize,color: Colors.black54,))
                     : Text(""),
-                Image.asset('asset/images/visitor_icon_next.png', scale: 2.0),
+                Image.asset('asset/icons/更多@2x.png', scale: 2.0),
               ],
             ),
             onTap: () {
@@ -56,9 +62,9 @@ class SecurityPageState extends State<SecurityPage> {
           Divider(height: 0.0),
           ListTile(
             title:
-                Text('修改登录密码', style: TextStyle(fontSize: Constant.fontSize)),
+                Text('修改登录密码', style: TextStyle(fontSize:  Constant.normalFontSize,fontWeight:FontWeight.w600)),
             trailing:
-                Image.asset('asset/images/visitor_icon_next.png', scale: 2.0),
+                Image.asset('asset/icons/更多@2x.png', scale: 2.0),
             onTap: () {
               Navigator.push(
                   context,
@@ -70,9 +76,9 @@ class SecurityPageState extends State<SecurityPage> {
           Divider(height: 0.0),
           ListTile(
             title:
-                Text('设置手势密码', style: TextStyle(fontSize: Constant.fontSize)),
+                Text('设置手势密码', style: TextStyle(fontSize: Constant.normalFontSize,fontWeight:FontWeight.w600),),
             trailing:
-                Image.asset('asset/images/visitor_icon_next.png', scale: 2.0),
+                Image.asset('asset/icons/更多@2x.png', scale: 2.0),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChangeGesturePage()));
@@ -90,105 +96,141 @@ class ChangePhonePage extends StatefulWidget {
     return ChangePhonePageState();
   }
 }
-
 class ChangePhonePageState extends State<ChangePhonePage> {
   var phoneController = new TextEditingController();
   var codeController = new TextEditingController();
+  Timer _timer;
+  int countDown=60;
+  bool isWork=true;
+  void timeCountDown(){
+    _timer=Timer.periodic(Duration(seconds: 1), (timer){
+      if(countDown<=0){
+        setState(() {
+          isWork=true;
+        });
+      }else{
+        setState(() {
+          isWork=false;
+          countDown=countDown-1;
+        });
+      }
+    });
+  }
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         title: Text(
           '更换手机',
         ),
         centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
       ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-            color: Colors.white,
-            height: 60,
-            child: Row(
-              children: <Widget>[
-                Text(
-                  '新手机号',
-                  style: TextStyle(fontSize: Constant.fontSize),
-                ),
-                Container(
-                  width: 180,
-                  padding: EdgeInsets.fromLTRB(30, 0.0, 0.0, 0.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: '请输入手机号',
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(fontSize: Constant.fontSize),
-                    ),
-                    controller: phoneController,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+              color: Colors.white,
+              height: 60,
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    '新手机号',
+                    style: TextStyle(fontSize:  Constant.normalFontSize),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            height: 0.0,
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-            color: Colors.white,
-            height: 60,
-            child: Row(
-              children: <Widget>[
-                Text(
-                  '验证码',
-                  style: TextStyle(fontSize: Constant.fontSize),
-                ),
-                Container(
-                  width: 180,
-                  padding: EdgeInsets.fromLTRB(45, 0.0, 0.0, 0.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: '请输入验证码',
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(fontSize: Constant.fontSize),
+                  Container(
+                    width: 180,
+                    padding: EdgeInsets.fromLTRB(30, 0.0, 0.0, 0.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: '请输入手机号',
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(fontSize:  Constant.normalFontSize),
+                      ),
+                      controller: phoneController,
                     ),
-                  controller: codeController,
                   ),
-                ),
-                RaisedButton(
-                    color: Colors.white,
-                    textColor: Colors.blue,
-                    elevation: 0,
-                    child: Text(
-                      '发送验证码',
-                      style: TextStyle(fontSize: Constant.fontSize),
-                    ),
-                    onPressed: () {
-                      sendCode();
-                    })
-              ],
-            ),
-          ),
-          new Container(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: new SizedBox(
-              width: 300.0,
-              height: 50.0,
-              child: new RaisedButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: new Text(
-                  '提交',
-                  style: TextStyle(fontSize: Constant.fontSize),
-                ),
-                onPressed: () async {
-                  updatePhone();
-                },
+                ],
               ),
             ),
-          )
-        ],
-      ),
+            Divider(
+              height: 0.0,
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+              color: Colors.white,
+              height: 60,
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    '验证码',
+                    style: TextStyle(fontSize: Constant.normalFontSize),
+                  ),
+                  Container(
+                    width: 180,
+                    padding: EdgeInsets.fromLTRB(45, 0.0, 0.0, 0.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: '请输入验证码',
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(fontSize:  Constant.normalFontSize),
+                      ),
+                      controller: codeController,
+                    ),
+                  ),
+                  isWork==true?RaisedButton(
+                      color: Colors.white,
+                      textColor: Colors.blue,
+                      elevation: 0,
+                      child: Text(
+                        '发送验证码',
+                        style: TextStyle(fontSize: Constant.normalFontSize),
+                      ),
+                      onPressed: () {
+                        sendCode();
+                      }):RaisedButton(
+                      color: Colors.white,
+                      textColor: Colors.grey,
+                      elevation: 0,
+                      child: Text(
+                        '$countDown',
+                        style: TextStyle(fontSize: Constant.normalFontSize),
+                      ),
+                    onPressed: (){},
+                  )
+                ],
+              ),
+            ),
+            new Container(
+              padding: EdgeInsets.fromLTRB(0, 100, 0, 0),
+              child: new SizedBox(
+                width: 300.0,
+                height: 50.0,
+                child: new RaisedButton(
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+                  child: new Text(
+                    '提交',
+                    style: TextStyle(fontSize: Constant.normalFontSize),
+                  ),
+                  onPressed: () async {
+                    updatePhone();
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+      )
     );
   }
   ///发送验证码
@@ -207,6 +249,10 @@ class ChangePhonePageState extends State<ChangePhonePage> {
       Map map = jsonDecode(res);
       if(map['verify']['sign']=="success"){
         ToastUtil.showShortClearToast("发送成功");
+        setState(() {
+          countDown=60;
+        });
+        timeCountDown();
       }
       else{
         ToastUtil.showShortClearToast(map['verify']['desc']);
@@ -237,7 +283,12 @@ class ChangePhonePageState extends State<ChangePhonePage> {
       });
       if(res!=null){
         Map map = jsonDecode(res);
-        ToastUtil.showShortClearToast(map['verify']['desc']);
+        if(map['verify']['sign']=="success"){
+          ToastUtil.showShortClearToast('手机更换成功');
+          Navigator.pop(context);
+        }else{
+          ToastUtil.showShortClearToast(map['verify']['desc']);
+        }
       }
     }
   }
@@ -270,6 +321,8 @@ class ChangePwdPageState extends State<ChangePwdPage> {
       appBar: AppBar(
         title: Text('更换登录密码'),
         centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
       ),
       body: SingleChildScrollView(
           child: Form(
@@ -286,17 +339,17 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                     children: <Widget>[
                       Text(
                         '为你的账号',
-                        style: TextStyle(fontSize: Constant.fontSize),
+                        style: TextStyle(fontSize: 14.0),
                       ),
                       _phone != null
                           ? Text(_phone,
                               style: TextStyle(
                                   color: Colors.red,
-                                  fontSize: Constant.fontSize))
+                                  fontSize:14.0))
                           : Text(""),
                       Text(
                         '设定新的登录密码',
-                        style: TextStyle(fontSize: Constant.fontSize),
+                        style: TextStyle(fontSize: 14.0),
                       ),
                     ],
                   ),
@@ -309,7 +362,7 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                 children: <Widget>[
                   Text(
                     '旧密码',
-                    style: TextStyle(fontSize: Constant.fontSize),
+                    style: TextStyle(fontSize:  Constant.normalFontSize,fontWeight: FontWeight.w600),
                   ),
                   Container(
                     width: 180,
@@ -318,7 +371,7 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                       decoration: InputDecoration(
                         hintText: '请输入旧密码',
                         border: InputBorder.none,
-                        hintStyle: TextStyle(fontSize: Constant.fontSize),
+                        hintStyle: TextStyle(fontSize: Constant.normalFontSize,),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -345,7 +398,7 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                 children: <Widget>[
                   Text(
                     '新密码',
-                    style: TextStyle(fontSize: Constant.fontSize),
+                    style: TextStyle(fontSize:  Constant.normalFontSize,fontWeight: FontWeight.w600),
                   ),
                   Container(
                     width: 180,
@@ -354,7 +407,7 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                       decoration: InputDecoration(
                         hintText: '请输入新密码',
                         border: InputBorder.none,
-                        hintStyle: TextStyle(fontSize: Constant.fontSize),
+                        hintStyle: TextStyle(fontSize:  Constant.normalFontSize),
                       ),
                       validator: (value) {
                         if (value.isEmpty && _oldPassword != null) {
@@ -381,7 +434,7 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                 children: <Widget>[
                   Text(
                     '确认密码',
-                    style: TextStyle(fontSize: Constant.fontSize),
+                    style: TextStyle(fontSize: Constant.normalFontSize,fontWeight: FontWeight.w600),
                   ),
                   Container(
                     width: 180,
@@ -390,7 +443,7 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                       decoration: InputDecoration(
                         hintText: '请确认新密码',
                         border: InputBorder.none,
-                        hintStyle: TextStyle(fontSize: Constant.fontSize),
+                        hintStyle: TextStyle(fontSize:  Constant.normalFontSize),
                       ),
                       validator: (value) {
                         if (value.isEmpty &&
@@ -422,7 +475,7 @@ class ChangePwdPageState extends State<ChangePwdPage> {
                   textColor: Colors.white,
                   child: new Text(
                     '提交',
-                    style: TextStyle(fontSize: Constant.fontSize),
+                    style: TextStyle(fontSize:  Constant.normalFontSize),
                   ),
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
@@ -474,16 +527,22 @@ bool _value = false;
 
 class ChangeGesturePageState extends State<ChangeGesturePage> {
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('设定手势密码'),
         centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
       ),
       body: Column(
         children: <Widget>[
           ListTile(
-            title: Text('手势密码', style: TextStyle(fontSize: Constant.fontSize)),
+            title: Text('手势密码', style: TextStyle(fontSize:  Constant.normalFontSize)),
             trailing: Switch(
               value: _value,
               onChanged: (newValue) {
@@ -508,7 +567,7 @@ class ChangeGesturePageState extends State<ChangeGesturePage> {
 Widget showUpdateGesture(BuildContext context) {
   if (_value == true) {
     return ListTile(
-      title: Text('修改手势密码', style: TextStyle(fontSize: Constant.fontSize)),
+      title: Text('修改手势密码', style: TextStyle(fontSize:  Constant.normalFontSize)),
       onTap: () {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => UpdateGesturePage()));
@@ -578,14 +637,16 @@ class UpdateGesturePageState extends State<UpdateGesturePage> {
       appBar: AppBar(
         title: Text('更新手势密码'),
         centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: (){Navigator.pop(context);}),
       ),
       body: Column(
         children: <Widget>[
           Container(
             child: Center(
-              child: MiniGesturePassword(key: miniGesturePassword),
+              child: Image.asset("asset/icons/手势密码用户@2x.png",scale: 1.7,),
             ),
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(30),
           ),
           Center(
             child: Text(
@@ -677,8 +738,8 @@ class UpdateGesturePageState extends State<UpdateGesturePage> {
     });
     if (res != null) {
       Map map = jsonDecode(res);
-        Navigator.pop(context);
         ToastUtil.showShortClearToast(map['verify']['desc']);
+        Navigator.pop(context);
     }
   }
 }
@@ -694,7 +755,7 @@ class GesturePageState extends State<GesturePage> {
   var firstStr;
   var repeatStr;
   var _noticeStr = "请绘制解锁图案";
-  var _color = Colors.blue;
+  var _color = Colors.black;
   Timer _timer;
   int _countdownTime = 0;
   void startCountdownTimer() {
@@ -705,7 +766,7 @@ class GesturePageState extends State<GesturePage> {
             if (_countdownTime < 1) {
               _timer.cancel();
               _noticeStr = "请绘制解锁图案";
-              _color = Colors.blue;
+              _color = Colors.black;
             } else {
               _countdownTime = _countdownTime - 1;
             }
@@ -721,7 +782,7 @@ class GesturePageState extends State<GesturePage> {
     if (_timer != null) {
       _timer.cancel();
       _noticeStr = "请绘制解锁图案";
-      _color = Colors.blue;
+      _color = Colors.black;
     }
   }
 
@@ -736,7 +797,7 @@ class GesturePageState extends State<GesturePage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
               _value = false;
               Navigator.pop(context);
@@ -746,9 +807,9 @@ class GesturePageState extends State<GesturePage> {
         children: <Widget>[
           Container(
             child: Center(
-              child: MiniGesturePassword(key: miniGesturePassword),
+              child: Image.asset("asset/icons/手势密码用户@2x.png",scale: 1.7,),
             ),
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(30),
           ),
           Center(
             child: Text(
@@ -767,6 +828,7 @@ class GesturePageState extends State<GesturePage> {
                       firstStr = s;
                       setState(() {
                         _noticeStr = "请重复解锁图案";
+                        _color=Colors.red;
                       });
                     } else {
                       repeatStr = s;

@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserModel.dart';
 import 'package:visitor/com/goldccm/visitor/view/addresspage/addresspage.dart';
+import 'package:visitor/com/goldccm/visitor/view/contract/chatListItem.dart';
 import 'package:visitor/com/goldccm/visitor/view/homepage/homepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 //import 'package:visitor/com/goldccm/visitor/view/homepage/homepage1.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/minepage.dart';
 import 'package:visitor/com/goldccm/visitor/view/minepage/settingpage.dart';
+import 'package:visitor/com/goldccm/visitor/view/visitor/fastvisitreq.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:badges/badges.dart';
+import 'com/goldccm/visitor/util/MessageUtils.dart';
 
 
 
 class MyHomeApp extends StatefulWidget{
+  final int tabIndex;
+  MyHomeApp({Key key,this.tabIndex}):super(key:key);
   @override
   HomeState createState()=> new HomeState();
 }
@@ -29,7 +38,6 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   var appBarTitles = ['首页', '访客','通讯录', '我的'];
   var _pageList;
   WebSocketChannel channel;
-
   /*
    * 根据选择获得对应的normal或是press的icon
    */
@@ -45,10 +53,10 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   Text getTabTitle(int curIndex) {
     if (curIndex == _tabIndex) {
       return new Text(appBarTitles[curIndex],
-          style: new TextStyle(fontSize: 14.0, color: const Color(0xff1296db),fontFamily:'楷体_GB2312' ));
+          style: new TextStyle(fontSize: 14.0, color: const Color(0xff1296db) ));
     } else {
       return new Text(appBarTitles[curIndex],
-          style: new TextStyle(fontSize: 14.0, color: const Color(0xff515151),fontFamily:'楷体_GB2312'));
+          style: new TextStyle(fontSize: 14.0, color: const Color(0xff515151),));
     }
   }
   /*
@@ -62,11 +70,15 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
   void initState() {
     super.initState();
     initData();
-    channel = IOWebSocketChannel.connect('ws://192.168.3.4:8088/echo');
   }
 
 
   void initData() {
+    setState(() {
+      if(widget.tabIndex!=null) {
+        _tabIndex = widget.tabIndex;
+      }
+    });
     /*
      * 初始化选中和未选中的icon
      */
@@ -81,8 +93,8 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
      */
     _pageList = [
       new HomePage(),
+      new ChatList(),
       new AddressPage(),
-      new HomePage(),
       new MinePage(),
     ];
   }
@@ -90,6 +102,11 @@ class HomeState extends State<MyHomeApp> with SingleTickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    if(Provider.of<UserModel>(context).info.id!=null){
+      int userId = Provider.of<UserModel>(context).info.id;
+      String token = Provider.of<UserModel>(context).info.token;
+      MessageUtils.setChannel(userId.toString(),token.toString());
+    }
     Future<bool> _onWillPop()=>new Future.value(false);
     return new WillPopScope(child: Scaffold(
           body: IndexedStack(

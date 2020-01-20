@@ -1,27 +1,74 @@
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
+import 'package:visitor/com/goldccm/visitor/util/CommonUtil.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
+import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
 
 class AddFriendPage extends StatefulWidget{
+  final UserInfo userInfo;
+  AddFriendPage({Key key,this.userInfo}):super(key:key);
   @override
   State<StatefulWidget> createState() {
     return AddFriendPageState();
   }
 }
 class AddFriendPageState extends State<AddFriendPage>{
+  UserInfo _userInfo;
+  String _phone;
+  String _name;
+  var textController =  new TextEditingController();
+  var formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    super.initState();
+    _userInfo=widget.userInfo;
+  }
+  addFriend() async {
+    String url = Constant.serverUrl+"userFriend/addFriendByPhoneAndUser";
+    String threshold = await CommonUtil.calWorkKey();
+    var res = await Http().post(url, queryParameters: {
+      "token": _userInfo.token,
+      "factor":CommonUtil.getCurrentTime(),
+      "threshold": threshold,
+      "requestVer": CommonUtil.getAppVersion(),
+      "userId":_userInfo.id,
+      "phone":_phone,
+      "realName":_name,
+    });
+    if(res is String){
+      Map map = jsonDecode(res);
+      if(map['verify']['desc']=="success"){
+        ToastUtil.showShortClearToast(map['verify']['desc']);
+        Navigator.pop(context);
+      }else{
+        ToastUtil.showShortClearToast(map['verify']['desc']);
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('添加好友'),
-        centerTitle:true,
+        title: const Text('添加好友',style: TextStyle(fontSize: 17.0),),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: _addFriend(),
     );
   }
   Widget _addFriend(){
-    return Container(
-      child: Column(
+    return SingleChildScrollView(
+      child: Form(
+        key: formKey,
+        child: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
@@ -31,7 +78,7 @@ class AddFriendPageState extends State<AddFriendPage>{
               children: <Widget>[
                 Text(
                   '姓名',
-                  style: TextStyle(fontSize: Constant.fontSize),
+                  style: TextStyle(fontSize:  Constant.normalFontSize),
                 ),
                 Container(
                   width: 180,
@@ -40,8 +87,16 @@ class AddFriendPageState extends State<AddFriendPage>{
                     decoration: InputDecoration(
                       hintText: '请输入好友姓名',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(fontSize: Constant.fontSize),
+                      hintStyle: TextStyle(fontSize: Constant.normalFontSize),
                     ),
+                    onSaved: (value){
+                      _name=value;
+                    },
+                    validator: (value){
+                      if(value.isEmpty){
+                        return '请不要为空';
+                      }
+                    },
                   ),
                 ),
               ],
@@ -55,7 +110,7 @@ class AddFriendPageState extends State<AddFriendPage>{
               children: <Widget>[
                 Text(
                   '手机号',
-                  style: TextStyle(fontSize: Constant.fontSize),
+                  style: TextStyle(fontSize: Constant.normalFontSize),
                 ),
                 Container(
                   width: 180,
@@ -64,69 +119,46 @@ class AddFriendPageState extends State<AddFriendPage>{
                     decoration: InputDecoration(
                       hintText: '请输入他的手机号码',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(fontSize: Constant.fontSize),
+                      hintStyle: TextStyle(fontSize:  Constant.normalFontSize),
                     ),
+                    onSaved: (value){
+                      _phone=value;
+                    },
+                    validator: (value){
+                      if(value.isEmpty){
+                        return '请不要为空';
+                      }
+                    },
                   ),
                 ),
               ],
             ),
           ),
           new Container(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+            padding: EdgeInsets.fromLTRB(20, 100, 20, 0),
             child: new SizedBox(
-              width: 300.0,
+              width: MediaQuery.of(context).size.width,
               height: 50.0,
               child: new RaisedButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
                 color: Colors.blue,
                 textColor: Colors.white,
                 child: new Text(
                   '添加好友',
-                  style: TextStyle(fontSize: Constant.fontSize),
+                  style: TextStyle(fontSize:  Constant.normalFontSize),
                 ),
                 onPressed: () async {
-
+                  if(formKey.currentState.validate()){
+                    formKey.currentState.save();
+                    addFriend();
+                  }
                 },
               ),
             ),
           ),
-          new Container(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: new SizedBox(
-              width: 300.0,
-              height: 50.0,
-              child: new RaisedButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: new Text(
-                  '申请访问',
-                  style: TextStyle(fontSize: Constant.fontSize),
-                ),
-                onPressed: () async {
-
-                },
-              ),
-            ),
-          ),
-          new Container(
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: new SizedBox(
-              width: 300.0,
-              height: 50.0,
-              child: new RaisedButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: new Text(
-                  '邀约来访',
-                  style: TextStyle(fontSize: Constant.fontSize),
-                ),
-                onPressed: () async {
-
-                },
-              ),
-            ),
-          )
         ],
       ),
+      )
     );
   }
 }

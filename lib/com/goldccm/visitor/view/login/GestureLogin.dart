@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gesture_password/gesture_password.dart';
 import 'package:flutter/material.dart';
 import 'package:gesture_password/gesture_password.dart';
@@ -7,6 +10,8 @@ import 'package:visitor/com/goldccm/visitor/model/UserInfo.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/DataUtils.dart';
 import 'package:visitor/com/goldccm/visitor/util/Md5Util.dart';
+import 'package:visitor/com/goldccm/visitor/util/SharedPreferenceUtil.dart';
+import 'package:visitor/home.dart';
 
 class GestureLogin extends StatefulWidget {
   @override
@@ -41,7 +46,7 @@ class GestureLoginState extends State<GestureLogin> {
             "手势密码登录",
             textAlign: TextAlign.center,
             style: new TextStyle(
-                fontSize: 18.0, color: Colors.white, fontFamily: '楷体_GB2312'),
+                fontSize: 18.0, color: Colors.white,),
           ),
         ),
         body: new Column(children: <Widget>[
@@ -51,7 +56,7 @@ class GestureLoginState extends State<GestureLogin> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Image.asset("asset/images/visitor_logo.png"),
+                new Image.asset("asset/icons/手势密码用户@2x.png",scale: 1.7,),
               ],
             ),
           ),
@@ -110,5 +115,26 @@ class GestureLoginState extends State<GestureLogin> {
       "style": "2",
       "sysPwd": _passNum,
     });
+    if (res != null) {
+      Map result =jsonDecode(res);
+      print('$result');
+      if (result['verify']['sign'] == 'success') {
+        var userMap = result['data']['user'];
+        print('返回用户信息：$userMap');
+        UserInfo userInfo = UserInfo.fromJson(userMap);
+        DataUtils.saveLoginInfo(userMap);
+        DataUtils.saveUserInfo(userMap);
+        SharedPreferenceUtil.saveUser(userInfo);
+        Navigator.of(context).pushAndRemoveUntil(
+            new MaterialPageRoute(
+                builder: (BuildContext context) =>new MyHomeApp()
+            ),
+                (Route route) => route == null);
+        return true;
+      } else {
+        Fluttertoast.showToast(msg: '请用账号密码登录');
+        return false;
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-class UserInfo {
+class UserInfo{
    int id;
    num orgId;
    String relationNo;
@@ -29,23 +29,16 @@ class UserInfo {
    String headImgUrl;
    String token;
    String userName;
-
    String qrcodeUrl;
    num companyId;
    String soleCode;
    String validityDate;
    String companyName;
-
    String visitorId;
-
    String lastLoginTime;
-
    String isGestureOpened; //是否启用手势密码 F:未启用 T:启用
-
    String ufId;
-
    String sortLetters;
-
    bool hasApplyPermission=false;
 
    UserInfo({this.id, this.orgId, this.relationNo, this.realName, this.nickName,

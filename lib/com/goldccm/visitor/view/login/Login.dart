@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:visitor/com/goldccm/visitor/httpinterface/http.dart';
 import 'package:visitor/com/goldccm/visitor/model/JsonResult.dart';
+import 'package:visitor/com/goldccm/visitor/model/UserModel.dart';
 import 'package:visitor/com/goldccm/visitor/util/Constant.dart';
 import 'package:visitor/com/goldccm/visitor/util/Md5Util.dart';
 import 'package:visitor/com/goldccm/visitor/util/ToastUtil.dart';
@@ -130,7 +132,7 @@ class LoginState extends State<Login> {
                         ]),
                     new Padding(
                       padding: const EdgeInsets.only(top: 80.0),
-                      child: new Image.asset("asset/images/visitor_logo.png"),
+                      child: new Image.asset("asset/icons/ic_launcher.png"),
                     ),
                     new Padding(
                         padding: const EdgeInsets.only(
@@ -359,9 +361,8 @@ class LoginState extends State<Login> {
     });
   }
 
-  /**
-   * 获取验证码
-   */
+  // 获取验证码
+
   Future<bool> getCheckCode() async {
     bool _userNameCheck = checkLoignUser();
     if (_userNameCheck) {
@@ -404,10 +405,7 @@ class LoginState extends State<Login> {
     }
     return checkResult;
   }
-
-  /**
-   * 密码校验
-   */
+   // 密码校验
   bool checkPass() {
     String _pass = _passwordController.text.toString();
     bool checkResult = true;
@@ -446,12 +444,13 @@ class LoginState extends State<Login> {
     bool userNameCheck = checkLoignUser();
     String _passNum;
     String _codeNum;
+    var user=Provider.of<UserModel>(context);
     var data;
     if (userNameCheck && _loginType == _loginPass) {
       bool passCheck = checkPass();
       if (passCheck) {
            _passNum = Md5Util().encryptByMD5ByHex(_passwordController.text.toString());
-           data = await Http.instance.post(Constant.loginUrl, queryParameters: {
+           data = await Http.instance.post(Constant.serverUrl+Constant.loginUrl, queryParameters: {
           "phone": _userNameController.text.toString(),
           "style": "1",
           "sysPwd": _passNum,
@@ -461,7 +460,7 @@ class LoginState extends State<Login> {
       //验证码登录
       if (checkCode()) {
         _codeNum = _checkCodeController.text.toString();
-        data = await Http.instance.post(Constant.loginUrl, queryParameters: {
+        data = await Http.instance.post(Constant.serverUrl+Constant.loginUrl, queryParameters: {
           "phone": _userNameController.text.toString(),
           "style": "1",
           "code": _codeNum
@@ -471,7 +470,6 @@ class LoginState extends State<Login> {
 
     if (data != null) {
       JsonResult result = JsonResult.fromJson(data);
-      print('$result');
       if (result.sign == 'success') {
         var userMap = result.data['user'];
         print('返回用户信息：$userMap');
@@ -479,10 +477,10 @@ class LoginState extends State<Login> {
         DataUtils.saveLoginInfo(userMap);
         DataUtils.saveUserInfo(userMap);
         SharedPreferenceUtil.saveUser(userInfo);
+        user.init(userInfo);
         Navigator.of(context).pushAndRemoveUntil(
             new MaterialPageRoute(
-              //builder: (BuildContext context) => _isLogin==true?new MyHomeApp():new Login()
-                builder: (BuildContext context) =>new MyHomeApp()
+              builder: (BuildContext context) => new MyHomeApp(),
             ),
                 (Route route) => route == null);
         return true;
